@@ -63,7 +63,10 @@ public class User {
 	}
 	
 	public User[] get_friends() {
-		return (User[]) friends.toArray();
+		User[] friends_array = new User[friends.size()];
+		friends_array = friends.toArray(friends_array);
+
+		return friends_array;
 	}
 	
 	// Setters

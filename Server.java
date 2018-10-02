@@ -14,21 +14,38 @@ public class Server {
         s.userLoggedIn("Sam");
         s.userLoggedIn("Jessica");
 
-        s.userLoggedOut("Sam");
         s.changeUsername("Jessica", "Josie");
 
-        s.printUsers();
+        s.addFriend("Josie", "Bob");
+        s.addFriend("Josie", "Sam");
+        
+        System.out.println("First trial:");
+        s.printUsersAndFriends();
+
+        s.removeFriend("Josie", "Sam");
+
+        System.out.println("Second trial:");
+        s.printUsersAndFriends();
+
+        s.userLoggedOut("Josie");
+
+        System.out.println("Third trial:");
+        s.printUsersAndFriends();
     }
 
     public Server() {
         this.onlineUsers = new ArrayList<User>();
     }
 
-    private void printUsers() {
-        // TODO: Delete this method, it's only used for testing
+    private void printUsersAndFriends() {
+        // Method used in unit testing of Server class
 
         for (User u : onlineUsers) {
-            System.out.println(u.get_username());
+            System.out.println(u.get_username() + ":");
+
+            for (User f : u.get_friends()) {
+                System.out.println(f.get_username());
+            }
         }
     }
 
@@ -94,5 +111,63 @@ public class Server {
         }
 
         return ERROR;
+    }
+
+    private int addFriend(String username, String newFriendUsername) {
+        // Update user with the new friend in the firebase database
+
+        // Find user in onlineUsers with the username,
+        // then find friend with the username
+        // Can this be done more efficiently?
+        User adder = null;
+        for (User u : onlineUsers) {
+            if (u.get_username().equals(username)) {
+                adder = u;
+            }
+        }
+
+        User addee = null;
+        for (User u : onlineUsers) {
+            if (u.get_username().equals(newFriendUsername)) {
+                addee = u;
+            }
+        }
+
+        if ((adder == null) || (addee == null)) {
+            return ERROR;
+        }
+
+        adder.add_friend(addee);
+
+        return OK;
+    }
+
+    private int removeFriend(String username, String removedUsername) {
+        // Update user with the deleted friend in the firebase database
+
+        // Find user in onlineUsers with the username,
+        // then find friend with the username
+        // Can this be done more efficiently?
+        User deleter = null;
+        for (User u : onlineUsers) {
+            if (u.get_username().equals(username)) {
+                deleter = u;
+            }
+        }
+
+        User deletee = null;
+        for (User u : onlineUsers) {
+            if (u.get_username().equals(removedUsername)) {
+                deletee = u;
+            }
+        }
+
+        if ((deleter == null) || (deletee == null)) {
+            return ERROR;
+        }
+
+        deleter.remove_friend(deletee);
+
+        return OK;
     }
 }
