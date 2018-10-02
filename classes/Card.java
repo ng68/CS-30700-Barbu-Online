@@ -1,3 +1,5 @@
+package classes;
+
 enum Suit {
 	Spades, Hearts, Diamonds, Clubs;
 }
@@ -7,9 +9,9 @@ enum Value {
 }
 
 public class Card {
-	public Suit suit;
-	public Value value;
-	public int rank;
+	private Suit suit;
+	private Value value;
+	private int rank;
 	
 	public Card(int num) {
 		if (num / 13 == 0) {
@@ -23,6 +25,9 @@ public class Card {
 		}
 		else if (num / 13 == 3) {
 			this.suit = Suit.Spades;
+		}
+		else {
+			this.suit = Suit.Clubs;
 		}
 		switch (num % 13) {
 			case 0:
@@ -66,8 +71,33 @@ public class Card {
 				break;
 			default:
 				this.value = Value.Two;
-				break;
 		}
 		this.rank = num % 13;
+	}
+	
+	// Getters
+	public Suit get_suit() {
+		return suit;
+	}
+	
+	public Value get_value() {
+		return value;
+	}
+	
+	public int get_rank() {
+		return rank;
+	}
+	
+	// Setters
+	public void set_suit(Suit s) {
+		suit = s;
+	}
+	
+	public void set_value(Value v) {
+		value = v;
+	}
+	
+	public void set_rank(int n) {
+		rank = n;
 	}
 }
