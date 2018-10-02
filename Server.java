@@ -76,6 +76,18 @@ public class Server {
         }
     }
 
+    private User getUserFromUsername(String username) {
+        // Find user in onlineUsers with the username.
+        // Can this be done more efficiently?
+        for (User u : onlineUsers) {
+            if (u.get_username().equals(username)) {
+                return u;
+            }
+        }
+
+        return null;
+    }
+
     private int userSignedUp(String username) {
         // Create an entry for the user in the firebase database
 
@@ -109,59 +121,37 @@ public class Server {
     private int userLoggedOut(String username) {
         // Update user's data in firebase?
 
-        // Find user in onlineUsers with the username.
-        // Can this be done more efficiently?
-        for (User u : onlineUsers) {
-            if (u.get_username().equals(username)) {
-                onlineUsers.remove(u);
-                globalChat.remove_participant(u);
+        User loggedOutUser = getUserFromUsername(username);
 
-                // Any other code that is necessary to clean up user
-
-                return OK;
-            }
+        if (loggedOutUser == null) {
+            return ERROR;
         }
 
-        return ERROR;
+        onlineUsers.remove(loggedOutUser);
+        globalChat.remove_participant(loggedOutUser);
+
+        return OK;
     }
 
     private int changeUsername(String currentUsername, String futureUsername) {
         // Update user in firebase database
 
-        // Find user in onlineUsers with the username.
-        // Can this be done more efficiently?
-        for (User u : onlineUsers) {
-            if(u.get_username().equals(currentUsername)) {
-                u.set_username(futureUsername);
+        User u = getUserFromUsername(currentUsername);
 
-                // Any other code that is necessary
-
-                return OK;
-            }
+        if (u == null) {
+            return ERROR;
         }
 
-        return ERROR;
+        u.set_username(futureUsername);
+
+        return OK;
     }
 
     private int addFriend(String username, String newFriendUsername) {
         // Update user with the new friend in the firebase database
 
-        // Find user in onlineUsers with the username,
-        // then find friend with the username
-        // Can this be done more efficiently?
-        User adder = null;
-        for (User u : onlineUsers) {
-            if (u.get_username().equals(username)) {
-                adder = u;
-            }
-        }
-
-        User addee = null;
-        for (User u : onlineUsers) {
-            if (u.get_username().equals(newFriendUsername)) {
-                addee = u;
-            }
-        }
+        User adder = getUserFromUsername(username);
+        User addee = getUserFromUsername(newFriendUsername);
 
         if ((adder == null) || (addee == null)) {
             return ERROR;
@@ -175,22 +165,8 @@ public class Server {
     private int removeFriend(String username, String removedUsername) {
         // Update user with the deleted friend in the firebase database
 
-        // Find user in onlineUsers with the username,
-        // then find friend with the username
-        // Can this be done more efficiently?
-        User deleter = null;
-        for (User u : onlineUsers) {
-            if (u.get_username().equals(username)) {
-                deleter = u;
-            }
-        }
-
-        User deletee = null;
-        for (User u : onlineUsers) {
-            if (u.get_username().equals(removedUsername)) {
-                deletee = u;
-            }
-        }
+        User deleter = getUserFromUsername(username);
+        User deletee = getUserFromUsername(removedUsername);
 
         if ((deleter == null) || (deletee == null)) {
             return ERROR;
@@ -202,14 +178,7 @@ public class Server {
     }
 
     private int sendMessage(String username, String content) {
-        // Find user in onlineUsers with the username.
-        // Can this be done more efficiently?
-        User sender = null;
-        for (User u : onlineUsers) {
-            if (u.get_username().equals(username)) {
-                sender = u;
-            }
-        }
+        User sender = getUserFromUsername(username);
 
         if (sender == null) {
             return ERROR;
