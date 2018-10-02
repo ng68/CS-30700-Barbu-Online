@@ -1,4 +1,4 @@
-import classes.User;
+import classes.*;
 import java.util.ArrayList;
 
 public class Server {
@@ -6,8 +6,13 @@ public class Server {
     private static final int ERROR = 0;
 
     private ArrayList<User> onlineUsers;
+    private Chat globalChat;
 
     public static void main(String[] args) {
+        test();
+    }
+
+    private static void test() {
         Server s = new Server();
 
         s.userLoggedIn("Bob");
@@ -18,34 +23,56 @@ public class Server {
 
         s.addFriend("Josie", "Bob");
         s.addFriend("Josie", "Sam");
-        
-        System.out.println("First trial:");
-        s.printUsersAndFriends();
 
-        s.removeFriend("Josie", "Sam");
+        System.out.println("\nFriend add/login/name change trial:");
+        s.printStatus();
 
-        System.out.println("Second trial:");
-        s.printUsersAndFriends();
+        s.sendMessage("Josie", "Hey Bob");
+        s.sendMessage("Bob", "Hello Josie");
+        s.sendMessage("Josie", "Bob we can't be friends anymore.");
+        s.sendMessage("Bob", "What???");
+
+        System.out.println("\nChat messages trial:");
+        s.printStatus();
+
+        s.removeFriend("Josie", "Bob");
+
+        System.out.println("\nFriend removal trial:");
+        s.printStatus();
 
         s.userLoggedOut("Josie");
+        s.userLoggedOut("Bob");
 
-        System.out.println("Third trial:");
-        s.printUsersAndFriends();
+        System.out.println("\nUsers logged out trial:");
+        s.printStatus();
     }
 
     public Server() {
         this.onlineUsers = new ArrayList<User>();
+        this.globalChat = new Chat(new User[] {});
     }
 
-    private void printUsersAndFriends() {
-        // Method used in unit testing of Server class
+    private void printStatus() {
+        // Method used in unit testing of Server class. Prints chat, users, friends, etc.
 
+        System.out.println("Users:\nFriends");
+        System.out.println("...");
         for (User u : onlineUsers) {
             System.out.println(u.get_username() + ":");
 
             for (User f : u.get_friends()) {
                 System.out.println(f.get_username());
             }
+        }
+
+        System.out.println("Chat participants:");
+        for (User u : globalChat.get_participants()) {
+            System.out.println(u.get_username());
+        }
+
+        System.out.println("Chat log:");
+        for (Message m : globalChat.get_messages()) {
+            System.out.println(m.get_sender().get_username() + " sent " + m.get_content());
         }
     }
 
@@ -59,6 +86,7 @@ public class Server {
 
         // Add user to list of online users
         onlineUsers.add(newUser);
+        globalChat.add_participant(newUser);
 
         return OK;
     }
@@ -73,6 +101,7 @@ public class Server {
 
         // Add user to list of online users
         onlineUsers.add(newUser);
+        globalChat.add_participant(newUser);
 
         return OK;
     }
@@ -85,6 +114,7 @@ public class Server {
         for (User u : onlineUsers) {
             if (u.get_username().equals(username)) {
                 onlineUsers.remove(u);
+                globalChat.remove_participant(u);
 
                 // Any other code that is necessary to clean up user
 
@@ -167,6 +197,31 @@ public class Server {
         }
 
         deleter.remove_friend(deletee);
+
+        return OK;
+    }
+
+    private int sendMessage(String username, String content) {
+        // Find user in onlineUsers with the username.
+        // Can this be done more efficiently?
+        User sender = null;
+        for (User u : onlineUsers) {
+            if (u.get_username().equals(username)) {
+                sender = u;
+            }
+        }
+
+        if (sender == null) {
+            return ERROR;
+        }
+
+        Message message = new Message(sender, content);
+        globalChat.add_message(message);
+        return OK;
+    }
+
+    private int updateClientChats() {
+        // TODO!!! This will be called after sendMessage, if sendMessage returns OK.
 
         return OK;
     }

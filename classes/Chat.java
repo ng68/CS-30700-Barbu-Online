@@ -29,11 +29,17 @@ public class Chat {
 	
 	// Getters
 	public User[] get_participants() {
-		return (User[]) participants.toArray();
+		User[] participants_array = new User[participants.size()];
+		participants_array = participants.toArray(participants_array);
+
+		return participants_array;
 	}
 	
 	public Message[] get_messages() {
-		return (Message[]) messages.toArray();
+		Message[] messages_array = new Message[messages.size()];
+		messages_array = messages.toArray(messages_array);
+
+		return messages_array;
 	}
 	
 	// Setters
