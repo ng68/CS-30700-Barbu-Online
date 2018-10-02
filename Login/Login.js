@@ -5,6 +5,7 @@ var signupbtn = document.getElementById("signupbtn");
 const auth = firebase.auth();
 
 localStorage.clear();
+auth.signOut();
 
 loginbtn.addEventListener('click', e => {
     const user = email.value;
@@ -26,15 +27,15 @@ loginbtn.addEventListener('click', e => {
             alert(errorMessage);
         }
     });
+    auth.onAuthStateChanged(function(user) {
+    if(user){
+        console.log('Signed In');
+        window.location.href = "/../Homepage/homepage.html";
+        }
+    });
 });
 
 signupbtn.addEventListener('click', e=> {
     window.location.href = "Signup.html";
 });
 
-auth.onAuthStateChanged(function(user) {
-    if(user){
-        console.log('Signed In');
-        window.location.href = "/../Homepage/homepage.html";
-    }
-});
