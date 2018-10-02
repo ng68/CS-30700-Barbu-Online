@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Barbu Online</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="signin.css" rel="stylesheet">
+    <link href="product.css" rel="stylesheet">
+  </head>
+
+  <body class="text-center">
+    <div class="form-signin">
+            <nav class="site-header sticky-top py-1">
+                    <div class="container d-flex flex-column flex-md-row justify-content-between">
+                      <a class="py-2 d-none d-md-inline-block" href="#">About</a>
+                      <a class="py-2 d-none d-md-inline-block" href="#">Developers</a>
+                    </div>
+                  </nav>
+      <img class="form-center" src="Logo.png">
+      <label for="inputEmail" class="sr-only">Email address</label>
+      <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+      <label for="inputPassword" class="sr-only">Password</label>
+      <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+      
+      <button class="btn btn-lg btn-light btn-block" type="submit" id="loginbtn">Log in</button>
+      <button class="btn btn-lg btn-light btn-block" id="signupbtn">Sign up</button>
+      <p class="mt-5 mb-3 text-muted">&copy; 2018-2019</p>
+    </div>
+  </body>
+<script src="https://www.gstatic.com/firebasejs/5.5.2/firebase.js"></script>
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyAHKp5tuwNe-Nt0dFglkryv1SjfhEzfD84",
+    authDomain: "barbu-online.firebaseapp.com",
+    databaseURL: "https://barbu-online.firebaseio.com",
+    projectId: "barbu-online",
+    storageBucket: "barbu-online.appspot.com",
+    messagingSenderId: "1021411455944"
+  };
+  firebase.initializeApp(config);
+</script>
+
+  <script src="Login.js"></script>
+
+</html>
