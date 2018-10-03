@@ -89,12 +89,14 @@ public class Server {
     }
 
     private int userSignedUp(String username) {
-        // Create an entry for the user in the firebase database
-
+        // Create an entry for the user in the firebase database.
+        // Initialize all the fields to 0 since it's a brand new user.
+        // The new user's username is passed as an argument.
         // If something goes wrong return ERROR
 
-        // Initialize user object (can just be all 0's since they are new)
-        User newUser = new User(username); // TODO: Add other args when they're added to class
+        // Initialize user object. Used the second constructor since
+        // we can just initialize all of the fields to 0.
+        User newUser = new User(username);
 
         // Add user to list of online users
         onlineUsers.add(newUser);
@@ -104,12 +106,28 @@ public class Server {
     }
 
     private int userLoggedIn(String username) {
-        // Scan firebase for user's details
+        // Scan firebase for user's details. This will be a user who has
+        // previously used the website before so they should have an entry
+        // in the database. Can get their username from the argument.
+        // Need to fill out the following variables:
 
+        int wins = 0;
+        int losses = 0;
+        double winPercentage = 0;
+        double averageScore = 0;
+        ArrayList<User> friends = new ArrayList<User>();
+
+        // For the array list of friends, I think what you will need to do
+        // is loop through all of the user's friends on firebase. For each one,
+        // run getUserFromUsername(username) with the friend's username. If that
+        // method returns null, then that friend is not currently online, so
+        // do NOT add them to the array list. If the method returns a User object
+        // instead of null, then you can add them to the array list.
+        
         // If something goes wrong return ERROR
 
         // Create user object from the details found in firebase
-        User newUser = new User(username); // TODO: Add other args when they're added to class
+        User newUser = new User(username, wins, losses, winPercentage, averageScore, friends);
 
         // Add user to list of online users
         onlineUsers.add(newUser);
@@ -119,9 +137,19 @@ public class Server {
     }
 
     private int userLoggedOut(String username) {
-        // Update user's data in firebase?
-
         User loggedOutUser = getUserFromUsername(username);
+
+        // Need to update the user's statistics in the database here. You
+        // can find them in the database either with the username (one of
+        // the method's parameters) or with anything in the user object
+        // (loggedOutUser). The following need to be updated:
+        //      - wins
+        //      - losses
+        //      - win percentage
+        //      - average score
+        //      - friends list
+        //
+        // If anything goes wrong with that, return ERROR.
 
         if (loggedOutUser == null) {
             return ERROR;
@@ -134,9 +162,12 @@ public class Server {
     }
 
     private int changeUsername(String currentUsername, String futureUsername) {
-        // Update user in firebase database
-
         User u = getUserFromUsername(currentUsername);
+
+        // Need to update the user's username in firebase. Both the current
+        // username and the new username are passed as arguments to the
+        // function, and there's also the user object u that gets instantiated
+        // above. If anything goes wrong return ERROR.
 
         if (u == null) {
             return ERROR;
@@ -148,17 +179,40 @@ public class Server {
     }
 
     private int addFriend(String username, String newFriendUsername) {
-        // Update user with the new friend in the firebase database
+        // Need to use firebase in this function as well, explained below.
+        // You have access to both the user's username and the friend
+        // they are adding's username.
 
         User adder = getUserFromUsername(username);
         User addee = getUserFromUsername(newFriendUsername);
 
-        if ((adder == null) || (addee == null)) {
+        if (adder == null) {
+            // The adder isn't logged in.
             return ERROR;
         }
 
-        adder.add_friend(addee);
+        if (addee == null) {
+            // The friend isn't logged in, therefore we cannot add them
+            // to the User object's friend list because they are a null
+            // user.
 
+            // Still need to use firebase to add the friend. Can use
+            // newFriendUsername to find them in the database. If there
+            // is an error or that person doesn't exist, return ERROR.
+            // If everything goes fine return OK. Do not let the program
+            // exit this if statement though, you must return before the
+            // if-block ends because the code below shouldn't execute.
+
+            return OK;
+        }
+
+        // Also user firebase here to add the friend to the user's friends
+        // list. This part of the code is the case where both the user
+        // and the new friend are logged in. That's why I can do
+        // adder.add_friend() below. If something goes wrong with the
+        // firebase, return ERROR.
+
+        adder.add_friend(addee);
         return OK;
     }
 
@@ -168,12 +222,29 @@ public class Server {
         User deleter = getUserFromUsername(username);
         User deletee = getUserFromUsername(removedUsername);
 
-        if ((deleter == null) || (deletee == null)) {
+        if (deleter == null) {
+            // The user making the deletion isn't logged in.
             return ERROR;
         }
+        
+        if (deletee == null) {
+            // The friend getting deleted either doesn't exist
+            // or is not logged in. Use firebase to find the person
+            // (the username is removedUsername) and remove them from
+            // the user's friend list. If something goes wrong or
+            // the friend doesn't exist return ERROR. If everything works
+            // return OK. Don't let the program escape this if-block
+            // without returning; see addFriend.
+
+            return OK;
+        }
+
+        // The friend exists and is logged in. Still need to update
+        // the firebase database to remove them from the user's
+        // friend list in permanent storage. If something goes wrong
+        // return ERROR.
 
         deleter.remove_friend(deletee);
-
         return OK;
     }
 
@@ -191,6 +262,25 @@ public class Server {
 
     private int updateClientChats() {
         // TODO!!! This will be called after sendMessage, if sendMessage returns OK.
+
+        return OK;
+    }
+
+    private int sendStatistics(String username) {
+        User u = getUserFromUsername(username);
+
+        // TODO send statistics from u
+
+        return OK;
+    }
+
+    private int sendLeaderboard() {
+        
+        // This function will need firebase. I'm still not exactly sure
+        // of the protocol we will be using so you don't have to worry about this
+        // for now. But in the future it will basically need to pull the stats of
+        // all the users from the database and send them to the client so they
+        // can view the leaderboard.
 
         return OK;
     }

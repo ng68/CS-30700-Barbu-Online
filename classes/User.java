@@ -11,13 +11,17 @@ public class User {
 	private double avg_score;
 	private ArrayList<User> friends;
 	
-	public User(String username) {
+	public User(String username, int wins, int losses, double win_pct, double avg_score, ArrayList<User> friends) {
 		this.username = username;
-		this.wins = 0;
-		this.losses = 0;
-		this.win_pct = 0.0;
-		this.avg_score = 0.0;
-		this.friends = new ArrayList<User>();
+		this.wins = wins;
+		this.losses = losses;
+		this.win_pct = win_pct;
+		this.avg_score = avg_score;
+		this.friends = friends;
+	}
+	
+	public User(String username) {
+		this(username, 0, 0, 0, 0, new ArrayList<User>());
 	}
 	
 	public void add_game(int place, double score) {
