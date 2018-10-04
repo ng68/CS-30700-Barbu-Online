@@ -25,7 +25,11 @@ firebase.auth().onAuthStateChanged(firebaseUser => {
             var email = username.value; 
             var user = email.substring(0, email.lastIndexOf("."));
 
-            firebase.database().ref("Users/" + user).set("Hello");
+            firebase.database().ref("Users/" + user).set({
+                Wins: 0,
+                Losses: 0,
+                "Avg Score": 0
+            });
             window.alert(user);
             
 
