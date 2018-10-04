@@ -23,7 +23,7 @@ firebase.auth().onAuthStateChanged(firebaseUser => {
 
             //Initializing the user info in Firebase database
             var email = username.value; 
-            var user = email.substring(0, email.ndexOf("."));
+            var user = email.substring(0, email.indexOf("."));
 
             firebase.database().ref("Users/" + user).set({
                 Wins: 0,
