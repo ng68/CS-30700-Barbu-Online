@@ -28,14 +28,13 @@ firebase.auth().onAuthStateChanged(firebaseUser => {
             firebase.database().ref("Users/" + user).set({
                 Wins: 0,
                 Losses: 0,
-                "Avg Score": 0
+                "Avg Score": 0,
+                Email: email
             });
-            window.alert(user);
-            
 
             firebase.auth().signOut();
             localStorage.clear();
-            //window.location.href = "index.html";
+            window.location.href = "index.html";
         }
         else {
             console.log('User not created');
