@@ -20,6 +20,15 @@ registerbtn.addEventListener('click', e=> {
 firebase.auth().onAuthStateChanged(firebaseUser => {
         if(firebaseUser){
             console.log('Success!');
+
+            //Initializing the user info in Firebase database
+            firebase.database().ref("Users/" + username.value).set({
+              "Average Score": 0,
+               Losses: 0,
+               Wins: 0
+            });
+            
+
             firebase.auth().signOut();
             localStorage.clear();
             window.location.href = "index.html";
