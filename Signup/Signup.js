@@ -22,7 +22,9 @@ firebase.auth().onAuthStateChanged(firebaseUser => {
             console.log('Success!');
 
             //Initializing the user info in Firebase database
-            firebase.database().ref("Users/" + username.value).set({
+            var email = username.value;
+            var user = email.substring(0,email.indexOf("@"));
+            firebase.database().ref("Users/" + user).set({
               "Average Score": 0,
                Losses: 0,
                Wins: 0
