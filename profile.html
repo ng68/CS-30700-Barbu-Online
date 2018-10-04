@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Barbu Online</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="bootstrap.min.css" rel="stylesheet">
+  
+  <link href="home.css" rel="stylesheet">
+</head>
+
+<body>
+<nav class="navbar navbar-expand-sm navbar-custom navbar-dark">
+    <a href="home.html" class="navbar-left"><img style="max-width: 30px" src="NavbarLogo.png"></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="collapsibleNavbar">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="profile.html">Profile</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Lobbies</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="rankings.html">Rankings</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+<div class="container">
+    
+  	<hr>
+      <!-- edit form column -->
+      <div class="col-md-9 personal-info text-white-50">
+        <h3>Profile Information</h3>
+        
+        <form class="form-horizontal" role="form">
+          <div class="form-group">
+            <label class="col-md-3 control-label text-white-50">Username:</label>
+            <div class="col-md-8">
+              <input class="form-control" type="text" placeholder="Username" id="inputUsername">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 control-label text-white-50">Password:</label>
+            <div class="col-md-8">
+              <input class="form-control" type="password" id="inputPassword">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 control-label text-white-50">Confirm password:</label>
+            <div class="col-md-8">
+              <input class="form-control" type="password" id="confirmPassword">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 control-label"></label>
+            <div class="col-md-8">
+              <input type="button" class="btn btn-primary" value="Save Changes" id="savebtn">
+              <span></span>
+            </div>
+          </div>
+        </form>
+      </div>
+  </div>
+</div>
+<hr>
+</body>
+<script src="https://www.gstatic.com/firebasejs/5.5.2/firebase.js"></script>
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyAHKp5tuwNe-Nt0dFglkryv1SjfhEzfD84",
+    authDomain: "barbu-online.firebaseapp.com",
+    databaseURL: "https://barbu-online.firebaseio.com",
+    projectId: "barbu-online",
+    storageBucket: "barbu-online.appspot.com",
+    messagingSenderId: "1021411455944"
+  };
+  firebase.initializeApp(config);
+</script>
+
+<script src="profile.js"></script>
+</html>
