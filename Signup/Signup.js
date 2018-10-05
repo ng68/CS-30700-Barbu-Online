@@ -24,15 +24,12 @@ firebase.auth().onAuthStateChanged(firebaseUser => {
             //Initializing the user info in Firebase databasea
             var root = firebase.database().ref();
             var uid = firebaseUser.uid;
-            var info = {
-                Hello: "hello",
-                Hi: "hi"
-            };
+            var info = 0;
             root.child("users").child(uid).set(info);
 
             firebase.auth().signOut();
-            localStorage.clear();
-            window.location.href = "index.html";
+            //localStorage.clear();
+            //window.location.href = "index.html";
         }
         else {
             console.log('User not created');
