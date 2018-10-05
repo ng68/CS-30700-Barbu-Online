@@ -7,6 +7,10 @@
   height: 75vh;
 }
 
+body {
+  background-color: black;
+}
+
 .home-row {
   height: 100%;
 }
