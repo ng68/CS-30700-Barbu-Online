@@ -27,7 +27,7 @@ firebase.auth().onAuthStateChanged(firebaseUser => {
             var info = {
                 "wins" : 0,
                 "losses" : 0,
-                "avg score" : 0,
+                "avg_score" : 0,
                 "email" : username.value,
                 "username" : username.value
             }
