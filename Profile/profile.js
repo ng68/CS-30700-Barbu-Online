@@ -12,13 +12,20 @@ savebtn.addEventListener('click', e=> {
     }
     else {
         var user = auth.currentUser;
-        user.updatePassword(password.value).catch(function(error) {
-            // An error happened.
-        });
-        firebase.database().ref().child("users").child(user.uid).update({"username" : username.value}, function(error){
-            alert("Information Updated Success!");
-            window.location.href = "profile.html";
-        });
+        if(password.value != 0) {
+            user.updatePassword(password.value).then(function(error) {
+                // An error happened.
+                alert("Information Updated Success!");
+                window.location.href = "profile.html";
+            });
+        }
+        if(username.value.length != 0){
+            firebase.database().ref().child("users").child(user.uid).update({"username" : username.value}, function(error){
+                alert("Information Updated Success!");
+                window.location.href = "profile.html";
+            });
+        }
+        
     }
 });
 
