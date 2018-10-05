@@ -6,13 +6,42 @@ var sendMessageBtn = document.getElementById("send-message-btn");
 var messageInput = document.getElementById("message-input");
 var messages = document.getElementById("messages");
 
+var addFriend = document.getElementById("addFriend");
+var removeFriend = document.getElementById("removeFriend");
+var addFriendBtn = document.getElementById("addFriendBtn");
+var removeFriendBtn = document.getElementById("removeFriendBtn");
+
+
 addFriendBtn.addEventListener('click', e=> {
-    window.alert("Hello!");
+    e.preventDefault();
     var query = firebase.database().ref("users");
     query.once("value")
-        .then(function(snapshot){
-            window.alert("Hi!");
-        });
+      .then(function(snapshot) {
+        snapshot.forEach(function(childSnapshot) {
+          var email = childSnapshot.child("email").val();
+          if (email == addFriend.value && firebase.auth().currentUser.email != addFriend.value) {
+             var username = childSnapshot.child("username").val();
+             var uid = childSnapshot.key;
+             firebase.database().ref().child("users").child(firebase.auth().currentUser.uid).child("friends").child(uid).update({email : email}); 
+             return true;
+          }
+      });
+    });
+});
+
+removeFriendBtn.addEventListener('click', e=> {
+    e.preventDefault();
+    var query = firebase.database().ref("users/" + firebase.auth().currentUser.uid + "/friends");
+    query.once("value")
+      .then(function(snapshot) {
+        snapshot.forEach(function(childSnapshot) {
+          var email = childSnapshot.child("email").val();
+          if (email == removeFriend.value) {
+              query.child(childSnapshot.key).remove();
+              return true;
+          }
+      });
+    });
 });
 
 sendMessageBtn.addEventListener('click', e => {
