@@ -30,7 +30,7 @@ loginbtn.addEventListener('click', e => {
     auth.onAuthStateChanged(function(user) {
     if(user){
         console.log('Signed In');
-        window.location.href = "/../Homepage/homepage.html";
+        window.location.href = "home.html";
         }
     });
 });

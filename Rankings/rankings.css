@@ -4,3 +4,37 @@
     overflow-y: auto;
     -ms-overflow-style: -ms-autohiding-scrollbar;
   }
+
+  table {
+    width: 200%;
+}
+
+  thead, tbody, tr, td, th { display: block; }
+
+  tr:after {
+    content: ' ';
+    display: block;
+    visibility: hidden;
+    clear: both;
+}
+
+thead th {
+    height: 50px;
+
+    /*text-align: left;*/
+}
+
+tbody {
+    height: 525px;
+    overflow-y: auto;
+}
+
+thead {
+    /* fallback */
+}
+
+
+tbody td, thead th {
+    width: 25%;
+    float: left;
+}
