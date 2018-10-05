@@ -9,7 +9,7 @@ var friendList = document.getElementById("friend-list");
 
 addFriendBtn.addEventListener('click', e=> {
     e.preventDefault();
-	document.getElementById("addFriend").reset();
+	document.getElementById("addFriend").value = '';
     var query = firebase.database().ref("users");
     query.once("value")
       .then(function(snapshot) {
@@ -28,7 +28,7 @@ addFriendBtn.addEventListener('click', e=> {
 
 removeFriendBtn.addEventListener('click', e=> {
     e.preventDefault();
-	document.getElementById("removeFriend").reset();
+	document.getElementById("removeFriend").value = '';
     var query = firebase.database().ref("users/" + firebase.auth().currentUser.uid + "/friends");
     query.once("value")
       .then(function(snapshot) {
@@ -64,7 +64,7 @@ sendMessageBtn.addEventListener('click', e => {
     let text = messageInput.value;
     let userEmail = firebase.auth().currentUser.email;
 
-	document.getElementById("message-input").reset();
+	document.getElementById("message-input").value = '';
     firebase.database().ref('/messages/').push({
         user: userEmail,
         content: text
