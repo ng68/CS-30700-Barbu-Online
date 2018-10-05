@@ -26,6 +26,11 @@
   background-color: black;
 }
 
+.friend {
+  margin-top: 15px;
+  margin-left: 5px;
+}
+
 #messages {
   height: 50%;
   margin-bottom: 10px;
@@ -34,6 +39,12 @@
 #friend-list {
   height: 70%;
   margin-bottom: 10px;
+}
+
+#current-user {
+  margin-right: 12px;
+  font-style: italic;
+  font-size: 13px;
 }
 
 .text-gold {

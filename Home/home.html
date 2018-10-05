@@ -30,7 +30,8 @@
       </li>
     </ul>
   </div>
-    <a class="nav-link text-light" href="">Sign Out</a>
+  <!-- <div class="text-muted" id="current-user">USERNAME is signed in</div> -->
+  <a class="nav-link text-light" href="">Sign Out</a>
   <img style="max-width: 192px" src="logo-thin.jpg"></a>
 
 </nav>
@@ -57,12 +58,12 @@
     </div>
     <div class="col-lg-3 rounded">
       <h2 class="text-gold">Friends</h2>
-      <div class="bg-light rounded" id="friend-list">
+      <div class="bg-light rounded" id="friend-list" style="overflow-y: scroll;">
       </div>
       <form>
         <div class="form-row home-form">
           <div class="col-9">
-            <input type="text" id="addFriend" class="form-control" placeholder="Friend Name">
+            <input type="text" id="addFriend" class="form-control" placeholder="Friend Email">
           </div>
           <button type="submit" id="addFriendBtn" class="btn">Add</button>
         </div>
@@ -70,7 +71,7 @@
       <form>
         <div class="form-row home-form" style="margin-top: 10px">
           <div class="col-8">
-            <input type="text" id="removeFriend" class="form-control" placeholder="Friend Name">
+            <input type="text" id="removeFriend" class="form-control" placeholder="Friend Email">
           </div>
           <button type="submit" id="removeFriendBtn" class="btn">Remove</button>
         </div>
