@@ -24,7 +24,14 @@ firebase.auth().onAuthStateChanged(firebaseUser => {
             //Initializing the user info in Firebase databasea
             var uid = firebaseUser.uid;
             window.alert(uid);
-            firebase.database().ref.child("users").child(uid).set("Hello");
+            var ref = firebase.database().ref().child("users/" + uid).push();
+            ref.set({
+                wins: 0,
+                losses: 0,
+                "avg score": 0,
+                email: username.value,
+                username: username.value
+            })
 
             firebase.auth().signOut();
             localStorage.clear();
