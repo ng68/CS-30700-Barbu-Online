@@ -36,7 +36,7 @@
   margin-bottom: 10px;
 }
 
-h2 {
+.text-gold {
   background: -webkit-linear-gradient(#A67909, #F9E6B6);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
