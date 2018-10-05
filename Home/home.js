@@ -9,7 +9,6 @@ var friendList = document.getElementById("friend-list");
 
 addFriendBtn.addEventListener('click', e=> {
     e.preventDefault();
-	document.getElementById("addFriend").value = '';
     var query = firebase.database().ref("users");
     query.once("value")
       .then(function(snapshot) {
@@ -24,11 +23,11 @@ addFriendBtn.addEventListener('click', e=> {
           }
       });
     });
+	document.getElementById("addFriend").value = '';
 });
 
 removeFriendBtn.addEventListener('click', e=> {
     e.preventDefault();
-	document.getElementById("removeFriend").value = '';
     var query = firebase.database().ref("users/" + firebase.auth().currentUser.uid + "/friends");
     query.once("value")
       .then(function(snapshot) {
@@ -41,6 +40,7 @@ removeFriendBtn.addEventListener('click', e=> {
           }
       });
     });
+	document.getElementById("removeFriend").value = '';
 });
 
 function friendsList(){
