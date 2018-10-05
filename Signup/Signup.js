@@ -27,9 +27,7 @@ firebase.auth().onAuthStateChanged(firebaseUser => {
             firebase.database().ref("Users/" + uid).set({
                 Wins: 0,
                 Losses: 0,
-                "Avg Score": 0,
-                Email: username.value,
-                Username: username.value
+                "Avg Score": 0
             });
 
             firebase.auth().signOut();
