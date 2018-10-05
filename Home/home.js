@@ -5,12 +5,7 @@ var removeFriendBtn = document.getElementById("removeFriendBtn");
 var sendMessageBtn = document.getElementById("send-message-btn");
 var messageInput = document.getElementById("message-input");
 var messages = document.getElementById("messages");
-
-var addFriend = document.getElementById("addFriend");
-var removeFriend = document.getElementById("removeFriend");
-var addFriendBtn = document.getElementById("addFriendBtn");
-var removeFriendBtn = document.getElementById("removeFriendBtn");
-
+var friendList = document.getElementById("friend-list");
 
 addFriendBtn.addEventListener('click', e=> {
     e.preventDefault();
@@ -22,7 +17,8 @@ addFriendBtn.addEventListener('click', e=> {
           if (email == addFriend.value && firebase.auth().currentUser.email != addFriend.value) {
              var username = childSnapshot.child("username").val();
              var uid = childSnapshot.key;
-             firebase.database().ref().child("users").child(firebase.auth().currentUser.uid).child("friends").child(uid).update({email : email}); 
+             firebase.database().ref().child("users").child(firebase.auth().currentUser.uid).child("friends").child(uid).update({email : email});
+             friendsList();        
              return true;
           }
       });
@@ -38,11 +34,28 @@ removeFriendBtn.addEventListener('click', e=> {
           var email = childSnapshot.child("email").val();
           if (email == removeFriend.value) {
               query.child(childSnapshot.key).remove();
+              friendsList();
               return true;
           }
       });
     });
 });
+
+function friendsList(){
+    friendList.innerHTML = "";
+    firebase.auth().onAuthStateChanged(function(user){
+        var query = firebase.database().ref("users/" + user.uid + "/friends");
+        query.once("value")
+        .then(function(snapshot) {
+            snapshot.forEach(function(childSnapshot) {
+            var email = childSnapshot.child("email").val();
+            let messageDiv = document.createElement("div");
+            messageDiv.innerHTML = email;
+            friendList.appendChild(messageDiv);
+            });
+        });
+    });
+}
 
 sendMessageBtn.addEventListener('click', e => {
     e.preventDefault();
@@ -74,3 +87,4 @@ function addMessage(username, messageContent) {
 }
 
 loadMessages();
+friendsList();
