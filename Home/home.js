@@ -8,6 +8,6 @@ addFriendBtn.addEventListener('click', e=> {
     var query = firebase.database().ref("users");
     query.once("value")
         .then(function(snapshot){
-            window.alert("Hi!");
+            window.alert("HEH");
         });
 });
