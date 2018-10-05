@@ -2,8 +2,10 @@ console.log("HI");
 str = ''
 users = []
 firebase.database().ref("users").orderByChild("avg_score").on("value", function(snapshot) {
-	users.push([snapshot.val().username, snapshot.val().wins, snapshot.val().avg_score]);
-	console.log(snapshot.val().username, snapshot.val().avg_score);
+	snapshot.forEach(function(childSnapshot) {
+		users.push([childSnapshot.val().username, childSnapshot.val().wins, childSnapshot.val().avg_score]);
+		console.log(childSnapshot.val().username, childSnapshot.val().avg_score);
+	});
 });
 
 users.sort(sort_function)
