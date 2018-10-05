@@ -31,11 +31,10 @@ firebase.auth().onAuthStateChanged(firebaseUser => {
                 "email" : username.value,
                 "username" : username.value
             }
-            root.child("users").child(uid).set(info);
-
-            firebase.auth().signOut();
-            //localStorage.clear();
-            window.location.href = "index.html";
+            root.child("users").child(uid).set(info, function(error){
+                firebase.auth().signOut();
+                window.location.href = "index.html";
+            });
         }
         else {
             console.log('User not created');
