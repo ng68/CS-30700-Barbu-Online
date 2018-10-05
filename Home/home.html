@@ -62,17 +62,17 @@
       <form>
         <div class="form-row home-form">
           <div class="col-9">
-            <input type="text" class="form-control" placeholder="Friend Name">
+            <input type="text" id="addFriend" class="form-control" placeholder="Friend Name">
           </div>
-          <button type="submit" class="btn">Add</button>
+          <button type="submit" id="addFriendBtn" class="btn">Add</button>
         </div>
       </form>
       <form>
         <div class="form-row home-form" style="margin-top: 10px">
           <div class="col-8">
-            <input type="text" class="form-control" placeholder="Friend Name">
+            <input type="text" id="removeFriend" class="form-control" placeholder="Friend Name">
           </div>
-          <button type="submit" class="btn">Remove</button>
+          <button type="submit" id="removeFriendBtn" class="btn">Remove</button>
         </div>
       </form>
     </div>
@@ -84,4 +84,19 @@
 </div>
 -->
 </body>
+<script src="https://www.gstatic.com/firebasejs/5.5.2/firebase.js"></script>
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyAHKp5tuwNe-Nt0dFglkryv1SjfhEzfD84",
+    authDomain: "barbu-online.firebaseapp.com",
+    databaseURL: "https://barbu-online.firebaseio.com",
+    projectId: "barbu-online",
+    storageBucket: "barbu-online.appspot.com",
+    messagingSenderId: "1021411455944"
+  };
+  firebase.initializeApp(config);
+</script>
+
+<script src="home.js"></script>
 </html>
