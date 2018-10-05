@@ -5,17 +5,9 @@ var removeFriendBtn = document.getElementById("removeFriendBtn");
 
 addFriendBtn.addEventListener('click', e=> {
     window.alert("Hello!");
-    var query = firebase.database().ref("users").orderByKey();
+    var query = firebase.database().ref("users");
     query.once("value")
-        .then(function(snapshot) {
-            window.alert(snapshot.val());
-            snapshot.foreach(function(childSnapshot) {
-                var tempEmail = childSnapshot.child("email");
-                window.alert(tempEmail);
-                if (tempEmail == addFriend) {
-                    window.alert("SUCCESS!!!!");
-                    return true;
-                }
-            })
+        .then(function(snapshot){
+            window.alert("Hi!");
         })
 })
