@@ -35,7 +35,7 @@ firebase.auth().onAuthStateChanged(firebaseUser => {
 
             firebase.auth().signOut();
             //localStorage.clear();
-            //window.location.href = "index.html";
+            window.location.href = "index.html";
         }
         else {
             console.log('User not created');
