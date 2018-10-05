@@ -21,15 +21,14 @@ firebase.auth().onAuthStateChanged(firebaseUser => {
         if(firebaseUser){
             console.log('Success!');
 
-            //Initializing the user info in Firebase database
-            var email = username.value; 
-            var user = email.substring(0, email.indexOf("."));
-
-            firebase.database().ref("Users/" + user).set({
+            //Initializing the user info in Firebase databasea
+            var uid = firebaseUser.uid;
+            firebase.database().ref("Users/" + uid).set({
                 Wins: 0,
                 Losses: 0,
                 "Avg Score": 0,
-                Email: email
+                Email: username.value,
+                Username: username.value
             });
 
             firebase.auth().signOut();
