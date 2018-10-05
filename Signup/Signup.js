@@ -24,7 +24,7 @@ firebase.auth().onAuthStateChanged(firebaseUser => {
             //Initializing the user info in Firebase databasea
             var uid = firebaseUser.uid;
             window.alert(uid);
-            firebase.database().ref("Users/"+uid).set("Hello");
+            firebase.database().ref.child("users").child(uid).set("Hello");
 
             firebase.auth().signOut();
             localStorage.clear();
