@@ -5,12 +5,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="bootstrap.min.css" rel="stylesheet">
-  
+
   <link href="home.css" rel="stylesheet">
 </head>
 
 <body>
-<nav class="navbar navbar-expand-sm navbar-custom navbar-dark">
+  <nav class="navbar navbar-expand-sm navbar-custom navbar-dark home-nav">
     <a href="home.html" class="navbar-left"><img style="max-width: 30px" src="NavbarLogo.png"></a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
       <span class="navbar-toggler-icon"></span>
@@ -18,33 +18,37 @@
     <div class="collapse navbar-collapse" id="collapsibleNavbar">
       <ul class="navbar-nav">
         <li class="nav-item">
-          <a class="nav-link" href="profile.html">Profile</a>
+          <a class="nav-link text-gold" href="profile.html">Profile</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Lobbies</a>
+          <a class="nav-link text-gold" href="#">Lobbies</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="rankings.html">Rankings</a>
+          <a class="nav-link text-gold" href="rankings.html">Rankings</a>
         </li>
       </ul>
     </div>
+      <a class="nav-link text-light" href="">Sign Out</a>
+    <img style="max-width: 192px" src="logo-thin.jpg"></a>
+
   </nav>
+
 <div class="container">
-    
+
   	<hr>
       <!-- edit form column -->
-      <div class="col-md-9 personal-info text-white-50">
-        <h3>Profile Information</h3>
-        
+      <div class="col-lg-9 personal-info text-white-50">
+        <h3 class="text-gold">Profile Information</h3>
+
         <form class="form-horizontal" role="form">
           <div class="form-group">
             <label class="col-md-3 control-label text-white-50">Username:</label>
             <div class="col-md-8">
-              <input class="form-control" type="text" placeholder="Username" id="inputUsername">
+              <input class="form-control" type="text" id="inputUsername">
             </div>
           </div>
           <div class="form-group">
-            <label class="col-md-3 control-label text-white-50">Password:</label>
+            <label class="col-md-3 control-label text-white-50">New Password:</label>
             <div class="col-md-8">
               <input class="form-control" type="password" id="inputPassword">
             </div>
@@ -58,7 +62,7 @@
           <div class="form-group">
             <label class="col-md-3 control-label"></label>
             <div class="col-md-8">
-              <input type="button" class="btn btn-primary" value="Save Changes" id="savebtn">
+              <input type="button" class="btn" value="Save Changes" id="savebtn">
               <span></span>
             </div>
           </div>
