@@ -9,5 +9,5 @@ addFriendBtn.addEventListener('click', e=> {
     query.once("value")
         .then(function(snapshot){
             window.alert("Hi!");
-        })
-})
+        });
+});
