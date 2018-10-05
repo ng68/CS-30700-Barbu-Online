@@ -23,6 +23,7 @@ firebase.auth().onAuthStateChanged(firebaseUser => {
 
             //Initializing the user info in Firebase databasea
             var uid = firebaseUser.uid;
+            window.alert(uid);
             firebase.database().ref("Users/" + uid).set({
                 Wins: 0,
                 Losses: 0,
