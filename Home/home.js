@@ -9,6 +9,7 @@ var friendList = document.getElementById("friend-list");
 
 addFriendBtn.addEventListener('click', e=> {
     e.preventDefault();
+	
     var query = firebase.database().ref("users");
     query.once("value")
       .then(function(snapshot) {
@@ -18,16 +19,18 @@ addFriendBtn.addEventListener('click', e=> {
              var username = childSnapshot.child("username").val();
              var uid = childSnapshot.key;
              firebase.database().ref().child("users").child(firebase.auth().currentUser.uid).child("friends").child(uid).update({email : email});
-             friendsList();        
+             friendsList();
+             document.getElementById("addFriend").value = "";        
              return true;
           }
       });
     });
-	document.getElementById("addFriend").value = '';
+    
 });
 
 removeFriendBtn.addEventListener('click', e=> {
     e.preventDefault();
+	
     var query = firebase.database().ref("users/" + firebase.auth().currentUser.uid + "/friends");
     query.once("value")
       .then(function(snapshot) {
@@ -36,11 +39,12 @@ removeFriendBtn.addEventListener('click', e=> {
           if (email == removeFriend.value) {
               query.child(childSnapshot.key).remove();
               friendsList();
+              document.getElementById("removeFriend").value = "";
               return true;
           }
       });
     });
-	document.getElementById("removeFriend").value = '';
+    
 });
 
 function friendsList(){
@@ -64,7 +68,7 @@ sendMessageBtn.addEventListener('click', e => {
     let text = messageInput.value;
     let userEmail = firebase.auth().currentUser.email;
 
-	document.getElementById("message-input").value = '';
+	document.getElementById("message-input").value = "";
     firebase.database().ref('/messages/').push({
         user: userEmail,
         content: text
