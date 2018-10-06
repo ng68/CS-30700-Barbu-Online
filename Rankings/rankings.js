@@ -4,7 +4,7 @@ firebase.database().ref("users").orderByChild("avg_score").on("value", function(
     snapshot.forEach(function(childSnapshot) {
         users.push([childSnapshot.val().username, childSnapshot.val().wins, childSnapshot.val().avg_score]);
     });
-    users.sort(sort_function).reverse();
+    users.sort(sort_function);
     var top100 = users.slice(0, 100);
     for(var i = 0; i < top100.length; i++) {
 	    str += '<tr>\n<td>' + (i+1) + '</td>\n';
