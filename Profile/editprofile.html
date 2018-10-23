@@ -34,57 +34,40 @@
   </nav>
 
 <div class="container">
+
   	<hr>
       <!-- edit form column -->
+      <div class="col-lg-9 personal-info text-white-50">
         <h3 class="text-gold">Profile Information</h3>
 
         <form class="form-horizontal" role="form">
           <div class="form-group">
-            <label class="col-md-9 control-label text-gold">Email:</label>
-            <div class="col-md-9">
-              <label class="col-md-3 text-white-50" id = "email"></label>
+            <label class="col-md-3 control-label text-white-50">Username:</label>
+            <div class="col-md-8">
+              <input class="form-control" type="text" id="inputUsername">
             </div>
           </div>
           <div class="form-group">
-            <label class="col-md-9 control-label text-gold">Username:</label>
-            <div class="col-md-9">
-              <label class="col-md-3 control-label text-white-50" id = "username"></label>
+            <label class="col-md-3 control-label text-white-50">New Password:</label>
+            <div class="col-md-8">
+              <input class="form-control" type="password" id="inputPassword">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 control-label text-white-50">Confirm password:</label>
+            <div class="col-md-8">
+              <input class="form-control" type="password" id="confirmPassword">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-3 control-label"></label>
+            <div class="col-md-8">
+              <input type="button" class="btn" value="Save Changes" id="savebtn">
+              <span></span>
             </div>
           </div>
         </form>
-
-        <h3 class="text-gold">Game Statistics</h3>
-
-        <form class="form-horizontal" role="form">
-          <div class="form-group">
-            <label class="col-md-3 control-label text-gold">Wins: </label>
-            <div class="col-md-8">
-              <label class="col-md-6 control-label text-white-50" id = "wins"></label>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="col-md-3 control-label text-gold">Losses:</label>
-            <div class="col-md-8">
-              <label class="col-md-6 control-label text-white-50" id = "losses"></label>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="col-md-3 control-label text-gold">Average Score:</label>
-            <div class="col-md-8">
-              <label class="col-md-6 control-label text-white-50" id = "avgscore"></label>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <div class="col-md-8">
-              <input type="button" class="btn" value="Edit Profile" id="editbtn">
-            </div>
-          </div>
-        </form>
-      
-  </div>
-</div>
-<hr>
+      </div>
   </div>
 </div>
 <hr>
@@ -103,5 +86,5 @@
   firebase.initializeApp(config);
 </script>
 
-<script src="profile.js"></script>
+<script src="editprofile.js"></script>
 </html>

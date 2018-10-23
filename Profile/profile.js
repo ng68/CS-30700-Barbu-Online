@@ -1,31 +1,33 @@
-var username = document.getElementById("inputUsername");
-var password = document.getElementById("inputPassword");
-var confirmPassword = document.getElementById("confirmPassword");
-var savebtn = document.getElementById("savebtn");
+var username = document.getElementById("username");
+var email = document.getElementById("email");
+var wins = document.getElementById("wins");
+var losses = document.getElementById("losses");
+var avgscore = document.getElementById("avgscore");
+var editbtn = document.getElementById("editbtn");
 const auth = firebase.auth();
 
-
-
-savebtn.addEventListener('click', e=> {
-    if(password.value != confirmPassword.value){
-        alert('Confirm Password does not match Password');
+firebase.auth().onAuthStateChanged( user => {
+    if (user) 
+    { 
+    var query = firebase.database().ref("users/" + user.uid);
+    query.once("value")
+      .then(function(snapshot) {
+        email.innerHTML = snapshot.child("email").val();
+        username.innerHTML = snapshot.child("username").val();
+        wins.innerHTML = snapshot.child("wins").val();
+        losses.innerHTML = snapshot.child("losses").val();
+        avgscore.innerHTML = snapshot.child("avg_score").val();
+      });
     }
     else {
-        var user = auth.currentUser;
-        if(password.value != 0) {
-            user.updatePassword(password.value).then(function(error) {
-                // An error happened.
-                alert("Information Updated Success!");
-                window.location.href = "profile.html";
-            });
-        }
-        if(username.value.length != 0){
-            firebase.database().ref().child("users").child(user.uid).update({"username" : username.value}, function(error){
-                alert("Information Updated Success!");
-                window.location.href = "profile.html";
-            });
-        }
-        
+        console.log("User not signed in");
     }
+  });
+editbtn.addEventListener('click', e=> {
+    window.location.href = "editprofile.html";
 });
+
+
+
+
 
