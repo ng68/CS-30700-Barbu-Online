@@ -9,24 +9,53 @@
     <script src="main.js"></script>
 </head>
 <body>
+    <input id="lobby-name" type="text" placeholder="name">
+    <input id="lobby-owner" type="text" placeholder="user/owner">
     <button onclick="makelobby()">Hi</button>
+    <h1>Lobbies:</h1>
+    <ul id="lobbies"></ul>
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
 <script>
     // Connects to sockets backend in the /lobbies namespace
     let socket = io('http://localhost:8080/lobbies');
 
+    let lobbyNameInput = document.getElementById('lobby-name');
+    let lobbyOwnerInput = document.getElementById('lobby-owner');
+
+    let lobbiesUL = document.getElementById('lobbies');
+
     function makelobby() {
         // emits that a lobby is created
         socket.emit('lobby-created', {
-            owner: "Bob",
-            name: "My lobby"
+            owner: lobbyOwnerInput.value,
+            name: lobbyNameInput.value
         });
     }
 
     // Response handler for creating the lobby
     socket.on('lobby-created-response', data => {
         console.log(data);
+    });
+
+    // When a new lobby is created, this code executes.
+    // The code also executes when the lobbies page first loads
+    // one time for each pre-existing lobby.
+    // lobbyData is expected to be of the form: {
+    //    owner: String,
+    //    name: String,
+    //    players: []
+    // }
+    socket.on('new-lobby', lobbyData => {
+        let string = lobbyData.name + " created by " + lobbyData.owner + ". Players:"
+        lobbyData.players.forEach(user => {
+            string += " ";
+            string += user;
+        });
+
+        let li = document.createElement('li');
+        li.appendChild(document.createTextNode(string));
+        lobbiesUL.appendChild(li);
     });
 </script>
 </html>
