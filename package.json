@@ -1,0 +1,25 @@
+{
+  "name": "barbu-online",
+  "version": "1.0.0",
+  "description": "A barbu game",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ng68/CS-30700-Barbu-Online.git"
+  },
+  "author": "Team 6",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ng68/CS-30700-Barbu-Online/issues"
+  },
+  "homepage": "https://github.com/ng68/CS-30700-Barbu-Online#readme",
+  "dependencies": {
+    "socket.io": "^2.1.1"
+  }
+}
