@@ -11,7 +11,7 @@
 <body>
     <input id="lobby-name" type="text" placeholder="name">
     <input id="lobby-owner" type="text" placeholder="user/owner">
-    <button onclick="makelobby()">Hi</button>
+    <button onclick="makelobby()">Create lobby</button>
     <h1>Lobbies:</h1>
     <ul id="lobbies"></ul>
 </body>
@@ -21,14 +21,14 @@
     let socket = io('http://localhost:8080/lobbies');
 
     let lobbyNameInput = document.getElementById('lobby-name');
-    let lobbyOwnerInput = document.getElementById('lobby-owner');
+    let usernameInput = document.getElementById('lobby-owner');
 
     let lobbiesUL = document.getElementById('lobbies');
 
     function makelobby() {
         // emits that a lobby is created
         socket.emit('lobby-created', {
-            owner: lobbyOwnerInput.value,
+            owner: usernameInput.value,
             name: lobbyNameInput.value
         });
     }
@@ -47,15 +47,48 @@
     //    players: []
     // }
     socket.on('new-lobby', lobbyData => {
+        // Basic string representation of the lobby
         let string = lobbyData.name + " created by " + lobbyData.owner + ". Players:"
         lobbyData.players.forEach(user => {
             string += " ";
             string += user;
         });
 
+        // Create a new list element, append the string to it
         let li = document.createElement('li');
         li.appendChild(document.createTextNode(string));
+
+        // Create a button that sends info to the server for a player to join
+        // the lobby that the button is attached to.
+        let btn = document.createElement('button');
+        btn.appendChild(document.createTextNode('Join'));
+        btn.addEventListener('click', e => {
+            e.preventDefault();
+
+            socket.emit('join-lobby', {
+                lobbyName: lobbyData.name,
+                user: usernameInput.value
+            });
+        });
+        li.appendChild(btn); // Append button to the li
+
         lobbiesUL.appendChild(li);
+    });
+
+    // Response handler for joining a lobby
+    socket.on('join-lobby-response', data => {
+        console.log(data);
+    });
+
+    // When a lobby is updated (e.g. a player joins), this
+    // code will execute on all clients.
+    // lobbyData is expected to be of the form: {
+    //    owner: String,
+    //    name: String,
+    //    players: []
+    // }
+    socket.on('lobby-updated', lobbyData => {
+        // Code to update lobby on screen
     });
 </script>
 </html>

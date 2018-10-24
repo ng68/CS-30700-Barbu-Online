@@ -10,19 +10,11 @@ io.on('connection', socket => {
     console.log("Root connected");
 });
 
-chatNamespace.on('connection', socket => {
-    console.log("Chat connected");
-});
-
-gamesNamespace.on('connection', socket => {
-    console.log("Games connected");
-});
-
 lobbiesNamespace.on('connection', socket => {
     console.log("Lobbies connected");
 
     // When the page loads (i.e. once a client joins lobbiesNamespace), want
-    // to send them all of the currently open lobbies
+    // to send the client all of the currently open lobbies
     lobbies.forEach(lobby => {
         socket.emit('new-lobby', {
             owner: lobby.owner,
@@ -62,4 +54,47 @@ lobbiesNamespace.on('connection', socket => {
             socket.emit('lobby-created-response', "ERROR"); // Send response to user
         }
     });
+
+    // Event handler for user joining a lobby
+    // Expects an object "data" of the form {
+    //    lobbyName: String
+    //    user: String
+    // }
+    socket.on('join-lobby', data => {
+        let lobby;
+        lobbies.forEach(l => {
+            if (l.name == data.lobbyName) {
+                lobby = l;
+            }
+        });
+
+        if (lobby.players.length > 3) {
+            // Cannot add a player because it's full.
+            // TODO In the future we should probably also check if the username is in a different lobby
+            // (We don't want users to be in multiple lobbies simultaneously)
+
+            socket.emit('join-lobby-response', "ERROR");
+        } else {
+            lobby.players.push(data.user);
+            lobbiesNamespace.emit('lobby-updated', lobby);
+            socket.emit('join-lobby-response', "OK");
+        }
+
+        // test
+        console.log("TEST:");
+        lobbies.forEach(lobby => {
+            console.log(lobby.name + " created by " + lobby.owner + " players:");
+            lobby.players.forEach(player => {
+                console.log(" " + player);
+            });
+        });
+    });
+});
+
+chatNamespace.on('connection', socket => {
+    console.log("Chat connected");
+});
+
+gamesNamespace.on('connection', socket => {
+    console.log("Games connected");
 });
