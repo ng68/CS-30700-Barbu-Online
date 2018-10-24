@@ -9,13 +9,23 @@
     <script src="main.js"></script>
 </head>
 <body>
-    <h1>Hi</h1>
+    <button onclick="makelobby()">Hi</button>
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
 <script>
+    // Connects to sockets backend in the /lobbies namespace
     let socket = io('http://localhost:8080/lobbies');
 
-    socket.on('lobby', data => {
+    function makelobby() {
+        // emits that a lobby is created
+        socket.emit('lobby-created', {
+            owner: "Bob",
+            name: "My lobby"
+        });
+    }
+
+    // Response handler for creating the lobby
+    socket.on('lobby-created-response', data => {
         console.log(data);
     });
 </script>
