@@ -13,6 +13,7 @@ var cards = (function() {
 	};
 	var zIndexCounter = 1;
 	var all = []; //All the cards created.
+	var names = [];
 	
 	function mouseEvent(ev) {
 		var card = $(this).data('card');
@@ -24,7 +25,7 @@ var cards = (function() {
 		}
 	}
 	
-	function init(options) {
+	function init(options, deck) {
 		if (options) {
 			for (var i in options) {
 				if (opt.hasOwnProperty(i)) {
@@ -38,18 +39,24 @@ var cards = (function() {
 		if ($(opt.table).css('position') == 'static') {
 			$(opt.table).css('position', 'relative');
 		}
-		//for (var i = start; i <= end; i++) {
-		//	all.push(new Card('h', i, opt.table));
-		//	all.push(new Card('s', i, opt.table));
-		//	all.push(new Card('d', i, opt.table));
-		//	all.push(new Card('c', i, opt.table));
-		//}
-		//if (opt.blackJoker) {
-		//	all.push(new Card('bj', 0, opt.table));
-		//}
-		//if (opt.redJoker) {
-		//	all.push(new Card('rj', 0, opt.table));
-		//}
+		for(var i = 0; i < 52; i++) {
+			all.push(new Card(deck[i].substring(0,1), deck[i].substring(1), '#card-table'));
+			names.push(deck[i]);
+		}
+		/*for (var i = start; i <= end; i++) {
+			all.push(new Card('h', i, opt.table));
+			all.push(new Card('s', i, opt.table));
+			all.push(new Card('d', i, opt.table));
+			all.push(new Card('c', i, opt.table));
+		}
+		*/
+		/*if (opt.blackJoker) {
+			all.push(new Card('bj', 0, opt.table));
+		}
+		if (opt.redJoker) {
+			all.push(new Card('rj', 0, opt.table));
+		}
+		*/
 		
 		$('.card').click(mouseEvent);
 		//shuffle(all);
@@ -326,6 +333,7 @@ var cards = (function() {
 	return {
 		init : init,
 		all : all,
+		names : names,
 		options : opt,
 		SIZE : opt.cardSize,
 		Card : Card,

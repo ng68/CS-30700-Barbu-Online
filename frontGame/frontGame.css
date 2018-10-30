@@ -54,3 +54,10 @@ a:visited {color:blue;}
 	top:170px;
 }
 
+#tester {
+    visibility: hidden;
+    position: absolute;
+	left:510px;
+	top:170px;
+}
+
