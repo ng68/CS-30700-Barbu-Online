@@ -112,8 +112,8 @@ gamesNamespace.on('connection', socket => {
         }
 
         socket.join(data.lobbyname); // Add the socket to a socket.io room corresponding to the user's game
-        io.to(data.lobbyname).emit('player-joined', { // Send a message to other clients in the lobby that a player joined, with their username
-            username: data.username
+        io.to(data.lobbyname).emit('player-joined', { // Send a message to other clients in the lobby that a player joined, with the list of players
+            players: gameHash[data.lobbyname].players
         });
     });
 
@@ -169,6 +169,40 @@ gamesNamespace.on('connection', socket => {
     // DOUBLES LOGIC GOES HERE AND POSSIBLY IN THE EVENT ABOVE
 
     // Somehow we need to send a 'your-turn' to the client whose turn it is, to start the play. Maybe it will be at the end of the doubles logic
+
+    // This event is for when a card is chosen by the user. It takes an object data containing {
+    //    lobbyname: String,
+    //    cardValue: Integer,
+    //    cardSuit: String
+    // }
+    socket.on('card-chosen', data => {
+        // TODO update the gameplay logic in here. Right now it's very primitive and only
+        // works for the trick-based games.
+
+        // TODO evaluate if card is valid
+
+        gameHash[data.lobbyname].currentTrick.push({
+            value: data.cardValue,
+            suit: data.cardSuit
+        }); // For now just pushing a basic object. In the future we can change it
+
+        io.to(data.lobbyname).emit('card-played', {
+            cardValue: data.cardValue,
+            cardSuit: data.cardSuit
+        }); // Let the rest of the lobby know what the card was. Can be changed later
+
+        if (gameHash[data.lobbyname].currentTrick.length == 4) { // Last card played
+            // TODO Evaluate who won the trick
+
+            // Update score and whatnot internally, clear currentTrick, etc.
+
+            io.to(data.lobbyname).emit('game-update', {
+                // Send data to clients about the outcome of the trick
+            });
+        }
+
+        // TODO emit a 'your-turn' event to whoever has the next turn
+    });
 });
 
 chatNamespace.on('connection', socket => {
