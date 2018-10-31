@@ -39,7 +39,7 @@ var cards = (function() {
 		if ($(opt.table).css('position') == 'static') {
 			$(opt.table).css('position', 'relative');
 		}
-		for(var i = 0; i < 52; i++) {
+		for(var i = 0; i < deck.length; i++) {
 			all.push(new Card(deck[i].substring(0,1), deck[i].substring(1), '#card-table'));
 			names.push(deck[i]);
 		}
