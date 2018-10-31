@@ -1,11 +1,15 @@
 var testerBtn = document.getElementById("tester");  //Testing button
 var testBtn = document.getElementById("testGame");  //Testing button
 let socket = io('http://localhost:8080'); //Socket
+let befPlayers = [];
 let players = {};   //Players in your lobby (Left, Top, Right)
-let user = "George";  //Current User
+let user = "Larry";  //Current User
+let currentDealer = 0;
+let currentSubgame;
 let host;  //Name of host
+let lobby = "Lobby";
 let myPosition;  //Current user position relative to other players
-let currentTurn = 0;  //Turn counter
+let currentTurn = 1;  //Turn counter
 let lowerhand = new cards.Hand({faceUp:true, y:500});  //Initializing all of the visuals for hands and discard piles
 let lefthand = new cards.Hand({faceUp:true, x:200});
 let upperhand = new cards.Hand({faceUp:true, y:80});	
@@ -15,6 +19,21 @@ let upperDiscardPile = new cards.Deck({faceUp:true, y:220});
 let leftDiscardPile = new cards.Deck({faceUp:true, x:550});
 let rightDiscardPile = new cards.Deck({faceUp:true, x:680});
 let loc = {};  //Keeps track of the reference to the location of each Card
+
+socket.on('player-joined', data => {
+    befPlayers = data.username;
+    host = befPlayers[0];
+    if (befPlayers.length == 4 && host == user) {
+        testerBtn.style.visibility = 'visible';
+    }
+});
+
+//When the game is started.
+testerBtn.addEventListener('click', e => {
+    socket.emit('host-start-game', {
+        lobbyname : lobby
+    });
+});
 
 //Used to test with test.js
 testBtn.addEventListener('click', e => {
@@ -27,8 +46,9 @@ testBtn.addEventListener('click', e => {
 });
 
 //Once the game has been started by the host we figure out where each player is and initialize variables.
-socket.on('startGame', data => {
-    host = data.host;
+socket.on('start-game', data => {
+    window.alert("HELLO");
+    host = data.players[0];
     for (var i = 0; i < 4;i++) {
         if (data.players[i] == user) {
             myPosition = i;
@@ -39,19 +59,14 @@ socket.on('startGame', data => {
             };
         }
     }
-    for (var i = 0; i < 4;i++) {
-        if (data.players[i] == user) {
-            //construct deck
-        }
-    }
-    socket.emit('confirmation', {
-
-    });
+    //socket.emit('confirmation', {
+    //    lobbyname : lobby
+    //});
 });
 
 //Run this for each subgame that we run this also populates the hands.
-socket.on('runGame', data => {
-    testerBtn.style.visibility = 'visible';
+socket.on('cards-dealt', data => {
+    window.alert("HI");
     var dealDeck = [];
     for(var i = 0; i < data.Size; i++) {
         dealDeck.push(data[players.right][i]);
@@ -70,8 +85,19 @@ socket.on('runGame', data => {
     deck.render({immediate:true});
     deck.deal(13, [lowerhand, lefthand, upperhand, righthand], 20);
     //prompt with subgame choice if dealer
-    //prompt with doubles choice if not dealer after subgame choice
+    if (myPosition == currentDealer) {
+        //Bring up subgame prompt
+        socket.emit('subgame-chosen', {
+            lobbyname : lobby, 
+            gamechoice : "Hearts"
+        });
+    }else {
+        //Waiting prompt
+    }
+});
 
+socket.on('subgame-choice', data => {
+    currentSubgame = data.gamechoice;
 });
 
 //Ability to click your own hand when it is your turn.
@@ -91,13 +117,7 @@ socket.on('playCard', data => {
 
 });
 
-//Used for testing
-testerBtn.addEventListener('click', e => {
-    var card = loc.cards[8];
-    lowerDiscardPile.addCard(card);
-    lowerDiscardPile.render();
-    righthand.render();
-});
+
 
 
    

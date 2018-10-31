@@ -3,16 +3,15 @@ const io = require('socket.io')(8080);
 io.on('connection', socket => {
     console.log("Root connected");
     socket.on('initializeTest', playerInfo => {
-        
-        socket.emit('startGame', {
-            players: playerInfo.players,
-            
-            size: 13,
-            host: playerInfo.players[0]
+        socket.emit('player-joined', {
+            username : ["Larry", "George", "Paul", "Harry"]
         });
     });
 
-    socket.on('confirmation', data => {
+    socket.on('host-start-game', data => {
+        socket.emit('start-game', {
+            players : ["Larry", "George", "Paul", "Harry"]
+        });
         let tester = [];
         let tester1 = [];
         let tester2 = [];
@@ -23,7 +22,7 @@ io.on('connection', socket => {
             tester2.push('s' + (7+i).toString());
             tester3.push('d' + (7+i).toString());
         }
-        socket.emit('runGame', {
+        socket.emit('cards-dealt', {
             Larry : tester,
             George : tester1,
             Paul : tester2,
@@ -31,5 +30,9 @@ io.on('connection', socket => {
             Size : tester.length
         });
     });
-});
+    });
+
+    //socket.on('confirmation', data => {
+        
+//});
 
