@@ -93,7 +93,25 @@ gamesNamespace.on('connection', socket => {
     //    username: String
     // }
     socket.on('player-info', data => {
-        socket.join(data.lobbyname); // Add socket to a socket.io room corresponding to the user's game
+        if (gameHash[data.lobbyname] == null) { // This game does not exist in the game hash yet
+            let game = { // Initialize an object corresponding to the game TODO: Add any other necessary fields
+                players: [],
+                currentDealer: 0,
+                handHash: {},
+                currentTrick: [], // TODO edit this code to whatever is actually needed later
+                subgame: {}
+            };
+
+            game.players.push(lobbydata.username); // Add the player to the players array.
+            game.dealerIndex = 0; // The first player that joins (i.e. the host) will be the first dealer
+            gameHash[data.lobbyname] = game; // Add the game to the gamehash.
+        } else { // The game already exists
+            gameHash[data.lobbyname].players.push(data.username); // Add the player to the lobby.
+            // NOTE: The above assumes that there aren't already 4 players in the game. This is checked
+            // in the lobbies namespace in 'join-lobby'.
+        }
+
+        socket.join(data.lobbyname); // Add the socket to a socket.io room corresponding to the user's game
         io.to(data.lobbyname).emit('player-joined', { // Send a message to other clients in the lobby that a player joined, with their username
             username: data.username
         });
@@ -104,8 +122,53 @@ gamesNamespace.on('connection', socket => {
     //     lobbyname: String,
     // }
     socket.on('start-game', data => {
-        
+        // Verify that there are 4 players in the game
+        let game = gameHash[data.lobbyname];
+        if (game == null || game.players.length != 4) {
+            socket.emit('start-game-response', "ERROR"); // Emit an error to the host that something went wrong
+            return;
+        }
+
+        // Code below here prepares the game for start
+
+        // 1. Shuffle deck
+
+        // 2. Assign hands to players
+        let handobject = {};
+        for (player in game.players) {
+            let hand = [];
+
+            // Assign subset of the deck to each player
+
+            handobject[player] = hand;
+        }
+        game.handHash = handobject; // write the hand object to the global data structure
+
+        socket.emit('start-game-response', "OK"); // Let the host client know that the game started correctly
+        io.to(data.lobbyname).emit('cards-dealt', handobject); // Send the hands to all the clients.
     });
+
+    // ANY NECESSARY SERVER-SIDE DEALER LOGIC GOES HERE AND POSSIBLY IN THE EVENT ABOVE
+
+    // The next event is when the dealer picks the subgame.
+    // In this case the data object needs two things, the lobby name and the game choice: {
+    //    lobbyname: String,
+    //    gamechoice: String
+    // }
+    socket.on('subgame-chosen', data => {
+        // data.gamechoice
+        // May need to do an error check (i.e. did this dealer already pick this subgame?)
+        // If we do error checking and there's an error, just do socket.emit('subgame-chosen-response', "ERROR");
+
+        // TODO: update internal data structures based on subgame choice
+
+        io.to(data.lobbyname).emit('subgame-choice', data.gamechoice); // FOR NOW just emit a string of the chosen game
+                                                                       // (May need to change later)
+    });
+
+    // DOUBLES LOGIC GOES HERE AND POSSIBLY IN THE EVENT ABOVE
+
+    // Somehow we need to send a 'your-turn' to the client whose turn it is, to start the play. Maybe it will be at the end of the doubles logic
 });
 
 chatNamespace.on('connection', socket => {
