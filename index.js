@@ -5,11 +5,10 @@ const lobbiesNamespace = io.of('/lobbies');
 const gamesNamespace = io.of('/games');
 
 let lobbies = [];
+let gameHash = {};
 
-io.on('connection', socket => {
-    console.log("Root connected");
-});
-
+// The events in the lobbies namespace deal with functionality that takes place on the
+// lobbies page.
 lobbiesNamespace.on('connection', socket => {
     console.log("Lobbies connected");
 
@@ -76,18 +75,36 @@ lobbiesNamespace.on('connection', socket => {
             socket.emit('join-lobby-response', "ERROR");
         } else {
             lobby.players.push(data.user);
-            lobbiesNamespace.emit('lobby-updated', lobby);
+            lobbiesNamespace.emit('lobby-updated', lobby); // Let everyone else know the lobby updated
             socket.emit('join-lobby-response', "OK");
         }
+    });
+});
 
-        // test
-        console.log("TEST:");
-        lobbies.forEach(lobby => {
-            console.log(lobby.name + " created by " + lobby.owner + " players:");
-            lobby.players.forEach(player => {
-                console.log(" " + player);
-            });
+// The games namespace is for individual game lobbies that people join. The /games channel itself is never used,
+// but rather an individual room is created for each game.
+gamesNamespace.on('connection', socket => {
+    console.log("Games connected");
+
+    // This function needs to be called as soon as a player
+    // goes to the game/lobby page (after joining/creating a lobby on the lobbIES page)
+    // Expects an object data of the form {
+    //    lobbyname: String,
+    //    username: String
+    // }
+    socket.on('player-info', data => {
+        socket.join(data.lobbyname); // Add socket to a socket.io room corresponding to the user's game
+        io.to(data.lobbyname).emit('player-joined', { // Send a message to other clients in the lobby that a player joined, with their username
+            username: data.username
         });
+    });
+
+    // This event should be emitted by the client who is hosting the game once the user is ready to start playing.
+    // It expects an object "data" of the form {
+    //     lobbyname: String,
+    // }
+    socket.on('start-game', data => {
+        
     });
 });
 
@@ -95,6 +112,6 @@ chatNamespace.on('connection', socket => {
     console.log("Chat connected");
 });
 
-gamesNamespace.on('connection', socket => {
-    console.log("Games connected");
+io.on('connection', socket => {
+    console.log("Root connected");
 });
