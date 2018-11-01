@@ -104,6 +104,7 @@ class Subgame {
 			this.cards_taken[this.players[i]] = [];
 		}
 		this.game_type = game_type;
+		this.num_tricks = 0;
 	}
 	
 	legal_play(player, card) {
@@ -150,6 +151,7 @@ class Subgame {
 			}
 		}
 	}
+	
 	game_done() {
 		switch(this.game_type) {
 			case "Last Two":
@@ -361,6 +363,8 @@ gamesNamespace.on('connection', socket => {
 
     // ANY NECESSARY SERVER-SIDE DEALER LOGIC GOES HERE AND POSSIBLY IN THE EVENT ABOVE
 
+	// NOTE FROM MATT: ALSO NEED USERNAME
+
     // The next event is when the dealer picks the subgame.
     // In this case the data object needs two things, the lobby name and the game choice: {
     //    lobbyname: String,
@@ -378,7 +382,7 @@ gamesNamespace.on('connection', socket => {
 			// User hasn't chosen game
 			
 			// Create new subgame
-			game.subgame = new Subgame(game.players[0], game.players[1], game.players[2], game.players[3], data.gamechoice);
+			game.subgame = new Subgame(game.players[0], game.players[1], game.players[2], game.players[3], hands, data.gamechoice);
 			
 			
 			io.to(data.lobbyname).emit('subgame-choice', data.gamechoice); // FOR NOW just emit a string of the chosen game
@@ -397,6 +401,8 @@ gamesNamespace.on('connection', socket => {
 
     // Somehow we need to send a 'your-turn' to the client whose turn it is, to start the play. Maybe it will be at the end of the doubles logic
 
+	// NOTE FROM MATT: ALSO NEED USERNAME
+	
     // This event is for when a card is chosen by the user. It takes an object data containing {
     //    lobbyname: String,
     //    cardValue: Integer,
@@ -407,25 +413,47 @@ gamesNamespace.on('connection', socket => {
         // works for the trick-based games.
 
 		card = new Card(data.cardSuit, data.cardValue);
-		
+		subgame = gameHash[data.lobbyname].subgame;
 		
         // TODO evaluate if card is valid
-
-        // gameHash[data.lobbyname].currentTrick.push({
-            // value: data.cardValue,
-            // suit: data.cardSuit
-        // }); // For now just pushing a basic object. In the future we can change it
+		if(subgame.legal_play(data.username, card)) {
+			// Add card to trick
+			subgame.current_trick.add(data.username, card);
+			
+			// Remove card from hand
+			subgame.hands[data.username].remove_card(card);
+			
+			// Update current player
+			if(subgame.current_index == 3) subgame.current_index = 0;
+			else subgame.current_index++;
+			subgame.current_player = subgame.players[subgame.current_index];
+		}
+		else {
+			// TODO send error to client
+		}
 
         io.to(data.lobbyname).emit('card-played', {
             cardValue: data.cardValue,
             cardSuit: data.cardSuit
         }); // Let the rest of the lobby know what the card was. Can be changed later
 
-        if (gameHash[data.lobbyname].currentTrick.length == 4) { // Last card played
+        if (subgame.current_trick.length == 4) { // Last card played
+		
             // TODO Evaluate who won the trick
+			var winner = subgame.current_trick.winner();
 
-            // Update score and whatnot internally, clear currentTrick, etc.
+			// Add cards to trick winner's taken cards
+			for(var i = 0; i < 4; i++) {
+				subgame.cards_taken[winner].push(subgame.current_trick.cards[i]);
+			}
+			
+			subgame.num_tricks++;
+			subgame.current_trick = new Trick();
 
+			if(subgame.game_done()) {
+				// GAME IS OVER
+				// TOOD send game over update, deal new hands
+			}
             io.to(data.lobbyname).emit('game-update', {
                 // Send data to clients about the outcome of the trick
             });
