@@ -39,6 +39,7 @@ var cards = (function() {
 		if ($(opt.table).css('position') == 'static') {
 			$(opt.table).css('position', 'relative');
 		}
+
 		for(var i = 0; i < deck.length; i++) {
 			all.push(new Card(deck[i].substring(0,1), deck[i].substring(1), '#card-table'));
 			names.push(deck[i]);
@@ -255,10 +256,10 @@ var cards = (function() {
 			var top = Math.round(this.y-opt.cardSize.height/2, 0);
 			var condenseCount = 6;
 			for (var i=0;i<this.length;i++) {
-				if (i > 0 && i % condenseCount == 0) {
-					top-=1;
-					left-=1;
-				}
+				//if (i > 0 && i % condenseCount == 0) {
+				//	top-=1;
+				//	left-=1;
+				//}
 				this[i].targetTop = top;
 				this[i].targetLeft = left;
 			}

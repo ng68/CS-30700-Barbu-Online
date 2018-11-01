@@ -16,11 +16,11 @@ io.on('connection', socket => {
         let tester1 = [];
         let tester2 = [];
         let tester3 = [];
-        for (var i = 5; i > 0; i--) {
+        for (var i = 1; i < 14; i++) {
             tester.push('h' + i.toString());
             tester1.push('c' + i.toString());
-            tester2.push('s' + (7+i).toString());
-            tester3.push('d' + (7+i).toString());
+            tester2.push('s' + (i).toString());
+            tester3.push('d' + (i).toString());
         }
         socket.emit('cards-dealt', {
             Larry : tester,
