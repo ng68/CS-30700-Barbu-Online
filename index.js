@@ -11,7 +11,7 @@ class Card {
 	constructor(suit, value) {
 		this.suit = suit;
 		this.rank = value
-		switc(value) {
+		switch(value) {
 			case 11:
 				this.card = "Jack";
 				break;
