@@ -4,10 +4,10 @@
 }
 
 a img {
-	position: absolute; 
-	top: 0; 
-	right: 0; 
-	border: 0;			
+	position: absolute;
+	top: 0;
+	right: 0;
+	border: 0;
 }
 button {
 	height:30px;
@@ -33,7 +33,7 @@ h1 {
 	top: 50%;
 	left: 50%;
 	margin-left: -40%;
-	border:solid 6px brown;
+	border:solid 6px #A67909;
 	border-radius:8px;
 	-webkit-border-radius:8px;
 	-moz-border-radius:8px;
@@ -61,3 +61,40 @@ a:visited {color:blue;}
 	top:170px;
 }
 
+/* <><><><><><> */
+
+.scorecard {
+	width: auto;
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	border-style: solid;
+	border-width: 1px;
+	border-color: black;
+	background-color: #f2f2f2;
+}
+
+#scoretable {
+	width: auto;
+}
+
+.borderRow{
+	border-bottom: solid;
+}
+
+th, td {
+	padding-right: 20px;
+}
+
+.navbar-custom {
+    color: #FFFFFF;
+    background-color: rgb(0, 0, 0);
+}
+body {
+  background-color: black;
+}
+.text-gold {
+  background: -webkit-linear-gradient(#A67909, #F9E6B6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
