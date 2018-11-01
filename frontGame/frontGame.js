@@ -1,13 +1,16 @@
 let socket = io('http://localhost:8080'); //Socket
-//emit "connected"
+let lobby = "Lobby"; //Lobby currently in
+let user = "Larry";  //Current User
+socket.emit('player-info', {
+    lobbyname : lobby,
+    username : user
+});
 var testerBtn = document.getElementById("tester");  //Testing button
 var testBtn = document.getElementById("testGame");  //Testing button
 let subgameList = ["Fan Tan", "No Hearts", "No King","No Last Two", "No Queens","No Tricks", "Trumps"];
 let players = {};   //Players in your lobby (Left, Top, Right)
-let user = "Larry";  //Current User
 let currentDealer = 0;
 let currentSubgame;
-let lobby = "Lobby";
 let myTurn = false;  //Current user position relative to other players
 let lowerhand = new cards.Hand({faceUp:true, y:500});  //Initializing all of the visuals for hands and discard piles
 let lefthand = new cards.Hand({faceUp:false, x:200});
@@ -51,9 +54,17 @@ let loc = {};  //Keeps track of the reference to the location of each Card
 });
 */
 //Once the game has been started by the host we figure out where each player is and initialize variables.
-socket.on('start-game', data => {
+//socket.on('start-game', data => {
+   
+    //socket.emit('confirmation', {
+    //    lobbyname : lobby
+    //});
+//});
+
+//Run this for each subgame that we run this also populates the hands.
+socket.on('cards-dealt', data => {
     for (var i = 0; i < 4;i++) {
-        if (data.players[i] === user) {
+        if (Object.keys(data)[i] === user) {
             myPosition = i;
             players = {
                 left: data.players[(i+1)%4],
@@ -62,13 +73,6 @@ socket.on('start-game', data => {
             };
         }
     }
-    //socket.emit('confirmation', {
-    //    lobbyname : lobby
-    //});
-});
-
-//Run this for each subgame that we run this also populates the hands.
-socket.on('cards-dealt', data => {
     $('.card').remove();  //Initializing all of the visuals for hands and discard piles
     var dealDeck = [];
     currentDealer = data.user;
@@ -109,7 +113,8 @@ function chooseSubgame (){
         currentSubgame = chosen; 
         socket.emit('subgame-chosen', {
             lobbyname : lobby, 
-            gamechoice : chosen
+            gamechoice : chosen,
+            username : user
         });
         for(var i = 0; i < subgameList.length; i++){ 
             if (subgameList[i] === chosen) {
@@ -130,44 +135,52 @@ socket.on('subgame-choice', data => {
 //Ability to click your own hand when it is your turn.
 lowerhand.click(function(card){
     if (myTurn) {
-        //Do legal play check
-        //If legal
-        myTurn = false;
         socket.emit('card-chosen', {
             lobbyname : lobby,
-            card : card.name
+            cardValue : card.rank,
+            cardSuit : card.suit,
+            username : user
         });
     }
 });
 
+socket.on('card-chosen-response', data =>{
+    if(data.valid) {
+        myTurn = false;
+    }else {
+        window.alert("Invalid card chosen");
+    }
+});
+
 socket.on('your-turn', data =>{
-    if (data.user === user) {
+    if (data.username === user) {
         myTurn = true;
         window.alert("It's your turn!");
     }
 });
 
 //When someone else plays a card we need to update the visuals.
-socket.on('played-card', data => {
+socket.on('card-played', data => {
+    let dataCard = data.cardSuit + (data.cardValue).toString();
     let tempCard;
     for (var i = 0; i < loc.names.length; i++) {
-        if (data.card === loc.names[i]) {
+        if (dataCard === loc.names[i]) {
             tempCard = loc.cards[i];
         }
     }
-    if (data.user === players.left) {
+    if (data.username === players.left) {
         leftDiscardPile.addCard(tempCard);
 	    leftDiscardPile.render();
 	    lefthand.render();
-    }else if (data.user === players.top){
+    }else if (data.username === players.top){
         upperDiscardPile.addCard(tempCard);
 	    upperDiscardPile.render();
 	    upperhand.render();
-    }else if (data.user === players.right){
+    }else if (data.username === players.right){
         rightDiscardPile.addCard(tempCard);
 	    rightDiscardPile.render();
 	    righthand.render();
-    }else if (data.user === user){
+    }else if (data.username === user){
         lowerDiscardPile.addCard(tempCard);
 	    lowerDiscardPile.render();
 	    lowerhand.render();
@@ -180,11 +193,11 @@ socket.on('game-update', data => {
 
 });
 
-socket.on('game-finished', data => {
-
+socket.on('subgame-finished', data => {
+    //update dealer++%4
 });
 
-socket.on('trick-won', data => {
+socket.on('game-update', data => {
     if (data.user === players.left) {
         leftTrickPile.addCard(leftDiscardPile.topCard());
         leftTrickPile.addCard(upperDiscardPile.topCard());

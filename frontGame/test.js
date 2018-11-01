@@ -16,7 +16,7 @@ io.on('connection', socket => {
         let tester1 = [];
         let tester2 = [];
         let tester3 = [];
-        for (var i = 1; i < 14; i++) {
+        for (var i = 2; i < 15; i++) {
             tester.push('h' + i.toString());
             tester1.push('c' + i.toString());
             tester2.push('s' + (i).toString());

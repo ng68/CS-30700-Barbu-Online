@@ -6,7 +6,7 @@ var cards = (function() {
 		animationSpeed : 500,
 		table : 'body',
 		cardback : 'red',
-		acesHigh : false,
+		acesHigh : true,
 		cardsUrl : 'img/cards.png',
 		blackJoker : false,
 		redJoker : false
