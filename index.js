@@ -88,22 +88,68 @@ class Trick {
 }
 
 class Subgame {
-	// Player[] players
+	// players array
+	// hands hashes player to hand
 	// int current_player (corresponds to index of players array)
-	// Trick current_trick
-	// dict player_to_cards_taken
-	constructor(dealer, dealerHand, p2, p2Hand, p3, p3Hand, p4, p4Hand, game_type) {
+	// current_trick
+	// cards_taken
+	constructor(dealer, p2, p3, p4, game_type) {
 		this.players = [dealer, p2, p3, p4];
+		this.hands = hands;
 		this.current_player = dealer;
 		this.current_index = 0;
 		this.current_trick = new Trick();
-		this.player_to_cards_taken = {};
+		this.cards_taken = {};
 		for(var i = 0; i < 4; i++) {
-			this.player_to_cards_taken[this.players[i]] = [];
+			this.cards_taken[this.players[i]] = [];
 		}
 		this.game_type = game_type;
 	}
-		
+	
+	legal_play(player, card) {
+		if(this.current_trick.cards.length != 0) {
+			// Not the lead
+			if(card.suit != this.current_trick.cards[0].suit) {
+				// Pitch
+				if(this.hands[player].has_suit(this.current_trick.cards[0].suit)) {
+					// Illegal pitch
+					return false;
+				}
+			}
+		}
+		else {
+			// Lead
+			if(this.game_type == "Barbu") {
+				if(card.suit == 'H') {
+					// Led heart
+					if(this.hands[player].has_suit('S') || this.hands[player].has_suit('D') || this.hands[player].has_suit('C')) {
+						// Not heart-tight
+						return false;
+					}
+				}
+			}
+			else if(this.game_type == "Hearts") {
+				if(card.suit == 'H') {
+					// Led heart
+					var num_hearts = 0;
+					for(var player in this.cards_taken) {
+						for(var i = 0; i < this.cards_taken[player].length; i++) {
+							if(this.cards_taken[player][i].suit == 'H') {
+								num_hearts++;
+							}
+						}
+					}
+					if(num_hearts == 0) {
+						// Hearts haven't been broken
+						if(this.hands[player].has_suit('S') || this.hands[player].has_suit('D') || this.hands[player].has_suit('C')) {
+							// Not heart-tight
+							return false;
+						}
+					}
+				}
+			}
+		}
+	}
 	game_done() {
 		switch(this.game_type) {
 			case "Last Two":
@@ -118,9 +164,9 @@ class Subgame {
 			case "Hearts":
 				// If all hearts have been played, game is over
 				var num_hearts = 0;
-				for(var player in this.player_to_cards_taken) {
-					for(var i = 0; i < this.player_to_cards_taken[player].length; i++) {
-						if(this.player_to_cards_taken[player][i].suit == "Heart") {
+				for(var player in this.cards_taken) {
+					for(var i = 0; i < this.cards_taken[player].length; i++) {
+						if(this.cards_taken[player][i].suit == "Heart") {
 							num_hearts++;
 						}
 					}
@@ -130,9 +176,9 @@ class Subgame {
 				break;
 			case "Barbu":
 				// If the King of Hearts has been played, game is over
-				for(var player in this.player_to_cards_taken) {
-					for(var i = 0; i < this.player_to_cards_taken[player].length; i++) {
-						if(this.player_to_cards_taken[player][i].suit == "Heart" && this.player_to_cards_taken[player][i].card == "King") {
+				for(var player in this.cards_taken) {
+					for(var i = 0; i < this.cards_taken[player].length; i++) {
+						if(this.cards_taken[player][i].suit == "Heart" && this.cards_taken[player][i].card == "King") {
 							return true;
 						}
 					}
@@ -141,9 +187,9 @@ class Subgame {
 				break;
 			case "Queens":
 				var num_queens = 0;
-				for(var player in this.player_to_cards_taken) {
-					for(var i = 0; i < this.player_to_cards_taken[player].length; i++) {
-						if(this.player_to_cards_taken[player][i].card == "Queen") {
+				for(var player in this.cards_taken) {
+					for(var i = 0; i < this.cards_taken[player].length; i++) {
+						if(this.cards_taken[player][i].card == "Queen") {
 							num_queens++;
 						}
 					}
