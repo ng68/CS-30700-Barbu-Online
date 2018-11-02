@@ -58,7 +58,11 @@ class Hand {
 	}
 	
 	remove_card(card) {
-		this.cards.splice(this.cards.indexOf(card), 1);
+		var index = 0;
+		for(var i = 0; i < this.cards.length; i++) {
+			if(this.cards[i].suit == card.suit && this.cards[i].rank == card.rank) index = i;
+		}
+		this.cards.splice(index, 1);
 	}
 	
 	as_array() {
@@ -87,7 +91,8 @@ class Trick {
 	winner() {
 		let max = 0;
 		for(var i = 1; i < 4; i++) {
-			if(this.cards[i].suit == this.cards[0].suit && this.cards[i].rank > this.cards[max].rank) {
+			
+			if(this.cards[i].suit == this.cards[0].suit && this.cards[i].rank > this.cards[max].rank && this.cards[max].suit != this.trump) {
 				max = i;
 			}
 			else if(this.cards[i].suit == this.trump && this.cards[max].suit == this.trump && this.cards[i].rank > this.cards[max].rank) {
@@ -97,7 +102,9 @@ class Trick {
 			else if(this.cards[i].suit == this.trump && this.cards[max].suit != this.trump) {
 				// Trump
 				max = i;
+			}else {
 			}
+			
 		}
 		return this.players[max];
 	}
@@ -112,8 +119,8 @@ class Subgame {
 	constructor(dealer, p2, p3, p4, hands, game_type, trump) {
 		this.players = [dealer, p2, p3, p4];
 		this.hands = hands;
-		this.current_player = dealer;
-		this.current_index = 0;
+		this.current_player = p2;
+		this.current_index = 1;
 		this.current_trick = new Trick(trump);
 		this.cards_taken = {};
 		for(var i = 0; i < 4; i++) {
@@ -218,6 +225,7 @@ class Subgame {
 	}
 	
 	game_done() {
+		if (this.num_tricks == 13) return true;
 		switch(this.game_type) {
 			case "Last Two":
 				return false;
@@ -418,7 +426,7 @@ gamesNamespace.on('connection', socket => {
         if (gameHash[data.lobbyname] == null) { // This game does not exist in the game hash yet
             let game = { // Initialize an object corresponding to the game TODO: Add any other necessary fields
                 players: [],
-                currentDealer: 0,
+                dealerIndex: 0,
                 handHash: {}, // TODO edit this code to whatever is actually needed later
 				scoreHash: {},
 				gamesChosen: {},
@@ -477,7 +485,6 @@ gamesNamespace.on('connection', socket => {
 						break;
 				}
 			}
-			console.log(cards);
             // 2. Assign hands to players
             let handobject = {};
             for (var i = 0; i < game.players.length; i++) {
@@ -489,8 +496,8 @@ gamesNamespace.on('connection', socket => {
                 handobject[player] = hand.as_array();
 				game.handHash[player] = hand;
             }
-			handobject["dealer"] = game.players[game.currentDealer];
-			handobject["scores"] = [];
+			handobject["dealer"] = game.players[game.dealerIndex];
+			handobject["scores"] = [0,0,0,0];
             gamesNamespace.to(data.lobbyname).emit('cards-dealt', handobject); // Send the hands to all the clients.
         }
     });
@@ -529,7 +536,6 @@ gamesNamespace.on('connection', socket => {
 			gamesNamespace.to(data.lobbyname).emit('subgame-choice', {
                 gamechoice: data.gamechoice
             }); // FOR NOW just emit a string of the chosen game
-
             gamesNamespace.to(data.lobbyname).emit('your-turn', {
                 username: game.players[(game.dealerIndex + 1) % 4]
             });
@@ -555,7 +561,7 @@ gamesNamespace.on('connection', socket => {
         // TODO update the gameplay logic in here. Right now it's very primitive and only
         // works for the trick-based games.
 
-		var card = new Card(data.cardSuit, data.cardValue);
+		var card = new Card(data.cardSuit, parseInt(data.cardValue, 10));
 		var subgame = gameHash[data.lobbyname].subgame;
 		var game = gameHash[data.lobbyname];
 		
@@ -565,8 +571,7 @@ gamesNamespace.on('connection', socket => {
 			subgame.current_trick.add_card(data.username, card);
 			
 			// Remove card from hand
-			subgame.hands[data.username].remove_card(card);
-			
+			game.handHash[data.username].remove_card(card);
 			// Update current player
 			if(subgame.current_index == 3) subgame.current_index = 0;
 			else subgame.current_index++;
@@ -681,7 +686,7 @@ gamesNamespace.on('connection', socket => {
 					handobject[player] = hand.as_array();
 					game.handHash[player] = hand;
 				}
-				handobject["dealer"] = game.players[game.currentDealer];
+				handobject["dealer"] = game.players[game.dealerIndex];
 				handobject["scores"] = [];
 				for(var i = 0; i < game.players.length; i++) {
 					let player = game.players[i];
@@ -690,15 +695,17 @@ gamesNamespace.on('connection', socket => {
 				gamesNamespace.to(data.lobbyname).emit('cards-dealt', handobject); // Send the hands to all the clients.
 			}
 			else {
+				gamesNamespace.to(data.lobbyname).emit('game-update', {
+					username: subgame.current_player
+            	});
+				console.log("Win-Trick");
 				gamesNamespace.to(data.lobbyname).emit('your-turn', {
-				username: subgame.current_player
+					username: subgame.current_player
 				});
-            // gamesNamespace.to(data.lobbyname).emit('game-update', {
-                // // Send data to clients about the outcome of the trick
-            // });
 			}
 		}
 		else {
+			console.log("Next-Turn");
 			gamesNamespace.to(data.lobbyname).emit('your-turn', {
 				username: subgame.current_player
 			});
