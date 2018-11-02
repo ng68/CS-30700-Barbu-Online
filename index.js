@@ -506,7 +506,11 @@ gamesNamespace.on('connection', socket => {
 			// User hasn't chosen game
 			
 			// Create new subgame
-			game.subgame = new Subgame(game.players[0], game.players[1], game.players[2], game.players[3], game.handHash, data.gamechoice);
+			var players = [];
+			for(var i = 0; i < 4; i++) {
+				players.push(game.players[(game.dealerIndex + i) % 4]);
+			}
+			game.subgame = new Subgame(players[0], players[1], players[2], players[3], game.handHash, data.gamechoice);
 			
 			
 			socket.emit('subgame-choice', {
