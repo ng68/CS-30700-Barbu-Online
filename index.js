@@ -626,6 +626,7 @@ gamesNamespace.on('connection', socket => {
 				}
 				
 				if(done) {
+					socket.emit('game-finished', game.scoreHash);
 					console.log("GAME OVER");
 				}
 				
