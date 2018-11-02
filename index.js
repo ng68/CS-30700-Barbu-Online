@@ -642,6 +642,9 @@ gamesNamespace.on('connection', socket => {
 				}
 				handobject["dealer"] = game.players[game.currentDealer];
 				handobject["scores"] = [];
+				for(player in game.players) {
+					handobject["scores"].push(game.scoreHash[player]);
+				}
 				io.to(data.lobbyname).emit('cards-dealt', handobject); // Send the hands to all the clients.
 			}
 			else {
