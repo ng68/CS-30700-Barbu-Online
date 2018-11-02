@@ -304,7 +304,10 @@ socket.on('game-finished', data => {
 //});
 
 socket.on('game-update', data => {
-    setTimeout(()=>{}, 1000);
+    setTimeout(timer(data), 1000);
+});
+
+function timer(data) {
     if (data.username === players.left) {
         leftTrickPile.addCard(leftDiscardPile.topCard());
         leftTrickPile.addCard(upperDiscardPile.topCard());
@@ -348,8 +351,6 @@ socket.on('game-update', data => {
     }else {
         window.alert("Error: Invalid user for trick-won");
     }
-});
-
-
+}
 
    
