@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Barbu Online</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+  <link href="home.css" rel="stylesheet">
+  <link href="lobbies.css" rel="stylesheet">
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-sm navbar-custom navbar-dark home-nav">
+    <img style="max-width: 192px" src="logo-thin.jpg"></a>
+  </nav>
+  <div class="container">
+    <div class="row">
+            <div class="col-lg-9" style="margin-top: 30px">
+        <div class="table-wrapper-scroll-y">
+                <h3 class="text-gold">Lobby</h3>
+    <table class="table table-sm table-striped text-white" id="table">
+    <thead>
+        <tr>
+        <th scope="col text-white">Players</th>
+        </tr>
+    </thead>
+    <tbody id="table">
+            <tr>
+                    <td id="player1">Waiting for player...</td>
+                </tr>
+                <tr>
+                    <td id="player2">Waiting for player...</td>
+                </tr>
+                <tr>
+                    <td id="player3">Waiting for player...</td>
+                </tr>
+                <tr>
+                    <td id="player4">Waiting for player...</td>
+                </tr>
+    </tbody>
+    </table>
+    </div>
+    </div>
+    </div>
+
+</body>
+<script src="https://www.gstatic.com/firebasejs/5.5.2/firebase.js"></script>
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyAHKp5tuwNe-Nt0dFglkryv1SjfhEzfD84",
+    authDomain: "barbu-online.firebaseapp.com",
+    databaseURL: "https://barbu-online.firebaseio.com",
+    projectId: "barbu-online",
+    storageBucket: "barbu-online.appspot.com",
+    messagingSenderId: "1021411455944"
+  };
+  firebase.initializeApp(config);
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
+<script src="joinedlobby.js"></script>
+</html>
