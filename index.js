@@ -156,6 +156,51 @@ class Subgame {
 				}
 			}
 		}
+		
+	explanation(player, card) {
+		if(this.current_trick.cards.length != 0) {
+			// Not the lead
+			if(card.suit != this.current_trick.cards[0].suit) {
+				// Pitch
+				if(this.hands[player].has_suit(this.current_trick.cards[0].suit)) {
+					// Illegal pitch
+					return "You must follow suit if you can";
+				}
+			}
+		}
+		else {
+			// Lead
+			if(this.game_type == "Barbu") {
+				if(card.suit == 'h') {
+					// Led heart
+					if(this.hands[player].has_suit('s') || this.hands[player].has_suit('d') || this.hands[player].has_suit('c')) {
+						// Not heart-tight
+						return "You can't lead a heart unless that's all you have";
+					}
+				}
+			}
+			else if(this.game_type == "Hearts") {
+				if(card.suit == 'h') {
+					// Led heart
+					var num_hearts = 0;
+					for(var player in this.cards_taken) {
+						for(var i = 0; i < this.cards_taken[player].length; i++) {
+							if(this.cards_taken[player][i].suit == 'h') {
+								num_hearts++;
+							}
+						}
+					}
+					if(num_hearts == 0) {
+						// Hearts haven't been broken
+						if(this.hands[player].has_suit('s') || this.hands[player].has_suit('d') || this.hands[player].has_suit('c')) {
+							// Not heart-tight
+							return "You can't lead a heart until they've been broken";
+						}
+					}
+				}
+			}
+		}
+		return "";
 	}
 	
 	game_done() {
@@ -508,11 +553,13 @@ gamesNamespace.on('connection', socket => {
 		}
 		else {
             // TODO send error to client
+			var explanation = subgame.explanation(data.username, card);
             io.to(data.lobbyname).emit('card-chosen-response', {
                 valid: false,
 				username: data.username,
 				error: "Illegal play",
-				card: card.suit + card.value
+				card: card.suit + card.value,
+				error: explanation
             });
 
             return;
