@@ -316,16 +316,21 @@ gamesNamespace.on('connection', socket => {
                 players: [],
                 currentDealer: 0,
                 handHash: {}, // TODO edit this code to whatever is actually needed later
+				scoreHash: {},
 				gamesChosen: {},
                 subgame: {}
             };
 
             game.players.push(data.username); // Add the player to the players array.
 			game.gamesChosen[data.username] = [];
+			game.scoreHash[data.username] = 0;
             game.dealerIndex = 0; // The first player that joins (i.e. the host) will be the first dealer
             gameHash[data.lobbyname] = game; // Add the game to the gamehash.
         } else { // The game already exists
             gameHash[data.lobbyname].players.push(data.username); // Add the player to the lobby.
+			gameHash[data.lobbyname].gamesChosen[data.username] = [];
+			gameHash[data.lobbyname].scoreHash[data.username] = 0;
+
             // NOTE: The above assumes that there aren't already 4 players in the game. This is checked
             // in the lobbies namespace in 'join-lobby'.
         
@@ -407,7 +412,7 @@ gamesNamespace.on('connection', socket => {
 			// User hasn't chosen game
 			
 			// Create new subgame
-			game.subgame = new Subgame(game.players[0], game.players[1], game.players[2], game.players[3], hands, data.gamechoice);
+			game.subgame = new Subgame(game.players[0], game.players[1], game.players[2], game.players[3], game.handHash, data.gamechoice);
 			
 			
 			io.to(data.lobbyname).emit('subgame-choice', {
@@ -456,24 +461,23 @@ gamesNamespace.on('connection', socket => {
 			if(subgame.current_index == 3) subgame.current_index = 0;
 			else subgame.current_index++;
             subgame.current_player = subgame.players[subgame.current_index];
-            socket.emit('card-chosen-response', {
-                valid: true
+            io.to(data.lobbyname).emit('card-chosen-response', {
+                valid: true,
+				username: data.username,
+				card: card.suit + card.value
             });
 		}
 		else {
             // TODO send error to client
-            socket.emit('card-chosen-response', {
-                valid: false
+            io.to(data.lobbyname).emit('card-chosen-response', {
+                valid: false,
+				username: data.username,
+				error: "Illegal play",
+				card: card.suit + card.value
             });
 
             return;
 		}
-
-        io.to(data.lobbyname).emit('card-played', {
-            cardValue: data.cardValue,
-            cardSuit: data.cardSuit,
-            username: data.username
-        }); // Let the rest of the lobby know what the card was. Can be changed later
 
         if (subgame.current_trick.length == 4) { // Last card played
 		
@@ -498,6 +502,9 @@ gamesNamespace.on('connection', socket => {
         }
 
         // TODO emit a 'your-turn' event to whoever has the next turn
+		io.to(data.lobbyname).emit('your-turn', {
+			username: subgame.current_player
+		});
     });
 });
 
