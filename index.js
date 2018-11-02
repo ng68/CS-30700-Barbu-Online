@@ -666,30 +666,34 @@ gamesNamespace.on('connection', socket => {
 					a[i] = a[j];
 					a[j] = temp;
 				}
+				var b = []
+				for(var i = 0; i < 4; i++) {
+					b.push(a.splice(0, 13).sort((a, b) => b - a));
+				}
+				a = b[0].concat(b[1]).concat(b[2]).concat(b[3]);
 				var cards = []
 				for(var i = 0; i < a.length; i++) {
 					switch(Math.floor(a[i] / 13)) {
 						case 0:
-							var card = new Card('s', a[i] % 13 + 2);
-							cards.push(card);
-							break;
-						case 1:
-							var card = new Card('h', a[i] % 13 + 2);
-							cards.push(card);
-							break;
-						case 2:
 							var card = new Card('d', a[i] % 13 + 2);
 							cards.push(card);
 							break;
-						case 3:
+						case 1:
 							var card = new Card('c', a[i] % 13 + 2);
+							cards.push(card);
+							break;
+						case 2:
+							var card = new Card('h', a[i] % 13 + 2);
+							cards.push(card);
+							break;
+						case 3:
+							var card = new Card('s', a[i] % 13 + 2);
 							cards.push(card);
 							break;
 						default:
 							break;
 					}
 				}
-				console.log(cards);
 				// 2. Assign hands to players
 				let handobject = {};
 				for (var i = 0; i < game.players.length; i++) {
