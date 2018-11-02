@@ -63,7 +63,8 @@ class Hand {
 	
 	as_array() {
 		var array = [];
-		for card in this.cards {
+		for(var i = 0; i < this.cards.length; i++) {
+			var card = this.cards[i];
 			var s = card.suit + card.rank;
 			array.push(s);
 		}
@@ -460,7 +461,8 @@ gamesNamespace.on('connection', socket => {
 			console.log(cards);
             // 2. Assign hands to players
             let handobject = {};
-            for (player in game.players) {
+            for (var i = 0; i < game.players.length; i++) {
+				let player = game.players[i];
 				let player_cards = cards.splice(0,13);
                 let hand = new Hand(player_cards);
     
@@ -632,7 +634,8 @@ gamesNamespace.on('connection', socket => {
 				console.log(cards);
 				// 2. Assign hands to players
 				let handobject = {};
-				for (player in game.players) {
+				for (var i = 0; i < game.players.length; i++) {
+					let player = game.players[i];
 					let player_cards = cards.splice(0,13);
 					let hand = new Hand(player_cards);
 		
@@ -642,7 +645,8 @@ gamesNamespace.on('connection', socket => {
 				}
 				handobject["dealer"] = game.players[game.currentDealer];
 				handobject["scores"] = [];
-				for(player in game.players) {
+				for(var i = 0; i < game.players.length; i++) {
+					let player = game.players[i];
 					handobject["scores"].push(game.scoreHash[player]);
 				}
 				io.to(data.lobbyname).emit('cards-dealt', handobject); // Send the hands to all the clients.
