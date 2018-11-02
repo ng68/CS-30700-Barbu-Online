@@ -1,0 +1,58 @@
+.navbar-custom {
+    color: #FFFFFF;
+    background-color: rgb(0, 0, 0);
+}
+
+.home-container {
+  height: 75vh;
+}
+
+body {
+  background-color: black;
+}
+
+.home-row {
+  height: 100%;
+}
+
+.home-nav {
+  border-bottom: solid;
+  border-color: #A67909;
+  border-radius: 100px;
+  border-width: 3px;
+}
+
+.home-form {
+  margin-left: 0px;
+}
+
+.home-body {
+  background-color: black;
+}
+
+.friend {
+  margin-top: 15px;
+  margin-left: 5px;
+}
+
+#messages {
+  height: 50%;
+  margin-bottom: 10px;
+}
+
+#friend-list {
+  height: 70%;
+  margin-bottom: 10px;
+}
+
+#current-user {
+  margin-right: 12px;
+  font-style: italic;
+  font-size: 13px;
+}
+
+.text-gold {
+  background: -webkit-linear-gradient(#A67909, #F9E6B6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
