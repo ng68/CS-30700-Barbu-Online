@@ -491,7 +491,7 @@ gamesNamespace.on('connection', socket => {
             }
 			handobject["dealer"] = game.players[game.currentDealer];
 			handobject["scores"] = [];
-            socket.emit('cards-dealt', handobject); // Send the hands to all the clients.
+            gamesNamespace.to(data.lobbyname).emit('cards-dealt', handobject); // Send the hands to all the clients.
         }
     });
 
@@ -526,15 +526,14 @@ gamesNamespace.on('connection', socket => {
 			// Add subgame to completed subgames
 			game.gamesChosen[data.username].push(data.gamechoice);
 			
-			socket.emit('subgame-choice', {
+			gamesNamespace.to(data.lobbyname).emit('subgame-choice', {
                 gamechoice: data.gamechoice
             }); // FOR NOW just emit a string of the chosen game
 
-            socket.emit('your-turn', {
+            gamesNamespace.to(data.lobbyname).emit('your-turn', {
                 username: game.players[(game.dealerIndex + 1) % 4]
             });
 		}
-		
 		else {
 			// User has chosen game
 			socket.emit('subgame-chosen-response', "ERROR");
@@ -572,7 +571,7 @@ gamesNamespace.on('connection', socket => {
 			if(subgame.current_index == 3) subgame.current_index = 0;
 			else subgame.current_index++;
             subgame.current_player = subgame.players[subgame.current_index];
-            socket.emit('card-chosen-response', {
+            gamesNamespace.to(data.lobbyname).emit('card-chosen-response', {
                 valid: true,
 				username: data.username,
 				card: card.suit + card.rank
@@ -581,7 +580,7 @@ gamesNamespace.on('connection', socket => {
 		else {
             // TODO send error to client
 			var explanation = subgame.explanation(data.username, card);
-            socket.emit('card-chosen-response', {
+            gamesNamespace.to(data.lobbyname).emit('card-chosen-response', {
                 valid: false,
 				username: data.username,
 				error: "Illegal play",
@@ -626,7 +625,7 @@ gamesNamespace.on('connection', socket => {
 				}
 				
 				if(done) {
-					socket.emit('game-finished', game.scoreHash);
+					gamesNamespace.to(data.lobbyname).emit('game-finished', game.scoreHash);
 					console.log("GAME OVER");
 				}
 				
@@ -688,13 +687,13 @@ gamesNamespace.on('connection', socket => {
 					let player = game.players[i];
 					handobject["scores"].push(game.scoreHash[player]);
 				}
-				socket.emit('cards-dealt', handobject); // Send the hands to all the clients.
+				gamesNamespace.to(data.lobbyname).emit('cards-dealt', handobject); // Send the hands to all the clients.
 			}
 			else {
-				socket.emit('your-turn', {
+				gamesNamespace.to(data.lobbyname).emit('your-turn', {
 				username: subgame.current_player
 				});
-            // io.to(data.lobbyname).emit('game-update', {
+            // gamesNamespace.to(data.lobbyname).emit('game-update', {
                 // // Send data to clients about the outcome of the trick
             // });
 			}
