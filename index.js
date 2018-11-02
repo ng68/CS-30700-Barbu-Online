@@ -63,6 +63,15 @@ class Hand {
 	remove_card(card) {
 		this.cards.splice(this.cards.indexOf(card), 1);
 	}
+	
+	as_array() {
+		var array = [];
+		for card in this.cards {
+			var s = card.suit + card.rank;
+			array.push(s);
+		}
+		return array;
+	}
 }
 
 class Trick {
@@ -366,13 +375,15 @@ gamesNamespace.on('connection', socket => {
             // 2. Assign hands to players
             let handobject = {};
             for (player in game.players) {
-                let hand = [];
+				let player_cards = cards.splice(0,13);
+                let hand = new Hand(player_cards);
     
                 // Assign subset of the deck to each player
-    
-                handobject[player] = hand;
+                handobject[player] = hand.as_array();
+				game.handHash[player] = hand;
             }
-            game.handHash = handobject; // write the hand object to the global data structure
+			handobject["dealer"] = game.players[game.currentDealer];
+			handobject["scores"] = [];
             io.to(data.lobbyname).emit('cards-dealt', handobject); // Send the hands to all the clients.
         }
     });
