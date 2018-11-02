@@ -1,5 +1,5 @@
 // Connects to sockets backend in the /lobbies namespace
-let socket = io('http://localhost:8080/lobbies');
+let socket = io('hhttp://protected-reef-35837.herokuapp.com/lobbies');
 let lobbyNameInput = document.getElementById('lobby-name');
 let table = document.getElementById('table');
 let username = "";

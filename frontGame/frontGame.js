@@ -1,4 +1,4 @@
-let socket = io('http://localhost:8080/games'); //Socket
+let socket = io('http://protected-reef-35837.herokuapp.com/games'); //Socket
 let lobby = localStorage.getItem('lobbyname'); //Lobby currently in 
 let user;  //Current User
 let subgameList = ["Barbu", "Fan Tan", "Hearts", "Last Two", "Losers", "Queens", "Trumps"];
@@ -27,6 +27,10 @@ firebase.auth().onAuthStateChanged( user => {
     query.once("value")
       .then(function(snapshot) {
         user = snapshot.child("username").val();
+        socket.emit('player-info', {
+            username : user,
+            lobbyname : lobby
+        });
       });
     }
     else {
@@ -282,14 +286,17 @@ socket.on('card-chosen-response', data =>{
 });
 
 socket.on('your-turn', data =>{
-    console.log(data.username);
+    document.getElementById("turn").innerHTML = data.username;
     if (data.username === user) {
         myTurn = true;
     }
 });
 
 socket.on('game-finished', data => {
-
+    for (var i = 0; i < 4; i++) {
+        window.alert(Object.keys(data)[i] + " : " + Object.values(data)[i]);
+    }
+    window.location.href = "home.html";
 });
 
 //socket.on('subgame-finished', data => {
