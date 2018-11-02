@@ -332,7 +332,37 @@ gamesNamespace.on('connection', socket => {
             // Code below here prepares the game for start
     
             // 1. Shuffle deck
-    
+			var a = [...Array(52).keys()];
+			for (var i = a.length - 1; i > 0; i--) {
+				var j = Math.floor(Math.random() * (i + 1));
+				var temp = a[i];
+				a[i] = a[j];
+				a[j] = temp;
+			}
+			var cards = []
+			for(var i = 0; i < a.length; i++) {
+				switch(Math.floor(a[i] / 13)) {
+					case 0:
+						var card = new Card('s', a[i] % 13 + 2);
+						cards.push(card);
+						break;
+					case 1:
+						var card = new Card('h', a[i] % 13 + 2);
+						cards.push(card);
+						break;
+					case 2:
+						var card = new Card('d', a[i] % 13 + 2);
+						cards.push(card);
+						break;
+					case 3:
+						var card = new Card('c', a[i] % 13 + 2);
+						cards.push(card);
+						break;
+					default:
+						break;
+				}
+			}
+			console.log(cards);
             // 2. Assign hands to players
             let handobject = {};
             for (player in game.players) {
