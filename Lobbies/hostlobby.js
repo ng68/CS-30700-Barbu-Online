@@ -1,5 +1,5 @@
 // Connects to sockets backend in the /lobbies namespace
-let socket = io('http://protected-reef-35837.herokuapp.com/lobbies');
+let socket = io('https://protected-reef-35837.herokuapp.com/lobbies');
 let table = document.getElementById('table');
 let lobbyname = localStorage.getItem('lobbyname');
 let startgamebtn = document.getElementById('startgamebtn');
