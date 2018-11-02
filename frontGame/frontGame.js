@@ -7,23 +7,23 @@ socket.emit('player-info', {
 });
 var testerBtn = document.getElementById("tester");  //Testing button
 var testBtn = document.getElementById("testGame");  //Testing button
-let subgameList = ["Fan Tan", "No Hearts", "No King","No Last Two", "No Queens","No Tricks", "Trumps"];
+let subgameList = ["Barbu", "Fan Tan", "Hearts", "Last Two", "Losers", "Queens", "Trumps"];
 let players = {};   //Players in your lobby (Left, Top, Right)
 let currentDealer = 0;
 let currentSubgame;
 let myTurn = false;  //Current user position relative to other players
-let lowerhand = new cards.Hand({faceUp:true, y:500});  //Initializing all of the visuals for hands and discard piles
-let lefthand = new cards.Hand({faceUp:false, x:200});
-let upperhand = new cards.Hand({faceUp:false, y:80});	
-let righthand = new cards.Hand({faceUp:false, x:1000});
-let lowerDiscardPile = new cards.Deck({faceUp:true, y:320});
-let upperDiscardPile = new cards.Deck({faceUp:true, y:220});
-let leftDiscardPile = new cards.Deck({faceUp:true, x:550});
-let rightDiscardPile = new cards.Deck({faceUp:true, x:680});
-let lowerTrickPile = new cards.Deck({faceUp:true, x:700, y:450});
-let upperTrickPile = new cards.Deck({faceUp:true, x:200, y:160});
-let leftTrickPile = new cards.Deck({faceUp:true, x:300, y:250});
-let rightTrickPile = new cards.Deck({faceUp:true, x:900, y:100});
+let lowerhand = new cards.Hand({faceUp:true, x:600, y:500});  //Initializing all of the visuals for hands and discard piles
+let lefthand = new cards.Hand({faceUp:false, x:200, y:270});
+let upperhand = new cards.Hand({faceUp:false, x:600, y:80});	
+let righthand = new cards.Hand({faceUp:false, x:1000, y:270});
+let lowerDiscardPile = new cards.Deck({faceUp:true, x:600, y:320});
+let upperDiscardPile = new cards.Deck({faceUp:true, x:600, y:220});
+let leftDiscardPile = new cards.Deck({faceUp:true, x:520, y:270});
+let rightDiscardPile = new cards.Deck({faceUp:true, x:680, y:270});
+let lowerTrickPile = new cards.Deck({faceUp:false, x:850, y:500});
+let upperTrickPile = new cards.Deck({faceUp:false, x:350, y:80});
+let leftTrickPile = new cards.Deck({faceUp:false, x:200, y:150});
+let rightTrickPile = new cards.Deck({faceUp:false, x:1000, y:390});
 let loc = {};  //Keeps track of the reference to the location of each Card
 
 /*socket.on('player-joined', data => {
@@ -67,16 +67,25 @@ socket.on('cards-dealt', data => {
         if (Object.keys(data)[i] === user) {
             myPosition = i;
             players = {
-                left: data.players[(i+1)%4],
-                top: data.players[(i+2)%4],
-                right: data.players[(i+3)%4]
+                left: Object.keys(data)[(i+1)%4],
+                top: Object.keys(data)[(i+2)%4],
+                right: Object.keys(data)[(i+3)%4]
             };
+            document.getElementById("player1").innerHTML = user;
+            document.getElementById("player1score").innerHTML = data.scores[myPosition];
+            document.getElementById("player2").innerHTML = players.left;
+            document.getElementById("player2score").innerHTML = data.scores[(myPosition+1)%4];
+            document.getElementById("player3").innerHTML = players.top;
+            document.getElementById("player3score").innerHTML = data.scores[(myPosition+2)%4];
+            document.getElementById("player4").innerHTML = players.right;
+            document.getElementById("player4score").innerHTML = data.scores[(myPosition+3)%4]; 
         }
     }
     $('.card').remove();  //Initializing all of the visuals for hands and discard piles
     var dealDeck = [];
-    currentDealer = data.user;
-    for(var i = 0; i < data.Size; i++) {
+    currentDealer = data.dealer;
+    document.getElementById("dealer").innerHTML = currentDealer;
+    for(var i = 0; i < data[user].length; i++) {
         dealDeck.push(data[players.right][i]);
         dealDeck.push(data[players.top][i]);
         dealDeck.push(data[players.left][i]);
@@ -90,7 +99,7 @@ socket.on('cards-dealt', data => {
     let deck = new cards.Deck();
     deck.addCards(cards.all); 
     deck.render({immediate:true});
-    deck.deal(13, [lowerhand, lefthand, upperhand, righthand], 50);
+    deck.deal(13, [lowerhand, lefthand, upperhand, righthand], 10);
     //prompt with subgame choice if dealer
     if (user === currentDealer) {
         let temp = "";
@@ -99,6 +108,8 @@ socket.on('cards-dealt', data => {
         }
         document.getElementById("radio-home").innerHTML = temp;
         //Bring up subgame prompt
+        document.getElementById("cSubgame").style.visibility = 'visible';
+        document.getElementById("trump").style.visibility = 'hidden';
         $('#myModal').modal('show');
     }else {
         //Waiting prompt
@@ -106,22 +117,49 @@ socket.on('cards-dealt', data => {
     }
 });
 
+function chooseTrump(){
+    let cTrump = document.querySelector('input[name = "trump"]:checked').value;
+    socket.emit('subgame-chosen', {
+        lobbyname : lobby, 
+        gamechoice : currentSubgame,
+        username : user,
+        trump : cTrump
+    });
+    $('#myModal').modal('hide');
+    for(var i = 0; i < subgameList.length; i++){ 
+        if (subgameList[i] === currentSubgame) {
+          subgameList.splice(i, 1); 
+        }
+     }
+}
+
 function chooseSubgame (){
     if ($('input[name=subgame]:checked').length > 0) {
         // do something here
         let chosen = document.querySelector('input[name = "subgame"]:checked').value;
-        currentSubgame = chosen; 
+        currentSubgame = chosen;
+        if (chosen === "Trumps") {
+            let temp = "";
+            temp += "<input type=\"radio\" name=\"trump\" value= \"Clubs\">Clubs<br>";
+            temp += "<input type=\"radio\" name=\"trump\" value= \"Diamonds\">Diamonds<br>";
+            temp += "<input type=\"radio\" name=\"trump\" value= \"Hearts\">Hearts<br>";
+            temp += "<input type=\"radio\" name=\"trump\" value= \"Spades\">Spades<br>";
+            document.getElementById("radio-home").innerHTML = temp;
+            document.getElementById("cSubgame").style.visibility = 'hidden';
+            document.getElementById("trump").style.visibility = 'visible';
+            return;
+        } 
         socket.emit('subgame-chosen', {
             lobbyname : lobby, 
             gamechoice : chosen,
             username : user
         });
+        $('#myModal').modal('hide');
         for(var i = 0; i < subgameList.length; i++){ 
             if (subgameList[i] === chosen) {
               subgameList.splice(i, 1); 
             }
          }
-        $('#myModal').modal('hide');
     }
     
 }
@@ -129,7 +167,7 @@ function chooseSubgame (){
 socket.on('subgame-choice', data => {
     currentSubgame = data.gamechoice;
     window.alert(currentSubgame);
-    //update a visual to let everyone know what subgame is being played
+    document.getElementById("subgame").innerHTML = currentSubgame;
 });
 
 //Ability to click your own hand when it is your turn.
@@ -144,11 +182,60 @@ lowerhand.click(function(card){
     }
 });
 
+/*upperhand.click(function(card){
+    upperDiscardPile.addCard(card);
+	upperDiscardPile.render();
+    upperhand.render();
+});
+*/
+
+/*lefthand.click(function(card){
+    leftDiscardPile.addCard(card);
+	leftDiscardPile.render();
+    lefthand.render();
+});
+*/
+
+/*righthand.click(function(card){
+    rightDiscardPile.addCard(card);
+	rightDiscardPile.render();
+    righthand.render();
+});
+*/
+
 socket.on('card-chosen-response', data =>{
     if(data.valid) {
         myTurn = false;
+        let dataCard = data.cardSuit + (data.cardValue).toString();
+        let tempCard;
+        for (var i = 0; i < loc.names.length; i++) {
+            if (dataCard === loc.names[i]) {
+                tempCard = loc.cards[i];
+            }
+        }
+        if (data.username === players.left) {
+            leftDiscardPile.addCard(tempCard);
+            leftDiscardPile.render();
+            lefthand.render();
+        }else if (data.username === players.top){
+            upperDiscardPile.addCard(tempCard);
+            upperDiscardPile.render();
+            upperhand.render();
+        }else if (data.username === players.right){
+            rightDiscardPile.addCard(tempCard);
+            rightDiscardPile.render();
+            righthand.render();
+        }else if (data.username === user){
+            lowerDiscardPile.addCard(tempCard);
+            lowerDiscardPile.render();
+            lowerhand.render();
+        }else {
+            window.alert("Error: Invalid user for played-card");
+        }
     }else {
-        window.alert("Invalid card chosen");
+        if (data.username === user) {
+            window.alert(data.error);
+        }
     }
 });
 
@@ -159,37 +246,7 @@ socket.on('your-turn', data =>{
     }
 });
 
-//When someone else plays a card we need to update the visuals.
-socket.on('card-played', data => {
-    let dataCard = data.cardSuit + (data.cardValue).toString();
-    let tempCard;
-    for (var i = 0; i < loc.names.length; i++) {
-        if (dataCard === loc.names[i]) {
-            tempCard = loc.cards[i];
-        }
-    }
-    if (data.username === players.left) {
-        leftDiscardPile.addCard(tempCard);
-	    leftDiscardPile.render();
-	    lefthand.render();
-    }else if (data.username === players.top){
-        upperDiscardPile.addCard(tempCard);
-	    upperDiscardPile.render();
-	    upperhand.render();
-    }else if (data.username === players.right){
-        rightDiscardPile.addCard(tempCard);
-	    rightDiscardPile.render();
-	    righthand.render();
-    }else if (data.username === user){
-        lowerDiscardPile.addCard(tempCard);
-	    lowerDiscardPile.render();
-	    lowerhand.render();
-    }else {
-        window.alert("Error: Invalid user for played-card");
-    }
-});
-
-socket.on('game-update', data => {
+socket.on('game-finished', data => {
 
 });
 
