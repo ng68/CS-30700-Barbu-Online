@@ -304,6 +304,7 @@ socket.on('game-finished', data => {
 //});
 
 socket.on('game-update', data => {
+    setTimeout(()=>{}, 1000);
     if (data.username === players.left) {
         leftTrickPile.addCard(leftDiscardPile.topCard());
         leftTrickPile.addCard(upperDiscardPile.topCard());
