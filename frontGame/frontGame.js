@@ -1,9 +1,21 @@
-let socket = io('http://localhost:8080'); //Socket
+let socket = io('http://localhost:8080/games'); //Socket
 let lobby = "Lobby"; //Lobby currently in
 let user = "Larry";  //Current User
 socket.emit('player-info', {
     lobbyname : lobby,
     username : user
+});
+socket.emit('player-info', {
+    lobbyname : lobby,
+    username : "H"
+});
+socket.emit('player-info', {
+    lobbyname : lobby,
+    username : "B"
+});
+socket.emit('player-info', {
+    lobbyname : lobby,
+    username : "N"
 });
 var testerBtn = document.getElementById("tester");  //Testing button
 var testBtn = document.getElementById("testGame");  //Testing button
@@ -206,10 +218,9 @@ lowerhand.click(function(card){
 socket.on('card-chosen-response', data =>{
     if(data.valid) {
         myTurn = false;
-        let dataCard = data.cardSuit + (data.cardValue).toString();
         let tempCard;
         for (var i = 0; i < loc.names.length; i++) {
-            if (dataCard === loc.names[i]) {
+            if (data.card === loc.names[i]) {
                 tempCard = loc.cards[i];
             }
         }

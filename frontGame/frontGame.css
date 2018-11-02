@@ -43,24 +43,6 @@ h1 {
 }
 a:visited {color:blue;}
 
-#startGame {
-	position: absolute;
-	left:310px;
-	top:170px;
-}
-#testGame {
-	position: absolute;
-	left:510px;
-	top:170px;
-}
-
-#tester {
-    visibility: hidden;
-    position: absolute;
-	left:510px;
-	top:170px;
-}
-
 /* <><><><><><> */
 
 .scorecard {
