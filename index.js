@@ -35,11 +35,8 @@ class Card {
 }
 
 class Hand {
-	constructor(integer_array) {
-		this.cards = []
-		for(var i = 0; i < integer_array.length; i++) {
-			this.cards.push(new Card(integer_array[i]));
-		}
+	constructor(cards) {
+		this.cards = cards;
 	}
 	
 	has_suit(suit) {
