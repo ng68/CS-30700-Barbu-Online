@@ -587,10 +587,17 @@ gamesNamespace.on('connection', socket => {
 			
 			// Remove card from hand
 			game.handHash[data.username].remove_card(card);
+			
+			if(subgame.current_trick.cards.length == 1) {
+				gamesNamespace.to(data.lobbyname).emit('game-update', {
+					username: subgame.current_player
+            	});
+			}
 			// Update current player
 			if(subgame.current_index == 3) subgame.current_index = 0;
 			else subgame.current_index++;
             subgame.current_player = subgame.players[subgame.current_index];
+
             gamesNamespace.to(data.lobbyname).emit('card-chosen-response', {
                 valid: true,
 				username: data.username,
@@ -714,9 +721,6 @@ gamesNamespace.on('connection', socket => {
 				gamesNamespace.to(data.lobbyname).emit('cards-dealt', handobject); // Send the hands to all the clients.
 			}
 			else {
-				gamesNamespace.to(data.lobbyname).emit('game-update', {
-					username: subgame.current_player
-            	});
 				console.log("Win-Trick");
 				gamesNamespace.to(data.lobbyname).emit('your-turn', {
 					username: subgame.current_player
