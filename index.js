@@ -158,7 +158,8 @@ class Subgame {
 				}
 			}
 		}
-		
+	}
+	
 	explanation(player, card) {
 		if(this.current_trick.cards.length != 0) {
 			// Not the lead
