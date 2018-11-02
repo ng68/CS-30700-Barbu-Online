@@ -1,5 +1,5 @@
 let socket = io('http://localhost:8080/games'); //Socket
-let lobby = "Lobby"; //Lobby currently in localStorage.getItem('lobbyname')
+let lobby = localStorage.getItem('lobbyname'); //Lobby currently in 
 let user;  //Current User
 let subgameList = ["Barbu", "Fan Tan", "Hearts", "Last Two", "Losers", "Queens", "Trumps"];
 let players = {};   //Players in your lobby (Left, Top, Right)
@@ -19,6 +19,20 @@ let upperTrickPile = new cards.Deck({faceUp:false, x:350, y:80});
 let leftTrickPile = new cards.Deck({faceUp:false, x:200, y:150});
 let rightTrickPile = new cards.Deck({faceUp:false, x:1000, y:390});
 let loc = {};  //Keeps track of the reference to the location of each Card
+
+firebase.auth().onAuthStateChanged( user => {
+    if (user) 
+    { 
+    var query = firebase.database().ref("users/" + user.uid);
+    query.once("value")
+      .then(function(snapshot) {
+        user = snapshot.child("username").val();
+      });
+    }
+    else {
+        console.log("User not signed in");
+    }
+  });
 /*
 socket.on('player-joined', data => {
     befPlayers = data.username;
