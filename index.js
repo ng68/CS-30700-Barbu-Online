@@ -1,4 +1,8 @@
-const io = require('socket.io')(8080);
+let port = process.env.PORT;
+if (port == null || port == "") {
+	port = 8080;
+}
+const io = require('socket.io')(port);
 
 const chatNamespace = io.of('/chat');
 const lobbiesNamespace = io.of('/lobbies');
