@@ -477,11 +477,11 @@ gamesNamespace.on('connection', socket => {
 			for(var i = 0; i < a.length; i++) {
 				switch(Math.floor(a[i] / 13)) {
 					case 0:
-						var card = new Card('c', a[i] % 13 + 2);
+						var card = new Card('d', a[i] % 13 + 2);
 						cards.push(card);
 						break;
 					case 1:
-						var card = new Card('d', a[i] % 13 + 2);
+						var card = new Card('c', a[i] % 13 + 2);
 						cards.push(card);
 						break;
 					case 2:
