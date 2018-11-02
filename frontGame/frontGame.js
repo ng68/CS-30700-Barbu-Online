@@ -1,4 +1,4 @@
-let socket = io('http://protected-reef-35837.herokuapp.com/games'); //Socket
+let socket = io('https://protected-reef-35837.herokuapp.com/games'); //Socket
 let lobby = localStorage.getItem('lobbyname'); //Lobby currently in 
 let user;  //Current User
 let subgameList = ["Barbu", "Fan Tan", "Hearts", "Last Two", "Losers", "Queens", "Trumps"];
