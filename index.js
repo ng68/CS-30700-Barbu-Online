@@ -158,6 +158,7 @@ class Subgame {
 				}
 			}
 		}
+		return true;
 	}
 	
 	explanation(player, card) {
@@ -512,11 +513,12 @@ gamesNamespace.on('connection', socket => {
 			}
 			game.subgame = new Subgame(players[0], players[1], players[2], players[3], game.handHash, data.gamechoice);
 			
+			// Add subgame to completed subgames
+			game.gamesChosen[data.username].push(data.gamechoice);
 			
 			socket.emit('subgame-choice', {
                 gamechoice: data.gamechoice
             }); // FOR NOW just emit a string of the chosen game
-                                                                       // (May need to change later)
 
             socket.emit('your-turn', {
                 username: game.players[(game.dealerIndex + 1) % 4]
@@ -551,7 +553,7 @@ gamesNamespace.on('connection', socket => {
         // TODO evaluate if card is valid
 		if(subgame.legal_play(data.username, card)) {
 			// Add card to trick
-			subgame.current_trick.add(data.username, card);
+			subgame.current_trick.add_card(data.username, card);
 			
 			// Remove card from hand
 			subgame.hands[data.username].remove_card(card);
@@ -563,7 +565,7 @@ gamesNamespace.on('connection', socket => {
             socket.emit('card-chosen-response', {
                 valid: true,
 				username: data.username,
-				card: card.suit + card.value
+				card: card.suit + card.rank
             });
 		}
 		else {
@@ -573,7 +575,7 @@ gamesNamespace.on('connection', socket => {
                 valid: false,
 				username: data.username,
 				error: "Illegal play",
-				card: card.suit + card.value,
+				card: card.suit + card.rank,
 				error: explanation
             });
 
