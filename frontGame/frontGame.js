@@ -1,5 +1,5 @@
 let socket = io('http://localhost:8080/games'); //Socket
-let lobby = "Lobby"; //Lobby currently in
+let lobby = localStorage.getItem('lobbyname'); //Lobby currently in 
 let user;  //Current User
 let subgameList = ["Barbu", "Fan Tan", "Hearts", "Last Two", "Losers", "Queens", "Trumps"];
 let players = {};   //Players in your lobby (Left, Top, Right)
@@ -19,6 +19,20 @@ let upperTrickPile = new cards.Deck({faceUp:false, x:350, y:80});
 let leftTrickPile = new cards.Deck({faceUp:false, x:200, y:150});
 let rightTrickPile = new cards.Deck({faceUp:false, x:1000, y:390});
 let loc = {};  //Keeps track of the reference to the location of each Card
+
+firebase.auth().onAuthStateChanged( user => {
+    if (user) 
+    { 
+    var query = firebase.database().ref("users/" + user.uid);
+    query.once("value")
+      .then(function(snapshot) {
+        user = snapshot.child("username").val();
+      });
+    }
+    else {
+        console.log("User not signed in");
+    }
+  });
 /*
 socket.on('player-joined', data => {
     befPlayers = data.username;
@@ -168,10 +182,10 @@ function chooseSubgame (){
         currentSubgame = chosen;
         if (chosen === "Trumps") {
             let temp = "";
-            temp += "<input type=\"radio\" name=\"trump\" value= \"Clubs\">Clubs<br>";
-            temp += "<input type=\"radio\" name=\"trump\" value= \"Diamonds\">Diamonds<br>";
-            temp += "<input type=\"radio\" name=\"trump\" value= \"Hearts\">Hearts<br>";
-            temp += "<input type=\"radio\" name=\"trump\" value= \"Spades\">Spades<br>";
+            temp += "<input type=\"radio\" name=\"trump\" value= \"c\">Clubs<br>";
+            temp += "<input type=\"radio\" name=\"trump\" value= \"d\">Diamonds<br>";
+            temp += "<input type=\"radio\" name=\"trump\" value= \"h\">Hearts<br>";
+            temp += "<input type=\"radio\" name=\"trump\" value= \"s\">Spades<br>";
             document.getElementById("radio-home").innerHTML = temp;
             document.getElementById("cSubgame").style.visibility = 'hidden';
             document.getElementById("trump").style.visibility = 'visible';
@@ -180,7 +194,8 @@ function chooseSubgame (){
         socket.emit('subgame-chosen', {
             lobbyname : lobby, 
             gamechoice : chosen,
-            username : user
+            username : user,
+            trump : ""
         });
         $('#myModal').modal('hide');
         for(var i = 0; i < subgameList.length; i++){ 
@@ -267,9 +282,9 @@ socket.on('card-chosen-response', data =>{
 });
 
 socket.on('your-turn', data =>{
+    console.log(data.username);
     if (data.username === user) {
         myTurn = true;
-        window.alert("It's your turn!");
     }
 });
 
@@ -277,12 +292,12 @@ socket.on('game-finished', data => {
 
 });
 
-socket.on('subgame-finished', data => {
-    //update dealer++%4
-});
+//socket.on('subgame-finished', data => {
+//    //update dealer++%4
+//});
 
 socket.on('game-update', data => {
-    if (data.user === players.left) {
+    if (data.username === players.left) {
         leftTrickPile.addCard(leftDiscardPile.topCard());
         leftTrickPile.addCard(upperDiscardPile.topCard());
         leftTrickPile.addCard(rightDiscardPile.topCard());
@@ -292,7 +307,7 @@ socket.on('game-update', data => {
         rightDiscardPile.render();
         lowerDiscardPile.render();
         leftTrickPile.render();
-    }else if (data.user === players.top){
+    }else if (data.username === players.top){
         upperTrickPile.addCard(leftDiscardPile.topCard());
         upperTrickPile.addCard(upperDiscardPile.topCard());
         upperTrickPile.addCard(rightDiscardPile.topCard());
@@ -302,7 +317,7 @@ socket.on('game-update', data => {
         lowerDiscardPile.render();
         leftDiscardPile.render();
         upperTrickPile.render();
-    }else if (data.user === players.right){
+    }else if (data.username === players.right){
         rightTrickPile.addCard(leftDiscardPile.topCard());
         rightTrickPile.addCard(upperDiscardPile.topCard());
         rightTrickPile.addCard(rightDiscardPile.topCard());
@@ -312,7 +327,7 @@ socket.on('game-update', data => {
         leftDiscardPile.render();
         upperDiscardPile.render();
         rightTrickPile.render();
-    }else if (data.user === user){
+    }else if (data.username === user){
         lowerTrickPile.addCard(leftDiscardPile.topCard());
         lowerTrickPile.addCard(upperDiscardPile.topCard());
         lowerTrickPile.addCard(rightDiscardPile.topCard());
