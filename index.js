@@ -530,8 +530,9 @@ gamesNamespace.on('connection', socket => {
         // TODO update the gameplay logic in here. Right now it's very primitive and only
         // works for the trick-based games.
 
-		card = new Card(data.cardSuit, data.cardValue);
-		subgame = gameHash[data.lobbyname].subgame;
+		var card = new Card(data.cardSuit, data.cardValue);
+		var subgame = gameHash[data.lobbyname].subgame;
+		var game = gameHash[data.lobbyname];
 		
         // TODO evaluate if card is valid
 		if(subgame.legal_play(data.username, card)) {
@@ -581,16 +582,77 @@ gamesNamespace.on('connection', socket => {
 			if(subgame.game_done()) {
 				// GAME IS OVER
 				// TOOD send game over update, deal new hands
+				
+				// Update scores
+				for(var i = 0; i < game.players.length; i++) {
+					var p = game.players[i];
+					game.scoreHash[p] += subgame.computeScore(p);
+				}
+				
+				// Update dealer
+				game.dealerIndex = (game.dealerIndex + 1) % 4;
+				var new_dealer = game.players[game.dealerIndex];
+				
+				// Clear current subgame
+				game.subgame = {};
+				
+				// Prepare next hand
+				
+				// 1. Shuffle deck
+				var a = [...Array(52).keys()];
+				for (var i = a.length - 1; i > 0; i--) {
+					var j = Math.floor(Math.random() * (i + 1));
+					var temp = a[i];
+					a[i] = a[j];
+					a[j] = temp;
+				}
+				var cards = []
+				for(var i = 0; i < a.length; i++) {
+					switch(Math.floor(a[i] / 13)) {
+						case 0:
+							var card = new Card('s', a[i] % 13 + 2);
+							cards.push(card);
+							break;
+						case 1:
+							var card = new Card('h', a[i] % 13 + 2);
+							cards.push(card);
+							break;
+						case 2:
+							var card = new Card('d', a[i] % 13 + 2);
+							cards.push(card);
+							break;
+						case 3:
+							var card = new Card('c', a[i] % 13 + 2);
+							cards.push(card);
+							break;
+						default:
+							break;
+					}
+				}
+				console.log(cards);
+				// 2. Assign hands to players
+				let handobject = {};
+				for (player in game.players) {
+					let player_cards = cards.splice(0,13);
+					let hand = new Hand(player_cards);
+		
+					// Assign subset of the deck to each player
+					handobject[player] = hand.as_array();
+					game.handHash[player] = hand;
+				}
+				handobject["dealer"] = game.players[game.currentDealer];
+				handobject["scores"] = [];
+				io.to(data.lobbyname).emit('cards-dealt', handobject); // Send the hands to all the clients.
 			}
-            io.to(data.lobbyname).emit('game-update', {
-                // Send data to clients about the outcome of the trick
-            });
-        }
-
-        // TODO emit a 'your-turn' event to whoever has the next turn
-		io.to(data.lobbyname).emit('your-turn', {
-			username: subgame.current_player
-		});
+			else {
+				io.to(data.lobbyname).emit('your-turn', {
+				username: subgame.current_player
+				});
+            // io.to(data.lobbyname).emit('game-update', {
+                // // Send data to clients about the outcome of the trick
+            // });
+			}
+		}
     });
 });
 
