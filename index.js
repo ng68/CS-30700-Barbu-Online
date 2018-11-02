@@ -698,6 +698,11 @@ gamesNamespace.on('connection', socket => {
             // });
 			}
 		}
+		else {
+			gamesNamespace.to(data.lobbyname).emit('your-turn', {
+				username: subgame.current_player
+			});
+		}
     });
 });
 
