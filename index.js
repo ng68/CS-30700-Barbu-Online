@@ -582,10 +582,12 @@ gamesNamespace.on('connection', socket => {
             return;
 		}
 
-        if (subgame.current_trick.length == 4) { // Last card played
+        if (subgame.current_trick.cards.length == 4) { // Last card played
 		
-            // TODO Evaluate who won the trick
+            // Evaluate who won the trick
 			var winner = subgame.current_trick.winner();
+			subgame.current_player = winner;
+			subgame.current_index = subgame.players.indexOf(winner);
 
 			if(subgame.num_tricks >= 11) subgame.last2.push(winner);
 			// Add cards to trick winner's taken cards
@@ -598,12 +600,23 @@ gamesNamespace.on('connection', socket => {
 
 			if(subgame.game_done()) {
 				// GAME IS OVER
-				// TOOD send game over update, deal new hands
 				
 				// Update scores
 				for(var i = 0; i < game.players.length; i++) {
 					var p = game.players[i];
-					game.scoreHash[p] += subgame.computeScore(p);
+					game.scoreHash[p] += subgame.compute_score(p);
+				}
+
+				// Check if entire game is done
+				done = true;
+				for(var i = 0; i < game.players.length; i++) {
+					if(game.gamesChosen[game.players[i]].length != 7) {
+						done = false;
+					}
+				}
+				
+				if(done) {
+					console.log("GAME OVER");
 				}
 				
 				// Update dealer
