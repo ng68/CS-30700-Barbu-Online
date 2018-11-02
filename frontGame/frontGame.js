@@ -20,10 +20,10 @@ let leftTrickPile = new cards.Deck({faceUp:false, x:200, y:150});
 let rightTrickPile = new cards.Deck({faceUp:false, x:1000, y:390});
 let loc = {};  //Keeps track of the reference to the location of each Card
 
-firebase.auth().onAuthStateChanged( user => {
-    if (user) 
+firebase.auth().onAuthStateChanged( usern => {
+    if (usern) 
     { 
-    var query = firebase.database().ref("users/" + user.uid);
+    var query = firebase.database().ref("users/" + usern.uid);
     query.once("value")
       .then(function(snapshot) {
         user = snapshot.child("username").val();
