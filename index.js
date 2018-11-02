@@ -112,6 +112,7 @@ class Subgame {
 		}
 		this.game_type = game_type;
 		this.num_tricks = 0;
+		this.last2 = [];
 	}
 	
 	legal_play(player, card) {
@@ -294,6 +295,12 @@ class Subgame {
 				break;
 			case "Losers":
 				return (this.cards_taken[player].length / 4) * -2;
+				break;
+			case "Last Two":
+				score = 0;
+				if(this.last2[0] == player) score -= 10;
+				if(this.last2[1] == player) score -= 20;
+				return score;
 				break;
 			default:
 				return 0;
@@ -573,6 +580,7 @@ gamesNamespace.on('connection', socket => {
             // TODO Evaluate who won the trick
 			var winner = subgame.current_trick.winner();
 
+			if(subgame.num_tricks >= 11) subgame.last2.push(winner);
 			// Add cards to trick winner's taken cards
 			for(var i = 0; i < 4; i++) {
 				subgame.cards_taken[winner].push(subgame.current_trick.cards[i]);
