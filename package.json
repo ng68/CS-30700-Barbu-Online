@@ -21,5 +21,8 @@
   "homepage": "https://github.com/ng68/CS-30700-Barbu-Online#readme",
   "dependencies": {
     "socket.io": "^2.1.1"
+  },
+  "engines": {
+    "node": "8.x"
   }
 }
