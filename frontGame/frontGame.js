@@ -47,7 +47,7 @@ socket.on('player-joined', data => {
 });
 */
 
-document.getElementById("p1").addEventListener('click', e => {
+/*document.getElementById("p1").addEventListener('click', e => {
     user = "p1";
     socket.emit('player-info', {
         username : user,
