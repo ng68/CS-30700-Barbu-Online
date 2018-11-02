@@ -1,24 +1,6 @@
 let socket = io('http://localhost:8080/games'); //Socket
 let lobby = "Lobby"; //Lobby currently in
-let user = "Larry";  //Current User
-socket.emit('player-info', {
-    lobbyname : lobby,
-    username : user
-});
-socket.emit('player-info', {
-    lobbyname : lobby,
-    username : "H"
-});
-socket.emit('player-info', {
-    lobbyname : lobby,
-    username : "B"
-});
-socket.emit('player-info', {
-    lobbyname : lobby,
-    username : "N"
-});
-var testerBtn = document.getElementById("tester");  //Testing button
-var testBtn = document.getElementById("testGame");  //Testing button
+let user;  //Current User
 let subgameList = ["Barbu", "Fan Tan", "Hearts", "Last Two", "Losers", "Queens", "Trumps"];
 let players = {};   //Players in your lobby (Left, Top, Right)
 let currentDealer = 0;
@@ -37,8 +19,8 @@ let upperTrickPile = new cards.Deck({faceUp:false, x:350, y:80});
 let leftTrickPile = new cards.Deck({faceUp:false, x:200, y:150});
 let rightTrickPile = new cards.Deck({faceUp:false, x:1000, y:390});
 let loc = {};  //Keeps track of the reference to the location of each Card
-
-/*socket.on('player-joined', data => {
+/*
+socket.on('player-joined', data => {
     befPlayers = data.username;
     host = befPlayers[0];
     if (befPlayers.length === 4 && host === user) {
@@ -46,6 +28,38 @@ let loc = {};  //Keeps track of the reference to the location of each Card
     }
 });
 */
+
+document.getElementById("p1").addEventListener('click', e => {
+    user = "p1";
+    socket.emit('player-info', {
+        username : user,
+        lobbyname : lobby
+    });
+});
+
+document.getElementById("p2").addEventListener('click', e => {
+    user = "p2";
+    socket.emit('player-info', {
+        username : user,
+        lobbyname : lobby
+    });
+});
+
+document.getElementById("p3").addEventListener('click', e => {
+    user = "p3";
+    socket.emit('player-info', {
+        username : user,
+        lobbyname : lobby
+    });
+});
+
+document.getElementById("p4").addEventListener('click', e => {
+    user = "p4";
+    socket.emit('player-info', {
+        username : user,
+        lobbyname : lobby
+    });
+});
 
 //When the game is started.
 /*testerBtn.addEventListener('click', e => {
@@ -75,6 +89,7 @@ let loc = {};  //Keeps track of the reference to the location of each Card
 
 //Run this for each subgame that we run this also populates the hands.
 socket.on('cards-dealt', data => {
+    console.log(data);
     for (var i = 0; i < 4;i++) {
         if (Object.keys(data)[i] === user) {
             myPosition = i;
@@ -122,6 +137,7 @@ socket.on('cards-dealt', data => {
         //Bring up subgame prompt
         document.getElementById("cSubgame").style.visibility = 'visible';
         document.getElementById("trump").style.visibility = 'hidden';
+        //button hide
         $('#myModal').modal('show');
     }else {
         //Waiting prompt
@@ -177,8 +193,8 @@ function chooseSubgame (){
 }
 
 socket.on('subgame-choice', data => {
+    $('#waitingModal').modal('hide');
     currentSubgame = data.gamechoice;
-    window.alert(currentSubgame);
     document.getElementById("subgame").innerHTML = currentSubgame;
 });
 

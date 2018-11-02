@@ -42,7 +42,24 @@ h1 {
 	box-shadow:#111 1px 1px 2px;
 }
 a:visited {color:blue;}
+ #p1 {
+	 position : absolute;
+ }
 
+ #p2 {
+	position : absolute;
+	left : 200px;
+}
+
+#p3 {
+	position : absolute;
+	left : 400px;
+}
+
+#p4 {
+	position : absolute;
+	left : 600px;
+}
 /* <><><><><><> */
 
 .scorecard {
