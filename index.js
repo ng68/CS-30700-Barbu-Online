@@ -211,8 +211,47 @@ class Subgame {
 		return false;
 	}
 	
-	compute_score() {
-		return;
+	compute_score(player) {
+		switch(this.game_type) {
+			case "Trumps":
+				return (this.cards_taken[player].length / 4) * 5;
+				break;
+			case "Barbu":
+				for(var i = 0; i < this.cards_taken[player].length; i++) {
+					var c = this.cards_taken[player][i];
+					if(c.suit == 'h' && c.card == 'King') {
+						return -15;
+					}
+				}
+				return 0;
+				break;
+			case "Queens":
+				var num_queens = 0;
+				for(var i = 0; i < this.cards_taken[player].length; i++) {
+					var c = this.cards_taken[player][i];
+					if(c.card == 'Queen') {
+						num_queens++;
+					}
+				}
+				return num_queens * -6;
+				break;
+			case "Hearts":
+				var score = 0;
+				for(var i = 0; i < this.cards_taken[player].length; i++) {
+					var c = this.cards_taken[player][i];
+					if(c.suit == 'h') {
+						if(c.card == 'Ace') score -= 6;
+						else score -= 2;
+					}
+				}
+				return score;
+				break;
+			case "Losers":
+				return (this.cards_taken[player].length / 4) * -2;
+				break;
+			default:
+				return 0;
+		}
 	}
 }
 
