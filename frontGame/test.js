@@ -12,15 +12,10 @@ io.on('connection', socket => {
         tester2.push('s' + (i).toString());
         tester3.push('d' + (i).toString());
     }
-    socket.emit('cards-dealt', {
-        Larry : tester, //["h2", "h3"...]
-        George : tester1,
-        Paul : tester2,
-        Harry : tester3,
-        dealer : "Larry",
-        scores : [20, -1, -5, -10]
-    });
-    
+    socket.emit('game-finished', {
+        Bole : [10, true]
+    }); 
+} /*
     socket.on('subgame-chosen', data => {
         socket.emit('subgame-choice', {
             gamechoice : data.gamechoice
