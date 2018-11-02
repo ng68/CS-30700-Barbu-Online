@@ -73,7 +73,8 @@ class Hand {
 }
 
 class Trick {
-	constructor() {
+	constructor(trump) {
+		this.trump = trump;
 		this.cards = [];
 		this.players = [];
 	}
@@ -89,6 +90,14 @@ class Trick {
 			if(this.cards[i].suit == this.cards[0].suit && this.cards[i].rank > this.cards[max].rank) {
 				max = i;
 			}
+			else if(this.cards[i].suit == this.trump && this.cards[max].suit == this.trump && this.cards[i].rank > this.cards[max].rank) {
+				// Over-trump
+				max = i;
+			}
+			else if(this.cards[i].suit == this.trump && this.cards[max].suit != this.trump) {
+				// Trump
+				max = i;
+			}
 		}
 		return this.players[max];
 	}
@@ -100,12 +109,12 @@ class Subgame {
 	// int current_player (corresponds to index of players array)
 	// current_trick
 	// cards_taken
-	constructor(dealer, p2, p3, p4, hands, game_type) {
+	constructor(dealer, p2, p3, p4, hands, game_type, trump) {
 		this.players = [dealer, p2, p3, p4];
 		this.hands = hands;
 		this.current_player = dealer;
 		this.current_index = 0;
-		this.current_trick = new Trick();
+		this.current_trick = new Trick(trump);
 		this.cards_taken = {};
 		for(var i = 0; i < 4; i++) {
 			this.cards_taken[this.players[i]] = [];
@@ -113,6 +122,7 @@ class Subgame {
 		this.game_type = game_type;
 		this.num_tricks = 0;
 		this.last2 = [];
+		this.trump = trump;
 	}
 	
 	legal_play(player, card) {
@@ -511,7 +521,7 @@ gamesNamespace.on('connection', socket => {
 			for(var i = 0; i < 4; i++) {
 				players.push(game.players[(game.dealerIndex + i) % 4]);
 			}
-			game.subgame = new Subgame(players[0], players[1], players[2], players[3], game.handHash, data.gamechoice);
+			game.subgame = new Subgame(players[0], players[1], players[2], players[3], game.handHash, data.gamechoice, data.trump);
 			
 			// Add subgame to completed subgames
 			game.gamesChosen[data.username].push(data.gamechoice);
@@ -596,7 +606,7 @@ gamesNamespace.on('connection', socket => {
 			}
 			
 			subgame.num_tricks++;
-			subgame.current_trick = new Trick();
+			subgame.current_trick = new Trick(subgame.trump);
 
 			if(subgame.game_done()) {
 				// GAME IS OVER
