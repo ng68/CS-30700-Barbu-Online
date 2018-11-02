@@ -400,7 +400,13 @@ lobbiesNamespace.on('connection', socket => {
             }
         });
         socket.emit('entered-lobby-response', lobby);
-    });
+	});
+	
+	socket.on('start-game', data => {
+		lobbiesNamespace.emit('game-started', {
+			lobbyname: data.lobbyname
+		});
+	});
 });
 
 // The games namespace is for individual game lobbies that people join. The /games channel itself is never used,
