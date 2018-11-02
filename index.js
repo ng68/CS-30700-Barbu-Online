@@ -472,7 +472,7 @@ gamesNamespace.on('connection', socket => {
             }
 			handobject["dealer"] = game.players[game.currentDealer];
 			handobject["scores"] = [];
-            io.to(data.lobbyname).emit('cards-dealt', handobject); // Send the hands to all the clients.
+            socket.emit('cards-dealt', handobject); // Send the hands to all the clients.
         }
     });
 
@@ -501,12 +501,12 @@ gamesNamespace.on('connection', socket => {
 			game.subgame = new Subgame(game.players[0], game.players[1], game.players[2], game.players[3], game.handHash, data.gamechoice);
 			
 			
-			io.to(data.lobbyname).emit('subgame-choice', {
+			socket.emit('subgame-choice', {
                 gamechoice: data.gamechoice
             }); // FOR NOW just emit a string of the chosen game
                                                                        // (May need to change later)
 
-            io.to(data.lobbyname).emit('your-turn', {
+            socket.emit('your-turn', {
                 username: game.players[(game.dealerIndex + 1) % 4]
             });
 		}
@@ -548,7 +548,7 @@ gamesNamespace.on('connection', socket => {
 			if(subgame.current_index == 3) subgame.current_index = 0;
 			else subgame.current_index++;
             subgame.current_player = subgame.players[subgame.current_index];
-            io.to(data.lobbyname).emit('card-chosen-response', {
+            socket.emit('card-chosen-response', {
                 valid: true,
 				username: data.username,
 				card: card.suit + card.value
@@ -557,7 +557,7 @@ gamesNamespace.on('connection', socket => {
 		else {
             // TODO send error to client
 			var explanation = subgame.explanation(data.username, card);
-            io.to(data.lobbyname).emit('card-chosen-response', {
+            socket.emit('card-chosen-response', {
                 valid: false,
 				username: data.username,
 				error: "Illegal play",
@@ -649,10 +649,10 @@ gamesNamespace.on('connection', socket => {
 					let player = game.players[i];
 					handobject["scores"].push(game.scoreHash[player]);
 				}
-				io.to(data.lobbyname).emit('cards-dealt', handobject); // Send the hands to all the clients.
+				socket.emit('cards-dealt', handobject); // Send the hands to all the clients.
 			}
 			else {
-				io.to(data.lobbyname).emit('your-turn', {
+				socket.emit('your-turn', {
 				username: subgame.current_player
 				});
             // io.to(data.lobbyname).emit('game-update', {
