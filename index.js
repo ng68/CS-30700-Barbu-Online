@@ -403,7 +403,30 @@ lobbiesNamespace.on('connection', socket => {
             lobbiesNamespace.emit('lobby-updated', lobby); // Let everyone else know the lobby updated
             socket.emit('join-lobby-response', "OK");
         }
-    });
+	});
+	
+	// Expects data to be an object of the form {
+	//	  lobbyName: STRING,
+	//	  username: STRING
+	// }
+	socket.on('leave-lobby', data => {
+		let lobby;
+		lobbies.forEach(l => {
+			if (l.name == data.lobbyName) {
+				lobby = l;
+			}
+		});
+
+		for (let i = lobby.players.length - 1; i >= 0; i--) {
+			if (lobby.players[i] == data.username) {
+				lobby.players.splice(i, 1);
+				break;
+			}
+		}
+
+		lobbiesNamespace.emit('lobby-updated', lobby);
+	});
+
     socket.on('entered-lobby', data => {
         let lobby;
         lobbies.forEach(l => {
