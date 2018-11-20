@@ -427,6 +427,25 @@ lobbiesNamespace.on('connection', socket => {
 		lobbiesNamespace.emit('lobby-updated', lobby);
 	});
 
+	// This event is triggered when a lobby's host clicks the disband button from their screen
+	// It expects a data object of the form {
+	// 	  lobbyName: STRING
+	// }
+	//
+	// It will return with an object containing the name of the lobby.
+	socket.on('disband-lobby', data => {
+		for (let i = lobbies.length - 1; i >= 0; i--) {
+			if (lobbies[i].name == data.lobbyName) {
+				lobbies.splice(i, 1); // Remove the lobby from the backend.
+			}
+		}
+
+		// Send an object containing the name of the removed lobby to everyone
+		lobbiesNamespace.emit('lobby-removed', {
+			lobbyName: data.lobbyName
+		});
+	});
+
     socket.on('entered-lobby', data => {
         let lobby;
         lobbies.forEach(l => {
