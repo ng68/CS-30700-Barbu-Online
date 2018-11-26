@@ -15,7 +15,6 @@ io.on('connection', socket => {
     socket.emit('game-finished', {
         Bole : [10, true]
     }); 
-} /*
     socket.on('subgame-chosen', data => {
         socket.emit('subgame-choice', {
             gamechoice : data.gamechoice
