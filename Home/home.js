@@ -7,6 +7,22 @@ var messageInput = document.getElementById("message-input");
 var messages = document.getElementById("messages");
 var friendList = document.getElementById("friend-list");
 
+///
+var amOnline = new Firebase('https://barbu-online.firebaseio.com/.info/connected');
+var userRef = new Firebase('https://barbu-online.firebaseio.com/presence/' + firebase.auth().currentUser.uid);
+amOnline.on('value', function(snapshot) {
+  if (snapshot.val()) {
+    userRef.onDisconnect().remove();
+    if(userRef.onDisconnect()) {
+        console.log("Disconnected from FB");
+    }else {
+        console.log("Connected to FB");
+    }
+    userRef.set(true);
+  }
+});
+///
+
 addFriendBtn.addEventListener('click', e=> {
     e.preventDefault();
     var query = firebase.database().ref("users");
