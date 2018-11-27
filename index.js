@@ -337,18 +337,24 @@ class Subgame {
 // The events in the lobbies namespace deal with functionality that takes place on the
 // lobbies page.
 lobbiesNamespace.on('connection', socket => {
-    console.log("Lobbies connected");
+	console.log("Lobbies connected");
+	
+	console.log("Before initialize");
 
     // When the page loads (i.e. once a client joins lobbiesNamespace), want
     // to send the client all of the currently open lobbies
     lobbies.forEach(lobby => {
+		console.log(lobby);
+
         socket.emit('new-lobby', {
             owner: lobby.owner,
             name: lobby.name,
 			players: lobby.players,
 			password: lobby.password
         });
-    });
+	});
+	
+	console.log("After initialize");
 
     // Event handler for user creating a new lobby
     // Expects an object lobbyData of the form {
@@ -414,12 +420,18 @@ lobbiesNamespace.on('connection', socket => {
 	//	  username: STRING
 	// }
 	socket.on('leave-lobby', data => {
+		console.log(data);
+
 		let lobby;
 		lobbies.forEach(l => {
 			if (l.name == data.lobbyName) {
 				lobby = l;
 			}
 		});
+
+		console.log("Lobby located:");
+		console.log(lobby);
+		console.log(lobby.players);
 
 		for (let i = lobby.players.length - 1; i >= 0; i--) {
 			if (lobby.players[i] == data.username) {
@@ -428,7 +440,11 @@ lobbiesNamespace.on('connection', socket => {
 			}
 		}
 
+		console.log(lobby.players);
+
 		lobbiesNamespace.emit('lobby-updated', lobby);
+
+		console.log("Sent lobby update");
 	});
 
 	// This event is triggered when a lobby's host clicks the disband button from their screen
