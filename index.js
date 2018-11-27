@@ -757,9 +757,123 @@ gamesNamespace.on('connection', socket => {
 					username: data.username,
 					card: card.suit + card.rank
 				});
+				
+				if (subgame.current_trick.cards.length == 4) { // Last card played
+					// Evaluate who won the trick
+					var winner = subgame.current_trick.winner();
+					subgame.current_player = winner;
+					subgame.current_index = subgame.players.indexOf(winner);
+
+					if(subgame.num_tricks >= 11) subgame.last2.push(winner);
+					// Add cards to trick winner's taken cards
+					for(var i = 0; i < 4; i++) {
+						subgame.cards_taken[winner].push(subgame.current_trick.cards[i]);
+					}
+					
+					subgame.num_tricks++;
+					subgame.current_trick = new Trick(subgame.trump);
+
+					if(subgame.game_done()) {
+						// GAME IS OVER
+						
+						// Update scores
+						for(var i = 0; i < game.players.length; i++) {
+							var p = game.players[i];
+							game.scoreHash[p] += subgame.compute_score(p);
+						}
+
+						// Check if entire game is done
+						done = true;
+						for(var i = 0; i < game.players.length; i++) {
+							if(game.gamesChosen[game.players[i]].length != 7) {
+								done = false;
+							}
+						}
+						
+						if(done) {
+							gamesNamespace.to(data.lobbyname).emit('game-finished', game.scoreHash);
+							console.log("GAME OVER");
+						}
+						
+						// Update dealer
+						game.dealerIndex = (game.dealerIndex + 1) % 4;
+						var new_dealer = game.players[game.dealerIndex];
+						
+						// Clear current subgame
+						game.subgame = {};
+						
+						// Prepare next hand
+						
+						// 1. Shuffle deck
+						var a = [...Array(52).keys()];
+						for (var i = a.length - 1; i > 0; i--) {
+							var j = Math.floor(Math.random() * (i + 1));
+							var temp = a[i];
+							a[i] = a[j];
+							a[j] = temp;
+						}
+						var b = []
+						for(var i = 0; i < 4; i++) {
+							b.push(a.splice(0, 13).sort((a, b) => b - a));
+						}
+						a = b[0].concat(b[1]).concat(b[2]).concat(b[3]);
+						var cards = []
+						for(var i = 0; i < a.length; i++) {
+							switch(Math.floor(a[i] / 13)) {
+								case 0:
+									var card = new Card('d', a[i] % 13 + 2);
+									cards.push(card);
+									break;
+								case 1:
+									var card = new Card('c', a[i] % 13 + 2);
+									cards.push(card);
+									break;
+								case 2:
+									var card = new Card('h', a[i] % 13 + 2);
+									cards.push(card);
+									break;
+								case 3:
+									var card = new Card('s', a[i] % 13 + 2);
+									cards.push(card);
+									break;
+								default:
+									break;
+							}
+						}
+						// 2. Assign hands to players
+						let handobject = {};
+						for (var i = 0; i < game.players.length; i++) {
+							let player = game.players[i];
+							let player_cards = cards.splice(0,13);
+							let hand = new Hand(player_cards);
+				
+							// Assign subset of the deck to each player
+							handobject[player] = hand.as_array();
+							game.handHash[player] = hand;
+						}
+						handobject["dealer"] = game.players[game.dealerIndex];
+						handobject["scores"] = [];
+						for(var i = 0; i < game.players.length; i++) {
+							let player = game.players[i];
+							handobject["scores"].push(game.scoreHash[player]);
+						}
+						gamesNamespace.to(data.lobbyname).emit('cards-dealt', handobject); // Send the hands to all the clients.
+					}
+					else {
+						console.log("Win-Trick");
+						gamesNamespace.to(data.lobbyname).emit('your-turn', {
+							username: subgame.current_player
+						});
+					}
+				}
+				else {
+					console.log("Next-Turn");
+					gamesNamespace.to(data.lobbyname).emit('your-turn', {
+						username: subgame.current_player
+					});
+				}
 			}
 			else {
-				
 				// Add card to fan-tan deck
 				if(card.rank == subgame.fan_tan[card.suit][0].rank - 1) {
 					subgame.fan_tan[card.suit][0] = card;
@@ -801,7 +915,6 @@ gamesNamespace.on('connection', socket => {
 					
 					if(all_done) {
 						gamesNamespace.to(data.lobbyname).emit('game-finished', game.scoreHash);
-						console.log("GAME OVER");
 					}
 					
 					// Update dealer
@@ -906,6 +1019,9 @@ gamesNamespace.on('connection', socket => {
 						start_card: subgame.start_card,
 						single_suit: array
 					});
+					gamesNamespace.to(data.lobbyname).emit('your-turn', {
+						username: subgame.current_player
+					});
 				}
 			}
 		}
@@ -921,122 +1037,6 @@ gamesNamespace.on('connection', socket => {
             });
 
             return;
-		}
-
-        if (subgame.current_trick.cards.length == 4) { // Last card played
-		
-            // Evaluate who won the trick
-			var winner = subgame.current_trick.winner();
-			subgame.current_player = winner;
-			subgame.current_index = subgame.players.indexOf(winner);
-
-			if(subgame.num_tricks >= 11) subgame.last2.push(winner);
-			// Add cards to trick winner's taken cards
-			for(var i = 0; i < 4; i++) {
-				subgame.cards_taken[winner].push(subgame.current_trick.cards[i]);
-			}
-			
-			subgame.num_tricks++;
-			subgame.current_trick = new Trick(subgame.trump);
-
-			if(subgame.game_done()) {
-				// GAME IS OVER
-				
-				// Update scores
-				for(var i = 0; i < game.players.length; i++) {
-					var p = game.players[i];
-					game.scoreHash[p] += subgame.compute_score(p);
-				}
-
-				// Check if entire game is done
-				done = true;
-				for(var i = 0; i < game.players.length; i++) {
-					if(game.gamesChosen[game.players[i]].length != 7) {
-						done = false;
-					}
-				}
-				
-				if(done) {
-					gamesNamespace.to(data.lobbyname).emit('game-finished', game.scoreHash);
-					console.log("GAME OVER");
-				}
-				
-				// Update dealer
-				game.dealerIndex = (game.dealerIndex + 1) % 4;
-				var new_dealer = game.players[game.dealerIndex];
-				
-				// Clear current subgame
-				game.subgame = {};
-				
-				// Prepare next hand
-				
-				// 1. Shuffle deck
-				var a = [...Array(52).keys()];
-				for (var i = a.length - 1; i > 0; i--) {
-					var j = Math.floor(Math.random() * (i + 1));
-					var temp = a[i];
-					a[i] = a[j];
-					a[j] = temp;
-				}
-				var b = []
-				for(var i = 0; i < 4; i++) {
-					b.push(a.splice(0, 13).sort((a, b) => b - a));
-				}
-				a = b[0].concat(b[1]).concat(b[2]).concat(b[3]);
-				var cards = []
-				for(var i = 0; i < a.length; i++) {
-					switch(Math.floor(a[i] / 13)) {
-						case 0:
-							var card = new Card('d', a[i] % 13 + 2);
-							cards.push(card);
-							break;
-						case 1:
-							var card = new Card('c', a[i] % 13 + 2);
-							cards.push(card);
-							break;
-						case 2:
-							var card = new Card('h', a[i] % 13 + 2);
-							cards.push(card);
-							break;
-						case 3:
-							var card = new Card('s', a[i] % 13 + 2);
-							cards.push(card);
-							break;
-						default:
-							break;
-					}
-				}
-				// 2. Assign hands to players
-				let handobject = {};
-				for (var i = 0; i < game.players.length; i++) {
-					let player = game.players[i];
-					let player_cards = cards.splice(0,13);
-					let hand = new Hand(player_cards);
-		
-					// Assign subset of the deck to each player
-					handobject[player] = hand.as_array();
-					game.handHash[player] = hand;
-				}
-				handobject["dealer"] = game.players[game.dealerIndex];
-				handobject["scores"] = [];
-				for(var i = 0; i < game.players.length; i++) {
-					let player = game.players[i];
-					handobject["scores"].push(game.scoreHash[player]);
-				}
-				gamesNamespace.to(data.lobbyname).emit('cards-dealt', handobject); // Send the hands to all the clients.
-			}
-			else {
-				console.log("Win-Trick");
-				gamesNamespace.to(data.lobbyname).emit('your-turn', {
-					username: subgame.current_player
-				});
-			}
-		}
-		else {
-			console.log("Next-Turn");
-			gamesNamespace.to(data.lobbyname).emit('your-turn', {
-				username: subgame.current_player
-			});
 		}
     });
 });
