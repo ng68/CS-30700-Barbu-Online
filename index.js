@@ -727,7 +727,7 @@ gamesNamespace.on('connection', socket => {
 		
         // TODO evaluate if card is valid
 		if(subgame.legal_play(data.username, card)) {
-			if(subgame.game_type == "Fan-Tan") {
+			if(subgame.game_type != "Fan-Tan") {
 			
 				// Add card to trick
 				subgame.current_trick.add_card(data.username, card);
