@@ -45,6 +45,10 @@ class Hand {
 		this.cards = cards;
 	}
 	
+	out_of_cards() {
+		return this.cards.length == 0;
+	}
+	
 	has_suit(suit) {
 		for(var i = 0; i < this.cards.length; i++) {
 			if(this.cards[i].suit == suit) {
