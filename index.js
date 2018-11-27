@@ -481,6 +481,21 @@ lobbiesNamespace.on('connection', socket => {
 			lobbyname: data.lobbyname
 		});
 	});
+
+	socket.on('check-password', data => {
+		let lobby;
+		lobbies.forEach(l => {
+			if (l.name == data.lobbyName) {
+				lobby = l;
+			}
+		});
+
+		if (lobby.password == data.password) {
+			socket.emit('password-accepted', lobby);
+		} else {
+			socket.emit('password-denied', lobby);
+		}
+	});
 });
 
 // The games namespace is for individual game lobbies that people join. The /games channel itself is never used,
