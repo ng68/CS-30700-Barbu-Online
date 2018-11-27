@@ -148,6 +148,39 @@ class Subgame {
 		}
 	}
 	
+	has_fan_tan_play(player) {
+		
+		// Look at all cards
+		var i = 0;
+		var a = this.hands[player].as_array();
+		for(i = 0; i < a.length; i++) {
+			var card = a[i];
+			
+			// Check for start card
+			if(card.rank == this.start_card) {
+				return true;
+			}
+			
+			// Check spades
+			if ((card.suit == 's') && ((card.rank == this.fan_tan['s'][0].rank - 1) || (card.rank == this.fan_tan['s'][1].rank + 1))) {
+				return true;
+			}
+			// Check hearts
+			else if((card.suit == 'h') && ((card.rank == this.fan_tan['h'][0].rank - 1) || (card.rank == this.fan_tan['h'][1].rank + 1))) {
+				return true;
+			}
+			// Check diamonds
+			else if ((card.suit == 'd') && ((card.rank == this.fan_tan['d'][0].rank - 1) || (card.rank == this.fan_tan['d'][1].rank + 1))) {
+				return true;
+			}
+			// Check clubs
+			else if ((card.suit == 'c') && ((card.rank == this.fan_tan['c'][0].rank - 1) || (card.rank == this.fan_tan['c'][1].rank + 1))) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	legal_play(player, card) {
 		if(this.game_type != "Fan-Tan") {
 			if(this.current_trick.cards.length != 0) {
@@ -654,7 +687,7 @@ gamesNamespace.on('connection', socket => {
 			for(var i = 0; i < 4; i++) {
 				players.push(game.players[(game.dealerIndex + i) % 4]);
 			}
-			game.subgame = new Subgame(players[0], players[1], players[2], players[3], game.handHash, data.gamechoice, data.trump, data.start_card);
+			game.subgame = new Subgame(players[0], players[1], players[2], players[3], game.handHash, data.gamechoice, data.trump, data.rank);
 			
 			// Add subgame to completed subgames
 			game.gamesChosen[data.username].push(data.gamechoice);
@@ -693,27 +726,81 @@ gamesNamespace.on('connection', socket => {
 		
         // TODO evaluate if card is valid
 		if(subgame.legal_play(data.username, card)) {
-			// Add card to trick
-			subgame.current_trick.add_card(data.username, card);
+			if(subgame.game_type == "Fan-Tan") {
 			
-			// Remove card from hand
-			game.handHash[data.username].remove_card(card);
-			
-			if(subgame.current_trick.cards.length == 1) {
-				gamesNamespace.to(data.lobbyname).emit('game-update', {
-					username: subgame.current_player
-            	});
-			}
-			// Update current player
-			if(subgame.current_index == 3) subgame.current_index = 0;
-			else subgame.current_index++;
-            subgame.current_player = subgame.players[subgame.current_index];
+				// Add card to trick
+				subgame.current_trick.add_card(data.username, card);
+				
+				// Remove card from hand
+				game.handHash[data.username].remove_card(card);
+				
+				if(subgame.current_trick.cards.length == 1) {
+					gamesNamespace.to(data.lobbyname).emit('game-update', {
+						username: subgame.current_player
+					});
+				}
+				// Update current player
+				if(subgame.current_index == 3) subgame.current_index = 0;
+				else subgame.current_index++;
+				subgame.current_player = subgame.players[subgame.current_index];
 
-            gamesNamespace.to(data.lobbyname).emit('card-chosen-response', {
-                valid: true,
-				username: data.username,
-				card: card.suit + card.rank
-            });
+				gamesNamespace.to(data.lobbyname).emit('card-chosen-response', {
+					valid: true,
+					username: data.username,
+					card: card.suit + card.rank
+				});
+			}
+			else {
+				
+				// Add card to fan-tan deck
+				if(card.rank == subgame.fan_tan[card.suit][0].rank - 1) {
+					subgame.fan_tan[card.suit][0] = card;
+				}
+				else {
+					subgame.fan_tan[card.suit][1] = card;
+				}
+				
+				// Remove card from hand
+				game.handHash[data.username].remove_card(card);
+
+				// Update current player
+				if(subgame.current_index == 3) subgame.current_index = 0;
+				else subgame.current_index++;
+				subgame.current_player = subgame.players[subgame.current_index];
+				while(!(subgame.has_fan_tan_play(subgame.current_player))) {
+					if(subgame.current_index == 3) subgame.current_index = 0;
+					else subgame.current_index++;
+					subgame.current_player = subgame.players[subgame.current_index];
+				}
+				
+				// Emit response
+				var array = [];
+				if(subgame.fan_tan['d'].length > 0 && subgame.fan_tan['d'][0] == subgame.fan_tan['d'][1]) {
+					array.push(true);
+				}
+				else array.push(false);
+				
+				if(subgame.fan_tan['c'].length > 0 && subgame.fan_tan['c'][0] == subgame.fan_tan['c'][1]) {
+					array.push(true);
+				}
+				else array.push(false);
+				if(subgame.fan_tan['h'].length > 0 && subgame.fan_tan['h'][0] == subgame.fan_tan['h'][1]) {
+					array.push(true);
+				}
+				else array.push(false);
+				if(subgame.fan_tan['s'].length > 0 && subgame.fan_tan['s'][0] == subgame.fan_tan['s'][1]) {
+					array.push(true);
+				}
+				else array.push(false);
+				
+				gamesNamespace.to(data.lobbyname).emit('card-chosen-response-ft', {
+					valid: true,
+					username: data.username,
+					card: card.suit + card.rank,
+					start_card: subgame.start_card,
+					single_suit: array
+				});
+			}
 		}
 		else {
             // TODO send error to client
