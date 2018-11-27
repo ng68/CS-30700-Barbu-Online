@@ -33,11 +33,7 @@ io.on('connection', socket => {
         });  
     });
 });
-    /*socket.on('initializeTest', playerInfo => {
-        socket.emit('player-joined', {
-            username : ["Larry", "George", "Paul", "Harry"]
-        });
-    });
+    /*
     
     socket.on('host-start-game', data => {
         socket.emit('start-game', {

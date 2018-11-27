@@ -4,7 +4,16 @@ var confirmPassword = document.getElementById("confirmPassword");
 var savebtn = document.getElementById("savebtn");
 const auth = firebase.auth();
 
-
+///
+/*var connectedRef = firebase.database().ref(".info/connected");
+connectedRef.on("value", function(snap) {
+  if (snap.val() === true) {
+    alert("connected");
+  } else {
+    alert("not connected");
+  }
+});
+*///
 
 savebtn.addEventListener('click', e=> {
     if(password.value != confirmPassword.value){
