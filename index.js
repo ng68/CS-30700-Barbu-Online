@@ -417,7 +417,7 @@ lobbiesNamespace.on('connection', socket => {
 	
 	// Expects data to be an object of the form {
 	//	  lobbyName: STRING,
-	//	  username: STRING
+	//	  user: STRING
 	// }
 	socket.on('leave-lobby', data => {
 		console.log(data);
@@ -434,7 +434,7 @@ lobbiesNamespace.on('connection', socket => {
 		console.log(lobby.players);
 
 		for (let i = lobby.players.length - 1; i >= 0; i--) {
-			if (lobby.players[i] == data.username) {
+			if (lobby.players[i] == data.user) {
 				lobby.players.splice(i, 1);
 				break;
 			}
