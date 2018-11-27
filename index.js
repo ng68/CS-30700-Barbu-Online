@@ -338,8 +338,6 @@ class Subgame {
 // lobbies page.
 lobbiesNamespace.on('connection', socket => {
 	console.log("Lobbies connected");
-	
-	console.log("Before initialize");
 
     // When the page loads (i.e. once a client joins lobbiesNamespace), want
     // to send the client all of the currently open lobbies
@@ -353,8 +351,6 @@ lobbiesNamespace.on('connection', socket => {
 			password: lobby.password
         });
 	});
-	
-	console.log("After initialize");
 
     // Event handler for user creating a new lobby
     // Expects an object lobbyData of the form {
@@ -420,18 +416,12 @@ lobbiesNamespace.on('connection', socket => {
 	//	  user: STRING
 	// }
 	socket.on('leave-lobby', data => {
-		console.log(data);
-
 		let lobby;
 		lobbies.forEach(l => {
 			if (l.name == data.lobbyName) {
 				lobby = l;
 			}
 		});
-
-		console.log("Lobby located:");
-		console.log(lobby);
-		console.log(lobby.players);
 
 		for (let i = lobby.players.length - 1; i >= 0; i--) {
 			if (lobby.players[i] == data.user) {
@@ -440,11 +430,7 @@ lobbiesNamespace.on('connection', socket => {
 			}
 		}
 
-		console.log(lobby.players);
-
 		lobbiesNamespace.emit('lobby-updated', lobby);
-
-		console.log("Sent lobby update");
 	});
 
 	// This event is triggered when a lobby's host clicks the disband button from their screen
@@ -489,6 +475,11 @@ lobbiesNamespace.on('connection', socket => {
 				lobby = l;
 			}
 		});
+
+		console.log("Lobby found:");
+		console.log(lobby);
+		console.log("Expected password:");
+		console.log(data.password);
 
 		if (lobby.password == data.password) {
 			socket.emit('password-accepted', lobby);
