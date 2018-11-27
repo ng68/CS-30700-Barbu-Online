@@ -4,7 +4,7 @@ if (port == null || port == "") {
 }
 const io = require('socket.io')(port);
 
-io.origins('https://barbu-online.firebaseapp.com:*');
+// io.origins('https://barbu-online.firebaseapp.com:*');
 
 const chatNamespace = io.of('/chat');
 const lobbiesNamespace = io.of('/lobbies');
@@ -913,8 +913,8 @@ gamesNamespace.on('connection', socket => {
 				game.handHash[data.username].remove_card(card);
 
 				// Check if player is out
-				if(game.handHash[username].out_of_cards()) {
-					subgame.fan_tan_order.push(username);
+				if(game.handHash[data.username].out_of_cards()) {
+					subgame.fan_tan_order.push(data.username);
 				}
 			
 				// Check if game is over
