@@ -897,6 +897,28 @@ gamesNamespace.on('connection', socket => {
 				}
 			}
 			else {
+				// FAN-TAN
+				
+				// Set single_suit array for response
+				var array = [];
+				if(subgame.fan_tan['d'].length > 0 && subgame.fan_tan['d'][0] == subgame.fan_tan['d'][1]) {
+					array.push(true);
+				}
+				else array.push(false);
+				
+				if(subgame.fan_tan['c'].length > 0 && subgame.fan_tan['c'][0] == subgame.fan_tan['c'][1]) {
+					array.push(true);
+				}
+				else array.push(false);
+				if(subgame.fan_tan['h'].length > 0 && subgame.fan_tan['h'][0] == subgame.fan_tan['h'][1]) {
+					array.push(true);
+				}
+				else array.push(false);
+				if(subgame.fan_tan['s'].length > 0 && subgame.fan_tan['s'][0] == subgame.fan_tan['s'][1]) {
+					array.push(true);
+				}
+				else array.push(false);
+				
 				// Add card to fan-tan deck
 				
 				// Lower card
@@ -1023,26 +1045,7 @@ gamesNamespace.on('connection', socket => {
 						subgame.current_player = subgame.players[subgame.current_index];
 					}
 					
-					// Emit response
-					var array = [];
-					if(subgame.fan_tan['d'].length > 0 && subgame.fan_tan['d'][0] == subgame.fan_tan['d'][1]) {
-						array.push(true);
-					}
-					else array.push(false);
-					
-					if(subgame.fan_tan['c'].length > 0 && subgame.fan_tan['c'][0] == subgame.fan_tan['c'][1]) {
-						array.push(true);
-					}
-					else array.push(false);
-					if(subgame.fan_tan['h'].length > 0 && subgame.fan_tan['h'][0] == subgame.fan_tan['h'][1]) {
-						array.push(true);
-					}
-					else array.push(false);
-					if(subgame.fan_tan['s'].length > 0 && subgame.fan_tan['s'][0] == subgame.fan_tan['s'][1]) {
-						array.push(true);
-					}
-					else array.push(false);
-					
+					// Emit response					
 					gamesNamespace.to(data.lobbyname).emit('card-chosen-response-ft', {
 						valid: true,
 						username: data.username,
