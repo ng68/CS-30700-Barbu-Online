@@ -663,7 +663,6 @@ gamesNamespace.on('connection', socket => {
 
     // ANY NECESSARY SERVER-SIDE DEALER LOGIC GOES HERE AND POSSIBLY IN THE EVENT ABOVE
 
-	// NOTE FROM MATT: ALSO NEED USERNAME
 
     // The next event is when the dealer picks the subgame.
     // In this case the data object needs two things, the lobby name and the game choice: {
@@ -693,7 +692,9 @@ gamesNamespace.on('connection', socket => {
 			game.gamesChosen[data.username].push(data.gamechoice);
 			
 			gamesNamespace.to(data.lobbyname).emit('subgame-choice', {
-                gamechoice: data.gamechoice
+                gamechoice: data.gamechoice,
+				trump: data.trump,
+				rank: data.rank
             }); // FOR NOW just emit a string of the chosen game
             gamesNamespace.to(data.lobbyname).emit('your-turn', {
                 username: game.players[(game.dealerIndex + 1) % 4]
