@@ -4,6 +4,8 @@ if (port == null || port == "") {
 }
 const io = require('socket.io')(port);
 
+io.origins('https://barbu-online.firebaseapp.com:*');
+
 const chatNamespace = io.of('/chat');
 const lobbiesNamespace = io.of('/lobbies');
 const gamesNamespace = io.of('/games');
@@ -444,7 +446,7 @@ class Subgame {
 // The events in the lobbies namespace deal with functionality that takes place on the
 // lobbies page.
 lobbiesNamespace.on('connection', socket => {
-    console.log("Lobbies connected");
+	console.log("Lobbies connected");
 
     // When the page loads (i.e. once a client joins lobbiesNamespace), want
     // to send the client all of the currently open lobbies
@@ -452,9 +454,10 @@ lobbiesNamespace.on('connection', socket => {
         socket.emit('new-lobby', {
             owner: lobby.owner,
             name: lobby.name,
-            players: lobby.players
+			players: lobby.players,
+			password: lobby.password
         });
-    });
+	});
 
     // Event handler for user creating a new lobby
     // Expects an object lobbyData of the form {
@@ -473,7 +476,8 @@ lobbiesNamespace.on('connection', socket => {
         if (!lobbyExists) {
             let lobby = {
                 owner: lobbyData.owner,
-                name: lobbyData.name,
+				name: lobbyData.name,
+				password: lobbyData.password,
                 players: []
             };
 
@@ -499,7 +503,7 @@ lobbiesNamespace.on('connection', socket => {
             if (l.name == data.lobbyName) {
                 lobby = l;
             }
-        });
+		});
 
         if (lobby.players.length > 3) {
             // Cannot add a player because it's full.
@@ -516,7 +520,7 @@ lobbiesNamespace.on('connection', socket => {
 	
 	// Expects data to be an object of the form {
 	//	  lobbyName: STRING,
-	//	  username: STRING
+	//	  user: STRING
 	// }
 	socket.on('leave-lobby', data => {
 		let lobby;
@@ -527,7 +531,7 @@ lobbiesNamespace.on('connection', socket => {
 		});
 
 		for (let i = lobby.players.length - 1; i >= 0; i--) {
-			if (lobby.players[i] == data.username) {
+			if (lobby.players[i] == data.user) {
 				lobby.players.splice(i, 1);
 				break;
 			}
@@ -569,6 +573,21 @@ lobbiesNamespace.on('connection', socket => {
 		lobbiesNamespace.emit('game-started', {
 			lobbyname: data.lobbyname
 		});
+	});
+
+	socket.on('check-password', data => {
+		let lobby;
+		lobbies.forEach(l => {
+			if (l.name == data.lobbyName) {
+				lobby = l;
+			}
+		});
+
+		if (lobby.password == data.password) {
+			socket.emit('password-accepted', lobby);
+		} else {
+			socket.emit('password-denied', lobby);
+		}
 	});
 });
 
