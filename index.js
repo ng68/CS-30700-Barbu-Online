@@ -894,11 +894,19 @@ gamesNamespace.on('connection', socket => {
 			}
 			else {
 				// Add card to fan-tan deck
-				if(card.rank == subgame.fan_tan[card.suit][0].rank - 1) {
+				
+				// Lower card
+				if(subgame.fan_tan[card.suit].length > 0 && card.rank == subgame.fan_tan[card.suit][0].rank - 1) {
 					subgame.fan_tan[card.suit][0] = card;
 				}
-				else {
+				// Higher card
+				else if (subgame.fan_tan[card.suit].length > 0 && card.rank == subgame.fan_tan[card.suit][1].rank + 1){
 					subgame.fan_tan[card.suit][1] = card;
+				}
+				// Start card
+				else {
+					subgame.fan_tan[card.suit] = [card, card];
+					console.log(subgame.fan_tan);
 				}
 				
 				// Remove card from hand
