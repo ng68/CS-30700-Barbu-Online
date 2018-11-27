@@ -146,6 +146,7 @@ class Subgame {
 			this.fan_tan['d'] = [];
 			this.fan_tan['c'] = [];
 		}
+		this.fan_tan_order = [];
 	}
 	
 	has_fan_tan_play(player) {
@@ -428,6 +429,12 @@ class Subgame {
 				if(this.last2[1] == player) score -= 20;
 				return score;
 				break;
+			case "Fan-Tan":
+				if(this.fan_tan_order.indexOf(player) == 0) return 45;
+				else if(this.fan_tan_order.indexOf(player) == 1) return 20;
+				else if(this.fan_tan_order.indexOf(player) == 2) return 5;
+				else if(this.fan_tan_order.indexOf(player) == 3) return -5;
+				else return 0;
 			default:
 				return 0;
 		}
@@ -764,43 +771,142 @@ gamesNamespace.on('connection', socket => {
 				// Remove card from hand
 				game.handHash[data.username].remove_card(card);
 
-				// Update current player
-				if(subgame.current_index == 3) subgame.current_index = 0;
-				else subgame.current_index++;
-				subgame.current_player = subgame.players[subgame.current_index];
-				while(!(subgame.has_fan_tan_play(subgame.current_player))) {
+				// Check if player is out
+				if(game.handHash[username].out_of_cards()) {
+					subgame.fan_tan_order.push(username);
+				}
+			
+				// Check if game is over
+				var done = true;
+				for(var i = 0; i < 4; i++) {
+					if(!game.handHash[subgame.players[i]].out_of_cards()) {
+						done = false;
+					}
+				}
+				
+				if(done) {
+					// Update scores
+					for(var i = 0; i < game.players.length; i++) {
+						var p = game.players[i];
+						game.scoreHash[p] += subgame.compute_score(p);
+					}
+
+					// Check if entire game is done
+					var all_done = true;
+					for(var i = 0; i < game.players.length; i++) {
+						if(game.gamesChosen[game.players[i]].length != 7) {
+							all_done = false;
+						}
+					}
+					
+					if(all_done) {
+						gamesNamespace.to(data.lobbyname).emit('game-finished', game.scoreHash);
+						console.log("GAME OVER");
+					}
+					
+					// Update dealer
+					game.dealerIndex = (game.dealerIndex + 1) % 4;
+					var new_dealer = game.players[game.dealerIndex];
+					
+					// Clear current subgame
+					game.subgame = {};
+					
+					// Prepare next hand
+					
+					// 1. Shuffle deck
+					var a = [...Array(52).keys()];
+					for (var i = a.length - 1; i > 0; i--) {
+						var j = Math.floor(Math.random() * (i + 1));
+						var temp = a[i];
+						a[i] = a[j];
+						a[j] = temp;
+					}
+					var b = []
+					for(var i = 0; i < 4; i++) {
+						b.push(a.splice(0, 13).sort((a, b) => b - a));
+					}
+					a = b[0].concat(b[1]).concat(b[2]).concat(b[3]);
+					var cards = []
+					for(var i = 0; i < a.length; i++) {
+						switch(Math.floor(a[i] / 13)) {
+							case 0:
+								var card = new Card('d', a[i] % 13 + 2);
+								cards.push(card);
+								break;
+							case 1:
+								var card = new Card('c', a[i] % 13 + 2);
+								cards.push(card);
+								break;
+							case 2:
+								var card = new Card('h', a[i] % 13 + 2);
+								cards.push(card);
+								break;
+							case 3:
+								var card = new Card('s', a[i] % 13 + 2);
+								cards.push(card);
+								break;
+							default:
+								break;
+						}
+					}
+					// 2. Assign hands to players
+					let handobject = {};
+					for (var i = 0; i < game.players.length; i++) {
+						let player = game.players[i];
+						let player_cards = cards.splice(0,13);
+						let hand = new Hand(player_cards);
+			
+						// Assign subset of the deck to each player
+						handobject[player] = hand.as_array();
+						game.handHash[player] = hand;
+					}
+					handobject["dealer"] = game.players[game.dealerIndex];
+					handobject["scores"] = [];
+					for(var i = 0; i < game.players.length; i++) {
+						let player = game.players[i];
+						handobject["scores"].push(game.scoreHash[player]);
+					}
+					gamesNamespace.to(data.lobbyname).emit('cards-dealt', handobject); // Send the hands to all the clients.
+				}
+				else {
+					// Update current player
 					if(subgame.current_index == 3) subgame.current_index = 0;
 					else subgame.current_index++;
 					subgame.current_player = subgame.players[subgame.current_index];
+					while(!(subgame.has_fan_tan_play(subgame.current_player))) {
+						if(subgame.current_index == 3) subgame.current_index = 0;
+						else subgame.current_index++;
+						subgame.current_player = subgame.players[subgame.current_index];
+					}
+					
+					// Emit response
+					var array = [];
+					if(subgame.fan_tan['d'].length > 0 && subgame.fan_tan['d'][0] == subgame.fan_tan['d'][1]) {
+						array.push(true);
+					}
+					else array.push(false);
+					
+					if(subgame.fan_tan['c'].length > 0 && subgame.fan_tan['c'][0] == subgame.fan_tan['c'][1]) {
+						array.push(true);
+					}
+					else array.push(false);
+					if(subgame.fan_tan['h'].length > 0 && subgame.fan_tan['h'][0] == subgame.fan_tan['h'][1]) {
+						array.push(true);
+					}
+					else array.push(false);
+					if(subgame.fan_tan['s'].length > 0 && subgame.fan_tan['s'][0] == subgame.fan_tan['s'][1]) {
+						array.push(true);
+					}
+					else array.push(false);
+					
+					gamesNamespace.to(data.lobbyname).emit('card-chosen-response-ft', {
+						valid: true,
+						username: data.username,
+						card: card.suit + card.rank,
+						start_card: subgame.start_card,
+						single_suit: array
+					});
 				}
-				
-				// Emit response
-				var array = [];
-				if(subgame.fan_tan['d'].length > 0 && subgame.fan_tan['d'][0] == subgame.fan_tan['d'][1]) {
-					array.push(true);
-				}
-				else array.push(false);
-				
-				if(subgame.fan_tan['c'].length > 0 && subgame.fan_tan['c'][0] == subgame.fan_tan['c'][1]) {
-					array.push(true);
-				}
-				else array.push(false);
-				if(subgame.fan_tan['h'].length > 0 && subgame.fan_tan['h'][0] == subgame.fan_tan['h'][1]) {
-					array.push(true);
-				}
-				else array.push(false);
-				if(subgame.fan_tan['s'].length > 0 && subgame.fan_tan['s'][0] == subgame.fan_tan['s'][1]) {
-					array.push(true);
-				}
-				else array.push(false);
-				
-				gamesNamespace.to(data.lobbyname).emit('card-chosen-response-ft', {
-					valid: true,
-					username: data.username,
-					card: card.suit + card.rank,
-					start_card: subgame.start_card,
-					single_suit: array
-				});
 			}
 		}
 		else {
