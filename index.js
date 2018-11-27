@@ -120,7 +120,7 @@ class Subgame {
 	// int current_player (corresponds to index of players array)
 	// current_trick
 	// cards_taken
-	constructor(dealer, p2, p3, p4, hands, game_type, trump) {
+	constructor(dealer, p2, p3, p4, hands, game_type, trump, start_card) {
 		this.players = [dealer, p2, p3, p4];
 		this.hands = hands;
 		this.current_player = p2;
@@ -132,100 +132,169 @@ class Subgame {
 		}
 		this.game_type = game_type;
 		this.num_tricks = 0;
+		
+		// Last 2 and Trumps
 		this.last2 = [];
 		this.trump = trump;
+		
+		// Fan-Tan
+		this.start_card = start_card;
+		this.fan_tan = {};
+		if(game_type == "Fan-Tan") {
+			this.fan_tan['s'] = [];
+			this.fan_tan['h'] = [];
+			this.fan_tan['d'] = [];
+			this.fan_tan['c'] = [];
+		}
 	}
 	
 	legal_play(player, card) {
-		if(this.current_trick.cards.length != 0) {
-			// Not the lead
-			if(card.suit != this.current_trick.cards[0].suit) {
-				// Pitch
-				if(this.hands[player].has_suit(this.current_trick.cards[0].suit)) {
-					// Illegal pitch
-					return false;
-				}
-			}
-		}
-		else {
-			// Lead
-			if(this.game_type == "Barbu") {
-				if(card.suit == 'h') {
-					// Led heart
-					if(this.hands[player].has_suit('s') || this.hands[player].has_suit('d') || this.hands[player].has_suit('c')) {
-						// Not heart-tight
+		if(this.game_type != "Fan-Tan") {
+			if(this.current_trick.cards.length != 0) {
+				// Not the lead
+				if(card.suit != this.current_trick.cards[0].suit) {
+					// Pitch
+					if(this.hands[player].has_suit(this.current_trick.cards[0].suit)) {
+						// Illegal pitch
 						return false;
 					}
 				}
 			}
-			else if(this.game_type == "Hearts") {
-				if(card.suit == 'h') {
-					// Led heart
-					var num_hearts = 0;
-					for(var player in this.cards_taken) {
-						for(var i = 0; i < this.cards_taken[player].length; i++) {
-							if(this.cards_taken[player][i].suit == 'h') {
-								num_hearts++;
-							}
-						}
-					}
-					if(num_hearts == 0) {
-						// Hearts haven't been broken
+			else {
+				// Lead
+				if(this.game_type == "Barbu") {
+					if(card.suit == 'h') {
+						// Led heart
 						if(this.hands[player].has_suit('s') || this.hands[player].has_suit('d') || this.hands[player].has_suit('c')) {
 							// Not heart-tight
 							return false;
 						}
 					}
 				}
-			}
-		}
-		return true;
-	}
-	
-	explanation(player, card) {
-		if(this.current_trick.cards.length != 0) {
-			// Not the lead
-			if(card.suit != this.current_trick.cards[0].suit) {
-				// Pitch
-				if(this.hands[player].has_suit(this.current_trick.cards[0].suit)) {
-					// Illegal pitch
-					return "You must follow suit if you can";
-				}
-			}
-		}
-		else {
-			// Lead
-			if(this.game_type == "Barbu") {
-				if(card.suit == 'h') {
-					// Led heart
-					if(this.hands[player].has_suit('s') || this.hands[player].has_suit('d') || this.hands[player].has_suit('c')) {
-						// Not heart-tight
-						return "You can't lead a heart unless that's all you have";
-					}
-				}
-			}
-			else if(this.game_type == "Hearts") {
-				if(card.suit == 'h') {
-					// Led heart
-					var num_hearts = 0;
-					for(var player in this.cards_taken) {
-						for(var i = 0; i < this.cards_taken[player].length; i++) {
-							if(this.cards_taken[player][i].suit == 'h') {
-								num_hearts++;
+				else if(this.game_type == "Hearts") {
+					if(card.suit == 'h') {
+						// Led heart
+						var num_hearts = 0;
+						for(var player in this.cards_taken) {
+							for(var i = 0; i < this.cards_taken[player].length; i++) {
+								if(this.cards_taken[player][i].suit == 'h') {
+									num_hearts++;
+								}
+							}
+						}
+						if(num_hearts == 0) {
+							// Hearts haven't been broken
+							if(this.hands[player].has_suit('s') || this.hands[player].has_suit('d') || this.hands[player].has_suit('c')) {
+								// Not heart-tight
+								return false;
 							}
 						}
 					}
-					if(num_hearts == 0) {
-						// Hearts haven't been broken
+				}
+			}
+			return true;
+		}
+		else {
+			// Fan-Tan rules
+			
+			// Check for start card
+			if(card.rank == this.start_card) {
+				return true;
+			}
+			
+			// Check spades
+			if ((card.suit == 's') && ((card.rank == this.fan_tan['s'][0].rank - 1) || (card.rank == this.fan_tan['s'][1].rank + 1))) {
+				return true;
+			}
+			// Check hearts
+			else if((card.suit == 'h') && ((card.rank == this.fan_tan['h'][0].rank - 1) || (card.rank == this.fan_tan['h'][1].rank + 1))) {
+				return true;
+			}
+			// Check diamonds
+			else if ((card.suit == 'd') && ((card.rank == this.fan_tan['d'][0].rank - 1) || (card.rank == this.fan_tan['d'][1].rank + 1))) {
+				return true;
+			}
+			// Check clubs
+			else if ((card.suit == 'c') && ((card.rank == this.fan_tan['c'][0].rank - 1) || (card.rank == this.fan_tan['c'][1].rank + 1))) {
+				return true;
+			}
+			
+			return false;
+		}
+	}
+	
+	explanation(player, card) {
+		if(this.game_type != "Fan-Tan") {
+			if(this.current_trick.cards.length != 0) {
+				// Not the lead
+				if(card.suit != this.current_trick.cards[0].suit) {
+					// Pitch
+					if(this.hands[player].has_suit(this.current_trick.cards[0].suit)) {
+						// Illegal pitch
+						return "You must follow suit if you can";
+					}
+				}
+			}
+			else {
+				// Lead
+				if(this.game_type == "Barbu") {
+					if(card.suit == 'h') {
+						// Led heart
 						if(this.hands[player].has_suit('s') || this.hands[player].has_suit('d') || this.hands[player].has_suit('c')) {
 							// Not heart-tight
-							return "You can't lead a heart until they've been broken";
+							return "You can't lead a heart unless that's all you have";
+						}
+					}
+				}
+				else if(this.game_type == "Hearts") {
+					if(card.suit == 'h') {
+						// Led heart
+						var num_hearts = 0;
+						for(var player in this.cards_taken) {
+							for(var i = 0; i < this.cards_taken[player].length; i++) {
+								if(this.cards_taken[player][i].suit == 'h') {
+									num_hearts++;
+								}
+							}
+						}
+						if(num_hearts == 0) {
+							// Hearts haven't been broken
+							if(this.hands[player].has_suit('s') || this.hands[player].has_suit('d') || this.hands[player].has_suit('c')) {
+								// Not heart-tight
+								return "You can't lead a heart until they've been broken";
+							}
 						}
 					}
 				}
 			}
+			return "";
 		}
-		return "";
+		else {
+			// Fan-Tan rules
+			
+			// Check for start card
+			if(card.rank == this.start_card) {
+				return "";
+			}
+			
+			// Check spades
+			if ((card.suit == 's') && ((card.rank == this.fan_tan['s'][0].rank - 1) || (card.rank == this.fan_tan['s'][1].rank + 1))) {
+				return "";
+			}
+			// Check hearts
+			else if((card.suit == 'h') && ((card.rank == this.fan_tan['h'][0].rank - 1) || (card.rank == this.fan_tan['h'][1].rank + 1))) {
+				return "";
+			}
+			// Check diamonds
+			else if ((card.suit == 'd') && ((card.rank == this.fan_tan['d'][0].rank - 1) || (card.rank == this.fan_tan['d'][1].rank + 1))) {
+				return "";
+			}
+			// Check clubs
+			else if ((card.suit == 'c') && ((card.rank == this.fan_tan['c'][0].rank - 1) || (card.rank == this.fan_tan['c'][1].rank + 1))) {
+				return "";
+			}
+		}
+		return "Card must be either the start card or adjacent to one of the cards on the board";
 	}
 	
 	game_done() {
@@ -585,7 +654,7 @@ gamesNamespace.on('connection', socket => {
 			for(var i = 0; i < 4; i++) {
 				players.push(game.players[(game.dealerIndex + i) % 4]);
 			}
-			game.subgame = new Subgame(players[0], players[1], players[2], players[3], game.handHash, data.gamechoice, data.trump);
+			game.subgame = new Subgame(players[0], players[1], players[2], players[3], game.handHash, data.gamechoice, data.trump, data.start_card);
 			
 			// Add subgame to completed subgames
 			game.gamesChosen[data.username].push(data.gamechoice);
