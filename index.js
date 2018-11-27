@@ -343,7 +343,8 @@ lobbiesNamespace.on('connection', socket => {
         socket.emit('new-lobby', {
             owner: lobby.owner,
             name: lobby.name,
-            players: lobby.players
+			players: lobby.players,
+			password: lobby.password
         });
     });
 
@@ -364,7 +365,8 @@ lobbiesNamespace.on('connection', socket => {
         if (!lobbyExists) {
             let lobby = {
                 owner: lobbyData.owner,
-                name: lobbyData.name,
+				name: lobbyData.name,
+				password: lobbyData.password,
                 players: []
             };
 
