@@ -394,7 +394,7 @@ class Subgame {
 				for(var i = 0; i < this.cards_taken[player].length; i++) {
 					var c = this.cards_taken[player][i];
 					if(c.suit == 'h' && c.card == 'King') {
-						return -15;
+						return -20;
 					}
 				}
 				return 0;
