@@ -4,7 +4,7 @@ if (port == null || port == "") {
 }
 const io = require('socket.io')(port);
 
-io.origins(['barbu-online.firebaseapp.com:*']);
+io.origins('https://barbu-online.firebaseapp.com:*');
 
 const chatNamespace = io.of('/chat');
 const lobbiesNamespace = io.of('/lobbies');
