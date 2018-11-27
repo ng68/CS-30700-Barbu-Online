@@ -500,9 +500,6 @@ lobbiesNamespace.on('connection', socket => {
     //    user: String
     // }
     socket.on('join-lobby', data => {
-		console.log("Sent data to join-lobby");
-		console.log(data);
-
         let lobby;
         lobbies.forEach(l => {
 			console.log(l.name);
@@ -510,7 +507,6 @@ lobbiesNamespace.on('connection', socket => {
                 lobby = l;
             }
 		});
-		console.log(lobby);
 
         if (lobby.players.length > 3) {
             // Cannot add a player because it's full.
