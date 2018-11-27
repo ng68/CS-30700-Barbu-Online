@@ -451,8 +451,6 @@ lobbiesNamespace.on('connection', socket => {
     // When the page loads (i.e. once a client joins lobbiesNamespace), want
     // to send the client all of the currently open lobbies
     lobbies.forEach(lobby => {
-		console.log(lobby);
-
         socket.emit('new-lobby', {
             owner: lobby.owner,
             name: lobby.name,
@@ -502,7 +500,6 @@ lobbiesNamespace.on('connection', socket => {
     socket.on('join-lobby', data => {
         let lobby;
         lobbies.forEach(l => {
-			console.log(l.name);
             if (l.name == data.lobbyName) {
                 lobby = l;
             }
