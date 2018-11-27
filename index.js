@@ -152,7 +152,7 @@ class Subgame {
 		
 		// Look at all cards
 		var i = 0;
-		var a = this.hands[player].as_array();
+		var a = this.hands[player].cards;
 		for(i = 0; i < a.length; i++) {
 			var card = a[i];
 			
@@ -162,19 +162,19 @@ class Subgame {
 			}
 			
 			// Check spades
-			if ((card.suit == 's') && ((card.rank == this.fan_tan['s'][0].rank - 1) || (card.rank == this.fan_tan['s'][1].rank + 1))) {
+			if ((card.suit == 's') && (this.fan_tan['s'].length > 0) && ((card.rank == this.fan_tan['s'][0].rank - 1) || (card.rank == this.fan_tan['s'][1].rank + 1))) {
 				return true;
 			}
 			// Check hearts
-			else if((card.suit == 'h') && ((card.rank == this.fan_tan['h'][0].rank - 1) || (card.rank == this.fan_tan['h'][1].rank + 1))) {
+			else if((card.suit == 'h') && (this.fan_tan['h'].length > 0) && ((card.rank == this.fan_tan['h'][0].rank - 1) || (card.rank == this.fan_tan['h'][1].rank + 1))) {
 				return true;
 			}
 			// Check diamonds
-			else if ((card.suit == 'd') && ((card.rank == this.fan_tan['d'][0].rank - 1) || (card.rank == this.fan_tan['d'][1].rank + 1))) {
+			else if ((card.suit == 'd') && (this.fan_tan['d'].length > 0) && ((card.rank == this.fan_tan['d'][0].rank - 1) || (card.rank == this.fan_tan['d'][1].rank + 1))) {
 				return true;
 			}
 			// Check clubs
-			else if ((card.suit == 'c') && ((card.rank == this.fan_tan['c'][0].rank - 1) || (card.rank == this.fan_tan['c'][1].rank + 1))) {
+			else if ((card.suit == 'c') && (this.fan_tan['c'].length > 0) && ((card.rank == this.fan_tan['c'][0].rank - 1) || (card.rank == this.fan_tan['c'][1].rank + 1))) {
 				return true;
 			}
 		}
@@ -236,19 +236,19 @@ class Subgame {
 			}
 			
 			// Check spades
-			if ((card.suit == 's') && ((card.rank == this.fan_tan['s'][0].rank - 1) || (card.rank == this.fan_tan['s'][1].rank + 1))) {
+			if ((card.suit == 's') && (this.fan_tan['s'].length > 0) && ((card.rank == this.fan_tan['s'][0].rank - 1) || (card.rank == this.fan_tan['s'][1].rank + 1))) {
 				return true;
 			}
 			// Check hearts
-			else if((card.suit == 'h') && ((card.rank == this.fan_tan['h'][0].rank - 1) || (card.rank == this.fan_tan['h'][1].rank + 1))) {
+			else if((card.suit == 'h') && (this.fan_tan['h'].length > 0) && ((card.rank == this.fan_tan['h'][0].rank - 1) || (card.rank == this.fan_tan['h'][1].rank + 1))) {
 				return true;
 			}
 			// Check diamonds
-			else if ((card.suit == 'd') && ((card.rank == this.fan_tan['d'][0].rank - 1) || (card.rank == this.fan_tan['d'][1].rank + 1))) {
+			else if ((card.suit == 'd') && (this.fan_tan['d'].length > 0) && ((card.rank == this.fan_tan['d'][0].rank - 1) || (card.rank == this.fan_tan['d'][1].rank + 1))) {
 				return true;
 			}
 			// Check clubs
-			else if ((card.suit == 'c') && ((card.rank == this.fan_tan['c'][0].rank - 1) || (card.rank == this.fan_tan['c'][1].rank + 1))) {
+			else if ((card.suit == 'c') && (this.fan_tan['c'].length > 0) && ((card.rank == this.fan_tan['c'][0].rank - 1) || (card.rank == this.fan_tan['c'][1].rank + 1))) {
 				return true;
 			}
 			
@@ -311,19 +311,19 @@ class Subgame {
 			}
 			
 			// Check spades
-			if ((card.suit == 's') && ((card.rank == this.fan_tan['s'][0].rank - 1) || (card.rank == this.fan_tan['s'][1].rank + 1))) {
+			if ((card.suit == 's') && (this.fan_tan['s'].length > 0) && ((card.rank == this.fan_tan['s'][0].rank - 1) || (card.rank == this.fan_tan['s'][1].rank + 1))) {
 				return "";
 			}
 			// Check hearts
-			else if((card.suit == 'h') && ((card.rank == this.fan_tan['h'][0].rank - 1) || (card.rank == this.fan_tan['h'][1].rank + 1))) {
+			else if((card.suit == 'h') && (this.fan_tan['h'].length > 0) && ((card.rank == this.fan_tan['h'][0].rank - 1) || (card.rank == this.fan_tan['h'][1].rank + 1))) {
 				return "";
 			}
 			// Check diamonds
-			else if ((card.suit == 'd') && ((card.rank == this.fan_tan['d'][0].rank - 1) || (card.rank == this.fan_tan['d'][1].rank + 1))) {
+			else if ((card.suit == 'd') && (this.fan_tan['d'].length > 0) && ((card.rank == this.fan_tan['d'][0].rank - 1) || (card.rank == this.fan_tan['d'][1].rank + 1))) {
 				return "";
 			}
 			// Check clubs
-			else if ((card.suit == 'c') && ((card.rank == this.fan_tan['c'][0].rank - 1) || (card.rank == this.fan_tan['c'][1].rank + 1))) {
+			else if ((card.suit == 'c') && (this.fan_tan['c'].length > 0) && ((card.rank == this.fan_tan['c'][0].rank - 1) || (card.rank == this.fan_tan['c'][1].rank + 1))) {
 				return "";
 			}
 		}
