@@ -297,8 +297,11 @@ socket.on('card-chosen-response', data =>{
 
 function checkWhichPile(initialRank, card, hand, single_suit, tempCard) {
     let suit = card.substring(0,1);
-    let rank = card.substring(1);
+    let rank = parseInt(card.substring(1),10);
+    initialRank = parseInt(initialRank,10);
     let pile;
+    console.log(initialRank);
+    console.log(rank);
     if (suit === "s") {
         if (rank >= initialRank) {
             pile = 4;
@@ -336,6 +339,7 @@ function checkWhichPile(initialRank, card, hand, single_suit, tempCard) {
             diamondTopDiscardPile.addCard(tempCard);
             diamondTopDiscardPile.render();
             hand.render();
+            break;
 
         case 2:
             if(single_suit[1]) {
@@ -346,6 +350,7 @@ function checkWhichPile(initialRank, card, hand, single_suit, tempCard) {
             clubTopDiscardPile.addCard(tempCard);
             clubTopDiscardPile.render();
             hand.render();
+            break;
 
         case 3:
             if(single_suit[2]) {
@@ -356,6 +361,7 @@ function checkWhichPile(initialRank, card, hand, single_suit, tempCard) {
             heartTopDiscardPile.addCard(tempCard);
             heartTopDiscardPile.render();
             hand.render();
+            break;
 
         case 4:
             if(single_suit[3]) {
@@ -366,23 +372,29 @@ function checkWhichPile(initialRank, card, hand, single_suit, tempCard) {
             spadeTopDiscardPile.addCard(tempCard);
             spadeTopDiscardPile.render();
             hand.render();
+            break;
 
         case 5:
             diamondBottomDiscardPile.addCard(tempCard);
             diamondBottomDiscardPile.render();
             hand.render();
+            break;
         case 6:
             clubBottomDiscardPile.addCard(tempCard);
             clubBottomDiscardPile.render();
             hand.render();
+            break;
         case 7:
             heartBottomDiscardPile.addCard(tempCard);
             heartBottomDiscardPile.render();
             hand.render();
+            break;
         case 8: 
             spadeBottomDiscardPile.addCard(tempCard);
             spadeBottomDiscardPile.render();
             hand.render();
+            break;
+        
     }
 }
 
@@ -395,15 +407,14 @@ socket.on('card-chosen-response-ft', data =>{
                 tempCard = loc.cards[i];
             }
         }
-        data.single_suit;
         if (data.username === players.left) {
-            checkWhichPile(data.initial_rank, data.card, lefthand, data.single_suit, tempCard);
+            checkWhichPile(data.start_card, data.card, lefthand, data.single_suit, tempCard);
         }else if (data.username === players.top){
-            checkWhichPile(data.initial_rank, data.card, upperhand, data.single_suit, tempCard);
+            checkWhichPile(data.start_card, data.card, upperhand, data.single_suit, tempCard);
         }else if (data.username === players.right){
-            checkWhichPile(data.initial_rank, data.card, righthand, data.single_suit, tempCard);
+            checkWhichPile(data.start_card, data.card, righthand, data.single_suit, tempCard);
         }else if (data.username === user){
-            checkWhichPile(data.initial_rank, data.card, lowerhand, data.single_suit, tempCard);
+            checkWhichPile(data.start_card, data.card, lowerhand, data.single_suit, tempCard);
         }else {
             window.alert("Error: Invalid user for played-card (Fan-Tan)");
         }
