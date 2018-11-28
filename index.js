@@ -129,8 +129,16 @@ class Subgame {
 	constructor(dealer, p2, p3, p4, hands, game_type, trump, start_card) {
 		this.players = [dealer, p2, p3, p4];
 		this.hands = hands;
-		this.current_player = p2;
-		this.current_index = 1;
+		
+		if(game_type != "Fan-Tan") {
+			this.current_player = p2;
+			this.current_index = 1;
+		}
+		else {
+			this.current_player = dealer;
+			this.current_index = 0;
+		}
+		
 		this.current_trick = new Trick(trump);
 		this.cards_taken = {};
 		for(var i = 0; i < 4; i++) {
@@ -153,6 +161,24 @@ class Subgame {
 			this.fan_tan['c'] = [];
 		}
 		this.fan_tan_order = [];
+		
+		if(game_type == "Fan-Tan") {
+			// Skip to first player who can play
+			while(!this.has_fan_tan_play(this.current_player)) {
+				this.current_index = (this.current_index + 1) % 4;
+				this.current_player = this.players[this.current_index];
+			}
+		}
+		
+		// Doubles
+		this.doubles = [[0,0,0,0], [0,0,0,0], [0,0,0,0], [0,0,0,0]];
+	}
+	
+	add_double(p1, p2) {
+		var i1 = this.players.indexOf(p1);
+		var i2 = this.players.indexOf(p2);
+		this.doubles[i1][i2]++;
+		this.doubles[i2][i1]++;
 	}
 	
 	has_fan_tan_play(player) {
@@ -727,7 +753,7 @@ gamesNamespace.on('connection', socket => {
 				rank: data.rank
             }); // FOR NOW just emit a string of the chosen game
             gamesNamespace.to(data.lobbyname).emit('your-turn', {
-                username: game.players[(game.dealerIndex + 1) % 4]
+                username: game.subgame.current_player
             });
 		}
 		else {
@@ -800,11 +826,25 @@ gamesNamespace.on('connection', socket => {
 						// GAME IS OVER
 						
 						// Update scores
-						for(var i = 0; i < game.players.length; i++) {
-							var p = game.players[i];
-							game.scoreHash[p] += subgame.compute_score(p);
+						var raw_scores = [0,0,0,0];
+						for(var i = 0; i < subgame.players.length; i++) {
+							var p = subgame.players[i];
+							raw_scores[i] = subgame.compute_score(p);
 						}
-
+						var scores = raw_scores.slice();
+						for(var i = 0; i < 4; i++) {
+							for(var j = 0; j < 4; j++) {
+								if(i == j) continue;
+								else {
+									scores[i] += (raw_scores[i] - raw_scores[j]) * subgame.doubles[i][j];
+								}
+							}
+						}
+						for(var i = 0; i < 4; i++) {
+							var p = subgame.players[i];
+							game.scoreHash[p] += scores[i];
+						}
+				
 						// Check if entire game is done
 						done = true;
 						for(var i = 0; i < game.players.length; i++) {
@@ -953,9 +993,24 @@ gamesNamespace.on('connection', socket => {
 				
 				if(done) {
 					// Update scores
-					for(var i = 0; i < game.players.length; i++) {
-						var p = game.players[i];
-						game.scoreHash[p] += subgame.compute_score(p);
+					var raw_scores = [0,0,0,0];
+					for(var i = 0; i < subgame.players.length; i++) {
+						var p = subgame.players[i];
+						raw_scores[i] = subgame.compute_score(p);
+					}
+					console.log(raw_scores);
+					var scores = raw_scores.slice();
+					for(var i = 0; i < 4; i++) {
+						for(var j = 0; j < 4; j++) {
+							if(i == j) continue;
+							else {
+								scores[i] += (raw_scores[i] - raw_scores[j]) * subgame.doubles[i][j];
+							}
+						}
+					}
+					for(var i = 0; i < 4; i++) {
+						var p = subgame.players[i];
+						game.scoreHash[p] += scores[i];
 					}
 
 					// Check if entire game is done

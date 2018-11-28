@@ -432,36 +432,37 @@ socket.on('your-turn', data =>{
     }
 });
 
-/*socket.on('game-finished', data => {
+socket.on('game-finished', data => {
     var msg = "";
     for (var i = 0; i < 4; i++) {
         msg = msg +  Object.keys(data)[i] + " : " + Object.values(data)[i][0] + "\n";
-        var query = firebase.database().ref("users/" + firebase.auth().currentUser.uid);
-        query.once("value")
-        .then(function(snapshot) {
-            let totalScore = snapshot.child("avg_score").val();
-            let wins = snapshot.child("wins").val();
-            let losses = snapshot.child("losses").val();
-            if (user = snapshot.child("username")) {
-                if (Object.values(data)[i][1]) {
-                    totalScore = totalScore + Object.values(data)[i][0];
-                    wins = wins + 1;
-                }else {
-                    totalScore = totalScore + Object.values(data)[i][0];
-                    losses = losses + 1;
+        firebase.auth().onAuthStateChanged(function(user){   
+            var query = firebase.database().ref("users/" + user.uid);
+            query.on("value", function(snapshot) {
+                let totalScore = snapshot.val().avg_score;
+                let wins = snapshot.val().wins;
+                let losses = snapshot.val().losses;
+                if (user = snapshot.child("username")) {
+                    if (Object.values(data)[i][1]) {
+                        totalScore = totalScore + Object.values(data)[i][0];
+                        wins = wins + 1;
+                    }else {
+                        totalScore = totalScore + Object.values(data)[i][0];
+                        losses = losses + 1;
+                    }
+                    firebase.database().ref("users/" + user.uid).update({
+                        wins : wins,
+                        losses : losses,
+                        avg_score: totalScore
+                    });
                 }
-                firebase.database().ref("users/" + firebase.auth().currentUser.uid).update({
-                    wins : wins,
-                    losses : losses,
-                    avg_score: totalScore
             });
-            }
         });   
     }
     window.alert(msg);
     window.location.href = "home.html";
 });
-*/
+
 
 //socket.on('subgame-finished', data => {
 //    //update dealer++%4
