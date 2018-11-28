@@ -162,11 +162,12 @@ class Subgame {
 		}
 		this.fan_tan_order = [];
 		
-		// Skip to first player who can play
-		// console.log(this.has_fan_tan_play(this.current_player));
-		while(!this.has_fan_tan_play(this.current_player)) {
-			this.current_player = this.players[(this.current_index + 1) % 4];
-			this.current_index = (this.current_index + 1) % 4;
+		if(game_type == "Fan-Tan") {
+			// Skip to first player who can play
+			while(!this.has_fan_tan_play(this.current_player)) {
+				this.current_index = (this.current_index + 1) % 4;
+				this.current_player = this.players[this.current_index];
+			}
 		}
 		
 		// Doubles
