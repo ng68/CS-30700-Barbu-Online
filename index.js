@@ -4,7 +4,7 @@ if (port == null || port == "") {
 }
 const io = require('socket.io')(port);
 
-io.origins('https://barbu-online.firebaseapp.com:*');
+// io.origins('https://barbu-online.firebaseapp.com:*');
 
 const chatNamespace = io.of('/chat');
 const lobbiesNamespace = io.of('/lobbies');
@@ -43,6 +43,10 @@ class Card {
 class Hand {
 	constructor(cards) {
 		this.cards = cards;
+	}
+	
+	out_of_cards() {
+		return this.cards.length == 0;
 	}
 	
 	has_suit(suit) {
@@ -125,8 +129,16 @@ class Subgame {
 	constructor(dealer, p2, p3, p4, hands, game_type, trump, start_card) {
 		this.players = [dealer, p2, p3, p4];
 		this.hands = hands;
-		this.current_player = p2;
-		this.current_index = 1;
+		
+		if(game_type != "Fan-Tan") {
+			this.current_player = p2;
+			this.current_index = 1;
+		}
+		else {
+			this.current_player = dealer;
+			this.current_index = 0;
+		}
+		
 		this.current_trick = new Trick(trump);
 		this.cards_taken = {};
 		for(var i = 0; i < 4; i++) {
@@ -149,6 +161,24 @@ class Subgame {
 			this.fan_tan['c'] = [];
 		}
 		this.fan_tan_order = [];
+		
+		if(game_type == "Fan-Tan") {
+			// Skip to first player who can play
+			while(!this.has_fan_tan_play(this.current_player)) {
+				this.current_index = (this.current_index + 1) % 4;
+				this.current_player = this.players[this.current_index];
+			}
+		}
+		
+		// Doubles
+		this.doubles = [[0,0,0,0], [0,0,0,0], [0,0,0,0], [0,0,0,0]];
+	}
+	
+	add_double(p1, p2) {
+		var i1 = this.players.indexOf(p1);
+		var i2 = this.players.indexOf(p2);
+		this.doubles[i1][i2]++;
+		this.doubles[i2][i1]++;
 	}
 	
 	has_fan_tan_play(player) {
@@ -396,7 +426,7 @@ class Subgame {
 				for(var i = 0; i < this.cards_taken[player].length; i++) {
 					var c = this.cards_taken[player][i];
 					if(c.suit == 'h' && c.card == 'King') {
-						return -15;
+						return -20;
 					}
 				}
 				return 0;
@@ -723,7 +753,7 @@ gamesNamespace.on('connection', socket => {
 				rank: data.rank
             }); // FOR NOW just emit a string of the chosen game
             gamesNamespace.to(data.lobbyname).emit('your-turn', {
-                username: game.players[(game.dealerIndex + 1) % 4]
+                username: game.subgame.current_player
             });
 		}
 		else {
@@ -796,11 +826,25 @@ gamesNamespace.on('connection', socket => {
 						// GAME IS OVER
 						
 						// Update scores
-						for(var i = 0; i < game.players.length; i++) {
-							var p = game.players[i];
-							game.scoreHash[p] += subgame.compute_score(p);
+						var raw_scores = [0,0,0,0];
+						for(var i = 0; i < subgame.players.length; i++) {
+							var p = subgame.players[i];
+							raw_scores[i] = subgame.compute_score(p);
 						}
-
+						var scores = raw_scores.slice();
+						for(var i = 0; i < 4; i++) {
+							for(var j = 0; j < 4; j++) {
+								if(i == j) continue;
+								else {
+									scores[i] += (raw_scores[i] - raw_scores[j]) * subgame.doubles[i][j];
+								}
+							}
+						}
+						for(var i = 0; i < 4; i++) {
+							var p = subgame.players[i];
+							game.scoreHash[p] += scores[i];
+						}
+				
 						// Check if entire game is done
 						done = true;
 						for(var i = 0; i < game.players.length; i++) {
@@ -893,20 +937,50 @@ gamesNamespace.on('connection', socket => {
 				}
 			}
 			else {
+				// FAN-TAN
+				
+				// Set single_suit array for response
+				var array = [];
+				if(subgame.fan_tan['d'].length > 0 && subgame.fan_tan['d'][0] == subgame.fan_tan['d'][1]) {
+					array.push(true);
+				}
+				else array.push(false);
+				
+				if(subgame.fan_tan['c'].length > 0 && subgame.fan_tan['c'][0] == subgame.fan_tan['c'][1]) {
+					array.push(true);
+				}
+				else array.push(false);
+				if(subgame.fan_tan['h'].length > 0 && subgame.fan_tan['h'][0] == subgame.fan_tan['h'][1]) {
+					array.push(true);
+				}
+				else array.push(false);
+				if(subgame.fan_tan['s'].length > 0 && subgame.fan_tan['s'][0] == subgame.fan_tan['s'][1]) {
+					array.push(true);
+				}
+				else array.push(false);
+				
 				// Add card to fan-tan deck
-				if(card.rank == subgame.fan_tan[card.suit][0].rank - 1) {
+				
+				// Lower card
+				if(subgame.fan_tan[card.suit].length > 0 && card.rank == subgame.fan_tan[card.suit][0].rank - 1) {
 					subgame.fan_tan[card.suit][0] = card;
 				}
-				else {
+				// Higher card
+				else if (subgame.fan_tan[card.suit].length > 0 && card.rank == subgame.fan_tan[card.suit][1].rank + 1){
 					subgame.fan_tan[card.suit][1] = card;
+				}
+				// Start card
+				else {
+					subgame.fan_tan[card.suit] = [card, card];
+					console.log(subgame.fan_tan);
 				}
 				
 				// Remove card from hand
 				game.handHash[data.username].remove_card(card);
 
 				// Check if player is out
-				if(game.handHash[username].out_of_cards()) {
-					subgame.fan_tan_order.push(username);
+				if(game.handHash[data.username].out_of_cards()) {
+					subgame.fan_tan_order.push(data.username);
 				}
 			
 				// Check if game is over
@@ -919,9 +993,24 @@ gamesNamespace.on('connection', socket => {
 				
 				if(done) {
 					// Update scores
-					for(var i = 0; i < game.players.length; i++) {
-						var p = game.players[i];
-						game.scoreHash[p] += subgame.compute_score(p);
+					var raw_scores = [0,0,0,0];
+					for(var i = 0; i < subgame.players.length; i++) {
+						var p = subgame.players[i];
+						raw_scores[i] = subgame.compute_score(p);
+					}
+					console.log(raw_scores);
+					var scores = raw_scores.slice();
+					for(var i = 0; i < 4; i++) {
+						for(var j = 0; j < 4; j++) {
+							if(i == j) continue;
+							else {
+								scores[i] += (raw_scores[i] - raw_scores[j]) * subgame.doubles[i][j];
+							}
+						}
+					}
+					for(var i = 0; i < 4; i++) {
+						var p = subgame.players[i];
+						game.scoreHash[p] += scores[i];
 					}
 
 					// Check if entire game is done
@@ -1011,26 +1100,7 @@ gamesNamespace.on('connection', socket => {
 						subgame.current_player = subgame.players[subgame.current_index];
 					}
 					
-					// Emit response
-					var array = [];
-					if(subgame.fan_tan['d'].length > 0 && subgame.fan_tan['d'][0] == subgame.fan_tan['d'][1]) {
-						array.push(true);
-					}
-					else array.push(false);
-					
-					if(subgame.fan_tan['c'].length > 0 && subgame.fan_tan['c'][0] == subgame.fan_tan['c'][1]) {
-						array.push(true);
-					}
-					else array.push(false);
-					if(subgame.fan_tan['h'].length > 0 && subgame.fan_tan['h'][0] == subgame.fan_tan['h'][1]) {
-						array.push(true);
-					}
-					else array.push(false);
-					if(subgame.fan_tan['s'].length > 0 && subgame.fan_tan['s'][0] == subgame.fan_tan['s'][1]) {
-						array.push(true);
-					}
-					else array.push(false);
-					
+					// Emit response					
 					gamesNamespace.to(data.lobbyname).emit('card-chosen-response-ft', {
 						valid: true,
 						username: data.username,
