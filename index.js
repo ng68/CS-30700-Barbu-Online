@@ -571,7 +571,7 @@ lobbiesNamespace.on('connection', socket => {
 	
 	socket.on('start-game', data => {
 		lobbiesNamespace.emit('game-started', {
-			lobbyname: data.lobbyname
+			lobbyName: data.lobbyName
 		});
 	});
 
