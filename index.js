@@ -168,6 +168,16 @@ class Subgame {
 			this.current_player = this.players[(this.current_index + 1) % 4];
 			this.current_index = (this.current_index + 1) % 4;
 		}
+		
+		// Doubles
+		this.doubles = [[0,0,0,0], [0,0,0,0], [0,0,0,0], [0,0,0,0]];
+	}
+	
+	add_double(p1, p2) {
+		var i1 = this.players.indexOf(p1);
+		var i2 = this.players.indexOf(p2);
+		this.doubles[i1][i2]++;
+		this.doubles[i2][i1]++;
 	}
 	
 	has_fan_tan_play(player) {
@@ -815,11 +825,25 @@ gamesNamespace.on('connection', socket => {
 						// GAME IS OVER
 						
 						// Update scores
-						for(var i = 0; i < game.players.length; i++) {
-							var p = game.players[i];
-							game.scoreHash[p] += subgame.compute_score(p);
+						var raw_scores = [0,0,0,0];
+						for(var i = 0; i < subgame.players.length; i++) {
+							var p = subgame.players[i];
+							raw_scores[i] = subgame.compute_score(p);
 						}
-
+						var scores = raw_scores.slice();
+						for(var i = 0; i < 4; i++) {
+							for(var j = 0; j < 4; j++) {
+								if(i == j) continue;
+								else {
+									scores[i] += (raw_scores[i] - raw_scores[j]) * subgame.doubles[i][j];
+								}
+							}
+						}
+						for(var i = 0; i < 4; i++) {
+							var p = subgame.players[i];
+							game.scoreHash[p] += scores[i];
+						}
+				
 						// Check if entire game is done
 						done = true;
 						for(var i = 0; i < game.players.length; i++) {
@@ -968,9 +992,24 @@ gamesNamespace.on('connection', socket => {
 				
 				if(done) {
 					// Update scores
-					for(var i = 0; i < game.players.length; i++) {
-						var p = game.players[i];
-						game.scoreHash[p] += subgame.compute_score(p);
+					var raw_scores = [0,0,0,0];
+					for(var i = 0; i < subgame.players.length; i++) {
+						var p = subgame.players[i];
+						raw_scores[i] = subgame.compute_score(p);
+					}
+					console.log(raw_scores);
+					var scores = raw_scores.slice();
+					for(var i = 0; i < 4; i++) {
+						for(var j = 0; j < 4; j++) {
+							if(i == j) continue;
+							else {
+								scores[i] += (raw_scores[i] - raw_scores[j]) * subgame.doubles[i][j];
+							}
+						}
+					}
+					for(var i = 0; i < 4; i++) {
+						var p = subgame.players[i];
+						game.scoreHash[p] += scores[i];
 					}
 
 					// Check if entire game is done
