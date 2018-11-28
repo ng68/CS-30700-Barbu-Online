@@ -129,8 +129,16 @@ class Subgame {
 	constructor(dealer, p2, p3, p4, hands, game_type, trump, start_card) {
 		this.players = [dealer, p2, p3, p4];
 		this.hands = hands;
-		this.current_player = p2;
-		this.current_index = 1;
+		
+		if(game_type != "Fan-Tan") {
+			this.current_player = p2;
+			this.current_index = 1;
+		}
+		else {
+			this.current_player = dealer;
+			this.current_index = 0;
+		}
+		
 		this.current_trick = new Trick(trump);
 		this.cards_taken = {};
 		for(var i = 0; i < 4; i++) {
@@ -153,6 +161,13 @@ class Subgame {
 			this.fan_tan['c'] = [];
 		}
 		this.fan_tan_order = [];
+		
+		// Skip to first player who can play
+		// console.log(this.has_fan_tan_play(this.current_player));
+		while(!this.has_fan_tan_play(this.current_player)) {
+			this.current_player = this.players[(this.current_index + 1) % 4];
+			this.current_index = (this.current_index + 1) % 4;
+		}
 	}
 	
 	has_fan_tan_play(player) {
