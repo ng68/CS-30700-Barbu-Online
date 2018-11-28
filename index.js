@@ -753,7 +753,7 @@ gamesNamespace.on('connection', socket => {
 				rank: data.rank
             }); // FOR NOW just emit a string of the chosen game
             gamesNamespace.to(data.lobbyname).emit('your-turn', {
-                username: game.players[(game.dealerIndex + 1) % 4]
+                username: game.subgame.current_player
             });
 		}
 		else {
