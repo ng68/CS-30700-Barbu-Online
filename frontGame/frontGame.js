@@ -19,14 +19,14 @@ let lowerTrickPile = new cards.Deck({faceUp:false, x:850, y:500});
 let upperTrickPile = new cards.Deck({faceUp:false, x:350, y:80});
 let leftTrickPile = new cards.Deck({faceUp:false, x:200, y:150});
 let rightTrickPile = new cards.Deck({faceUp:false, x:1000, y:390});
-let diamondTopDiscardPile = new cards.Deck({faceUp:true, x:460, y:220});
-let diamondBottomDiscardPile = new cards.Deck({faceUp:true, x:460, y:320});
-let clubTopDiscardPile = new cards.Deck({faceUp:true, x:530, y:220});
-let clubBottomDiscardPile = new cards.Deck({faceUp:true, x:530, y:320});
-let heartTopDiscardPile = new cards.Deck({faceUp:true, x:600, y:220});
-let heartBottomDiscardPile = new cards.Deck({faceUp:true, x:600, y:320});
-let spadeTopDiscardPile = new cards.Deck({faceUp:true, x:670, y:220});
-let spadeBottomDiscardPile = new cards.Deck({faceUp:true, x:670, y:320});   
+let diamondTopDiscardPile = new cards.Deck({faceUp:true, x:495, y:220});
+let diamondBottomDiscardPile = new cards.Deck({faceUp:true, x:495, y:320});
+let clubTopDiscardPile = new cards.Deck({faceUp:true, x:565, y:220});
+let clubBottomDiscardPile = new cards.Deck({faceUp:true, x:565, y:320});
+let heartTopDiscardPile = new cards.Deck({faceUp:true, x:635, y:220});
+let heartBottomDiscardPile = new cards.Deck({faceUp:true, x:635, y:320});
+let spadeTopDiscardPile = new cards.Deck({faceUp:true, x:705, y:220});
+let spadeBottomDiscardPile = new cards.Deck({faceUp:true, x:705, y:320});   
 
 let loc = {};  //Keeps track of the reference to the location of each Card
 
@@ -84,7 +84,6 @@ document.getElementById("p4").addEventListener('click', e => {
 
 //Run this for each subgame that we run this also populates the hands.
 socket.on('cards-dealt', data => {
-    console.log(data);
     for (var i = 0; i < 4;i++) {
         if (Object.keys(data)[i] === user) {
             myPosition = i;
@@ -138,6 +137,34 @@ socket.on('cards-dealt', data => {
         $('#myModal').modal('show');
     }else {
         //Waiting prompt
+        document.getElementById("exampleModalLabel2").innerHTML = "Waiting for subgame to be chosen...";
+        $('#waitingModal').modal('show');
+    }
+});
+
+socket.on('request-double', data => {
+    if (data.username === user) {
+        let posUsers = data.users;
+        let redouble = data.redouble;
+        let temp = "";
+        console.log(posUsers);
+        console.log(redouble);
+        for (let i = 0; i < posUsers.length;i++) {
+            let type = "";
+            if (redouble[i]) {
+                type = "Re-double";
+            }else {
+                type = "Double";
+            }
+            temp += "<input type=\"checkbox\" value=\"" + posUsers[i] + "\" class=\"chk\"> " + type + " " + posUsers[i] + "<br>";
+        }
+        document.getElementById("check").innerHTML = temp;
+        $('#waitingModal').modal('hide');
+        $('#doubleModal').modal('show');
+    }else {
+        //Waiting prompt
+        document.getElementById("exampleModalLabel2").innerHTML = "Waiting for doubles to be decided...";
+        $('#doubleModal').modal('hide');
         $('#waitingModal').modal('show');
     }
 });
@@ -174,6 +201,18 @@ function chooseRank(){
           subgameList.splice(i, 1); 
         }
      }
+}
+
+function chooseDouble(){
+    let chkArray = [];
+    $(".chk:checked").each(function() {
+		chkArray.push($(this).val());
+    });
+    socket.emit('double-chosen', {
+        lobbyname : lobby, 
+        users_doubled : chkArray,
+        username : user
+    });
 }
 
 function chooseSubgame (){
@@ -231,12 +270,7 @@ function chooseSubgame (){
     
 }
 
-socket.on('doubles', data => {
-    
-});
-
 socket.on('subgame-choice', data => {
-    $('#waitingModal').modal('hide');
     currentSubgame = data.gamechoice;
     if (currentSubgame === "Trumps") {
         document.getElementById("subgame").innerHTML = currentSubgame + " (" + data.trump + ")";
@@ -245,6 +279,13 @@ socket.on('subgame-choice', data => {
     }else {
         document.getElementById("subgame").innerHTML = currentSubgame;
     }
+});
+
+socket.on('double-choices', data => {
+    $('#doubleModal').modal('hide');
+    $('#waitingModal').modal('hide');
+    let players = data.players;
+    let doubles = data.doubles;
 });
 
 //Ability to click your own hand when it is your turn.
