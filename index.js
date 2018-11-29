@@ -1030,26 +1030,20 @@ gamesNamespace.on('connection', socket => {
 							handobject["scores"].push(game.scoreHash[player]);
 						}
 						gamesNamespace.to(data.lobbyname).emit('cards-dealt', handobject); // Send the hands to all the clients.
-<<<<<<< HEAD
 					}
 					else {
 						console.log("Win-Trick");
 						gamesNamespace.to(data.lobbyname).emit('your-turn', {
 							username: subgame.current_player
 						});
-=======
->>>>>>> 8a9ba9f19f60bd19887d3feb20ae138b2729fed9
 					}
 				}
-<<<<<<< HEAD
 				else {
 					console.log("Next-Turn");
 					gamesNamespace.to(data.lobbyname).emit('your-turn', {
 						username: subgame.current_player
 					});
 				}
-=======
->>>>>>> 8a9ba9f19f60bd19887d3feb20ae138b2729fed9
 			}
 			else {
 				// FAN-TAN
