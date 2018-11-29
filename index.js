@@ -973,7 +973,7 @@ gamesNamespace.on('connection', socket => {
 							for(var i = 0; i < 4; i++) {
 								users.push(game.players[i]);
 								var score = game.scoreHash[game.players[i]];
-								users_score.push(score);
+								users_scores.push(score);
 								if(score > win_score) {
 									win_score = score;
 									winner = game.players[i];
@@ -1158,7 +1158,7 @@ gamesNamespace.on('connection', socket => {
 						for(var i = 0; i < 4; i++) {
 							users.push(game.players[i]);
 							var score = game.scoreHash[game.players[i]];
-							users_score.push(score);
+							users_scores.push(score);
 							if(score > win_score) {
 								win_score = score;
 								winner = game.players[i];
