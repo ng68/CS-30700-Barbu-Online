@@ -603,6 +603,10 @@ lobbiesNamespace.on('connection', socket => {
 		lobbiesNamespace.emit('game-started', {
 			lobbyName: data.lobbyName
 		});
+
+		lobbiesNamespace.emit('lobby-removed', {
+			lobbyName: data.lobbyName
+		});
 	});
 
 	socket.on('check-password', data => {
