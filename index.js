@@ -654,7 +654,8 @@ gamesNamespace.on('connection', socket => {
 				scoreHash: {},
 				gamesChosen: {},
                 subgame: {},
-				num_rounds: 0
+				num_rounds: 0,
+				game_data: []
             };
 
             game.players.push(data.username); // Add the player to the players array.
@@ -958,6 +959,15 @@ gamesNamespace.on('connection', socket => {
 							var p = subgame.players[i];
 							game.scoreHash[p] += scores[i];
 						}
+						
+						// Add scores to end of game data
+						var round_data = []; // [dealer, game, p1 score, p2 score, p3 score, p4 score]
+						round_data.push(game.players[game.dealerIndex]);
+						round_data.push(subgame.game_type);
+						for(var i = 0; i < 4; i++) {
+							round_data.push(scores[subgame.players.indexOf(game.players[i])]);
+						}
+						game.game_data.push(round_data);
 				
 						// Check if entire game is done
 						done = true;
@@ -985,7 +995,8 @@ gamesNamespace.on('connection', socket => {
 							gamesNamespace.to(data.lobbyname).emit('game-finished', {
 								users: users,
 								users_scores: users_scores,
-								winner: winner
+								winner: winner,
+								game_data: game.game_data
 							});
 						}
 						
@@ -1143,7 +1154,16 @@ gamesNamespace.on('connection', socket => {
 						var p = subgame.players[i];
 						game.scoreHash[p] += scores[i];
 					}
-
+					
+					// Add scores to end of game data
+					var round_data = []; // [dealer, game, p1 score, p2 score, p3 score, p4 score]
+					round_data.push(game.players[game.dealerIndex]);
+					round_data.push(subgame.game_type);
+					for(var i = 0; i < 4; i++) {
+						round_data.push(scores[subgame.players.indexOf(game.players[i])]);
+					}
+					game.game_data.push(round_data);
+						
 					// Check if entire game is done
 					var all_done = true;
 					for(var i = 0; i < game.players.length; i++) {
@@ -1170,7 +1190,8 @@ gamesNamespace.on('connection', socket => {
 						gamesNamespace.to(data.lobbyname).emit('game-finished', {
 							users: users,
 							users_scores: users_scores,
-							winner: winner
+							winner: winner,
+							game_data: game.game_data
 						});
 					}
 					
