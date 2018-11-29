@@ -24,7 +24,7 @@ addFriendBtn.addEventListener('click', e=> {
              var username = childSnapshot.child("username").val();
              var uid = childSnapshot.key;
              firebase.database().ref().child("users").child(firebase.auth().currentUser.uid).child("friends").child(uid).update({email : email});
-             friendsList();        
+             friendsList();
              return true;
           }
       });
@@ -93,6 +93,36 @@ function addMessage(username, messageContent) {
     messageDiv.innerHTML = messageString;
 
     messages.appendChild(messageDiv);
+}
+
+// JS for top 5 players
+var str = '';
+var users = [];
+firebase.database().ref("users").orderByChild("avg_score").on("value", function(snapshot) {
+    snapshot.forEach(function(childSnapshot) {
+        users.push([childSnapshot.val().username, childSnapshot.val().wins, childSnapshot.val().avg_score]);
+    });
+    users.sort(sort_function);
+    var top5 = users.slice(0, 5);
+    for(var i = 0; i < top5.length; i++) {
+	    str += '<tr>\n<td>' + (i+1) + '</td>\n';
+	    str += '<td>' + top5[i][0] + '</td>\n';
+	    str += '</tr>\n';
+    }
+    document.getElementById("table").innerHTML += str;
+});
+
+
+function sort_function(a, b) {
+    if(a[2] == b[2]) {
+        return 0;
+    }
+    else if(a[2] > b[2]) {
+        return -1;
+    }
+    else {
+        return 1;
+    }
 }
 
 loadMessages();
