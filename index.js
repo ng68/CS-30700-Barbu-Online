@@ -642,7 +642,8 @@ gamesNamespace.on('connection', socket => {
     // goes to the game/lobby page (after joining/creating a lobby on the lobbIES page)
     // Expects an object data of the form {
     //    lobbyname: String,
-    //    username: String
+    //    username: String,
+	//	  num_rounds: Integer
     // }
     socket.on('player-info', data => {
         if (gameHash[data.lobbyname] == null) { // This game does not exist in the game hash yet
@@ -652,13 +653,15 @@ gamesNamespace.on('connection', socket => {
                 handHash: {}, // TODO edit this code to whatever is actually needed later
 				scoreHash: {},
 				gamesChosen: {},
-                subgame: {}
+                subgame: {},
+				num_rounds: 0
             };
 
             game.players.push(data.username); // Add the player to the players array.
 			game.gamesChosen[data.username] = [];
 			game.scoreHash[data.username] = 0;
             game.dealerIndex = 0; // The first player that joins (i.e. the host) will be the first dealer
+			game.num_rounds = data.num_rounds;
             gameHash[data.lobbyname] = game; // Add the game to the gamehash.
         } else { // The game already exists
             gameHash[data.lobbyname].players.push(data.username); // Add the player to the lobby.
@@ -959,7 +962,7 @@ gamesNamespace.on('connection', socket => {
 						// Check if entire game is done
 						done = true;
 						for(var i = 0; i < game.players.length; i++) {
-							if(game.gamesChosen[game.players[i]].length != 1) { // CHANGED FOR SUBGAME LENGTH
+							if(game.gamesChosen[game.players[i]].length != game.num_rounds) { // CHANGED FOR SUBGAME LENGTH
 								done = false;
 							}
 						}
@@ -1144,7 +1147,7 @@ gamesNamespace.on('connection', socket => {
 					// Check if entire game is done
 					var all_done = true;
 					for(var i = 0; i < game.players.length; i++) {
-						if(game.gamesChosen[game.players[i]].length != 1) { // CHANGED FOR SUBGAME LENGTH
+						if(game.gamesChosen[game.players[i]].length != game.num_rounds) { // CHANGED FOR SUBGAME LENGTH
 							all_done = false;
 						}
 					}
