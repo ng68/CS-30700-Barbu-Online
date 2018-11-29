@@ -607,6 +607,12 @@ lobbiesNamespace.on('connection', socket => {
 		lobbiesNamespace.emit('lobby-removed', {
 			lobbyName: data.lobbyName
 		});
+
+		for (let i = lobbies.length - 1; i >= 0; i--) {
+			if (lobbies[i].name == data.lobbyName) {
+				lobbies.splice(i, 1); // Remove the lobby from the backend.
+			}
+		}
 	});
 
 	socket.on('check-password', data => {
