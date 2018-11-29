@@ -585,7 +585,8 @@ lobbiesNamespace.on('connection', socket => {
 
 		// Send an object containing the name of the removed lobby to everyone
 		lobbiesNamespace.emit('lobby-removed', {
-			lobbyName: data.lobbyName
+			lobbyName: data.lobbyName,
+			kickClients: true
 		});
 	});
 
@@ -605,7 +606,8 @@ lobbiesNamespace.on('connection', socket => {
 		});
 
 		lobbiesNamespace.emit('lobby-removed', {
-			lobbyName: data.lobbyName
+			lobbyName: data.lobbyName,
+			kickClients: false
 		});
 
 		for (let i = lobbies.length - 1; i >= 0; i--) {
