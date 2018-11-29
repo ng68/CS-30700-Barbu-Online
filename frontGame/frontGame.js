@@ -1,7 +1,9 @@
+//let socket = io('http://localhost:8080/games');
 let socket = io('https://protected-reef-35837.herokuapp.com/games'); //Socket
+//let lobby = "Lobby";//
 let lobby = localStorage.getItem('lobbyname'); //Lobby currently in 
 let user;  //Current User
-let subgameList = ["Barbu", "Fan Tan", "Hearts", "Last Two", "Losers", "Queens", "Trumps"];
+let subgameList = ["Barbu", "Fan-Tan", "Hearts", "Last Two", "Losers", "Queens", "Trumps"];
 let players = {};   //Players in your lobby (Left, Top, Right)
 let currentDealer = 0;
 let currentSubgame;
@@ -18,6 +20,15 @@ let lowerTrickPile = new cards.Deck({faceUp:false, x:850, y:500});
 let upperTrickPile = new cards.Deck({faceUp:false, x:350, y:80});
 let leftTrickPile = new cards.Deck({faceUp:false, x:200, y:150});
 let rightTrickPile = new cards.Deck({faceUp:false, x:1000, y:390});
+let diamondTopDiscardPile = new cards.Deck({faceUp:true, x:495, y:220});
+let diamondBottomDiscardPile = new cards.Deck({faceUp:true, x:495, y:320});
+let clubTopDiscardPile = new cards.Deck({faceUp:true, x:565, y:220});
+let clubBottomDiscardPile = new cards.Deck({faceUp:true, x:565, y:320});
+let heartTopDiscardPile = new cards.Deck({faceUp:true, x:635, y:220});
+let heartBottomDiscardPile = new cards.Deck({faceUp:true, x:635, y:320});
+let spadeTopDiscardPile = new cards.Deck({faceUp:true, x:705, y:220});
+let spadeBottomDiscardPile = new cards.Deck({faceUp:true, x:705, y:320});   
+
 let loc = {};  //Keeps track of the reference to the location of each Card
 
 firebase.auth().onAuthStateChanged( usern => {
@@ -37,17 +48,10 @@ firebase.auth().onAuthStateChanged( usern => {
         console.log("User not signed in");
     }
   });
-/*
-socket.on('player-joined', data => {
-    befPlayers = data.username;
-    host = befPlayers[0];
-    if (befPlayers.length === 4 && host === user) {
-        testerBtn.style.visibility = 'visible';
-    }
-});
-*/
 
-/*document.getElementById("p1").addEventListener('click', e => {
+
+
+document.getElementById("p1").addEventListener('click', e => {
     user = "p1";
     socket.emit('player-info', {
         username : user,
@@ -79,35 +83,8 @@ document.getElementById("p4").addEventListener('click', e => {
     });
 });
 
-//When the game is started.
-/*testerBtn.addEventListener('click', e => {
-    socket.emit('host-start-game', {
-        lobbyname : lobby
-    });
-});
-*/
-
-//Used to test with test.js
-/*testBtn.addEventListener('click', e => {
-    testBtn.style.visibility = 'hidden';
-    socket.emit('initializeTest', {
-        host: "Larry",
-        lobby: "Larry's Lobby",
-        players: ["Larry", "George", "Paul", "Harry"]
-    });
-});
-*/
-//Once the game has been started by the host we figure out where each player is and initialize variables.
-//socket.on('start-game', data => {
-   
-    //socket.emit('confirmation', {
-    //    lobbyname : lobby
-    //});
-//});
-
 //Run this for each subgame that we run this also populates the hands.
 socket.on('cards-dealt', data => {
-    console.log(data);
     for (var i = 0; i < 4;i++) {
         if (Object.keys(data)[i] === user) {
             myPosition = i;
@@ -147,6 +124,7 @@ socket.on('cards-dealt', data => {
     deck.deal(13, [lowerhand, lefthand, upperhand, righthand], 10);
     //prompt with subgame choice if dealer
     if (user === currentDealer) {
+        document.getElementById("exampleModalLabel").innerHTML = "Choose a Subgame";
         let temp = "";
         for (var i = 0; i < subgameList.length; i++) {
             temp += "<input type=\"radio\" name=\"subgame\" value=\"" + subgameList[i] + "\"> " + subgameList[i] + "<br>";
@@ -155,10 +133,39 @@ socket.on('cards-dealt', data => {
         //Bring up subgame prompt
         document.getElementById("cSubgame").style.visibility = 'visible';
         document.getElementById("trump").style.visibility = 'hidden';
+        document.getElementById("rank").style.visibility = 'hidden';
         //button hide
         $('#myModal').modal('show');
     }else {
         //Waiting prompt
+        document.getElementById("exampleModalLabel2").innerHTML = "Waiting for subgame to be chosen...";
+        $('#waitingModal').modal('show');
+    }
+});
+
+socket.on('request-double', data => {
+    if (data.username === user) {
+        let posUsers = data.users;
+        let redouble = data.redouble;
+        let temp = "";
+        console.log(posUsers);
+        console.log(redouble);
+        for (let i = 0; i < posUsers.length;i++) {
+            let type = "";
+            if (redouble[i]) {
+                type = "Re-double";
+            }else {
+                type = "Double";
+            }
+            temp += "<input type=\"checkbox\" value=\"" + posUsers[i] + "\" class=\"chk\"> " + type + " " + posUsers[i] + "<br>";
+        }
+        document.getElementById("check").innerHTML = temp;
+        $('#waitingModal').modal('hide');
+        $('#doubleModal').modal('show');
+    }else {
+        //Waiting prompt
+        document.getElementById("exampleModalLabel2").innerHTML = "Waiting for doubles to be decided...";
+        $('#doubleModal').modal('hide');
         $('#waitingModal').modal('show');
     }
 });
@@ -169,7 +176,8 @@ function chooseTrump(){
         lobbyname : lobby, 
         gamechoice : currentSubgame,
         username : user,
-        trump : cTrump
+        trump : cTrump,
+        rank : ""
     });
     $('#myModal').modal('hide');
     for(var i = 0; i < subgameList.length; i++){ 
@@ -179,12 +187,42 @@ function chooseTrump(){
      }
 }
 
+function chooseRank(){
+    let cRank = document.querySelector('input[name = "rank"]:checked').value;
+    socket.emit('subgame-chosen', {
+        lobbyname : lobby, 
+        gamechoice : currentSubgame,
+        username : user,
+        trump : "",
+        rank : cRank
+    });
+    $('#myModal').modal('hide');
+    for(var i = 0; i < subgameList.length; i++){ 
+        if (subgameList[i] === currentSubgame) {
+          subgameList.splice(i, 1); 
+        }
+     }
+}
+
+function chooseDouble(){
+    let chkArray = [];
+    $(".chk:checked").each(function() {
+		chkArray.push($(this).val());
+    });
+    socket.emit('double-chosen', {
+        lobbyname : lobby, 
+        users_doubled : chkArray,
+        username : user
+    });
+}
+
 function chooseSubgame (){
     if ($('input[name=subgame]:checked').length > 0) {
         // do something here
         let chosen = document.querySelector('input[name = "subgame"]:checked').value;
         currentSubgame = chosen;
         if (chosen === "Trumps") {
+            document.getElementById("exampleModalLabel").innerHTML = "Choose a Trump";
             let temp = "";
             temp += "<input type=\"radio\" name=\"trump\" value= \"c\">Clubs<br>";
             temp += "<input type=\"radio\" name=\"trump\" value= \"d\">Diamonds<br>";
@@ -195,11 +233,33 @@ function chooseSubgame (){
             document.getElementById("trump").style.visibility = 'visible';
             return;
         } 
+        if (chosen === "Fan-Tan") {
+            document.getElementById("exampleModalLabel").innerHTML = "Choose a Rank";
+            let temp = "";
+            temp += "<input type=\"radio\" name=\"rank\" value=2>2<br>";
+            temp += "<input type=\"radio\" name=\"rank\" value=3>3<br>";
+            temp += "<input type=\"radio\" name=\"rank\" value=4>4<br>";
+            temp += "<input type=\"radio\" name=\"rank\" value=5>5<br>";
+            temp += "<input type=\"radio\" name=\"rank\" value=6>6<br>";
+            temp += "<input type=\"radio\" name=\"rank\" value=7>7<br>";
+            temp += "<input type=\"radio\" name=\"rank\" value=8>8<br>";
+            temp += "<input type=\"radio\" name=\"rank\" value=9>9<br>";
+            temp += "<input type=\"radio\" name=\"rank\" value=10>10<br>";
+            temp += "<input type=\"radio\" name=\"rank\" value=11>Jack<br>";
+            temp += "<input type=\"radio\" name=\"rank\" value=12>Queen<br>";
+            temp += "<input type=\"radio\" name=\"rank\" value=13>King<br>";
+            temp += "<input type=\"radio\" name=\"rank\" value=14>Ace<br>";
+            document.getElementById("radio-home").innerHTML = temp;
+            document.getElementById("cSubgame").style.visibility = 'hidden';
+            document.getElementById("rank").style.visibility = 'visible';
+            return;
+        }
         socket.emit('subgame-chosen', {
             lobbyname : lobby, 
             gamechoice : chosen,
             username : user,
-            trump : ""
+            trump : "",
+            rank : ""
         });
         $('#myModal').modal('hide');
         for(var i = 0; i < subgameList.length; i++){ 
@@ -212,9 +272,21 @@ function chooseSubgame (){
 }
 
 socket.on('subgame-choice', data => {
-    $('#waitingModal').modal('hide');
     currentSubgame = data.gamechoice;
-    document.getElementById("subgame").innerHTML = currentSubgame;
+    if (currentSubgame === "Trumps") {
+        document.getElementById("subgame").innerHTML = currentSubgame + " (" + data.trump + ")";
+    }else if (currentSubgame === "Fan-Tan") {
+        document.getElementById("subgame").innerHTML = currentSubgame + " (" + data.rank + ")";
+    }else {
+        document.getElementById("subgame").innerHTML = currentSubgame;
+    }
+});
+
+socket.on('double-choices', data => {
+    $('#doubleModal').modal('hide');
+    $('#waitingModal').modal('hide');
+    let players = data.players;
+    let doubles = data.doubles;
 });
 
 //Ability to click your own hand when it is your turn.
@@ -229,26 +301,6 @@ lowerhand.click(function(card){
     }
 });
 
-/*upperhand.click(function(card){
-    upperDiscardPile.addCard(card);
-	upperDiscardPile.render();
-    upperhand.render();
-});
-*/
-
-/*lefthand.click(function(card){
-    leftDiscardPile.addCard(card);
-	leftDiscardPile.render();
-    lefthand.render();
-});
-*/
-
-/*righthand.click(function(card){
-    rightDiscardPile.addCard(card);
-	rightDiscardPile.render();
-    righthand.render();
-});
-*/
 
 socket.on('card-chosen-response', data =>{
     if(data.valid) {
@@ -285,6 +337,134 @@ socket.on('card-chosen-response', data =>{
     }
 });
 
+function checkWhichPile(initialRank, card, hand, single_suit, tempCard) {
+    let suit = card.substring(0,1);
+    let rank = parseInt(card.substring(1),10);
+    initialRank = parseInt(initialRank,10);
+    let pile;
+    if (suit === "s") {
+        if (rank >= initialRank) {
+            pile = 4;
+        }else {
+            pile = 8;
+        }
+    }else if (suit === "c") {
+        if (rank >= initialRank) {
+            pile = 2;
+        }else {
+            pile = 6;
+        }
+    }else if (suit === "h") {
+        if (rank >= initialRank) {
+            pile = 3;
+        }else {
+            pile = 7;
+        }
+    }else if (suit === "d") {
+        if (rank >= initialRank) {
+            pile = 1;
+        }else {
+            pile = 5;
+        }
+    }else {
+        console.log("Unknown suit for Fan Tan");
+    }
+    switch(pile) {
+        case 1:
+            if(single_suit[0]) {
+                diamondBottomDiscardPile.addCard(diamondTopDiscardPile.topCard());
+                diamondBottomDiscardPile.render();
+                diamondTopDiscardPile.render();
+            }
+            diamondTopDiscardPile.addCard(tempCard);
+            diamondTopDiscardPile.render();
+            hand.render();
+            break;
+
+        case 2:
+            if(single_suit[1]) {
+                clubBottomDiscardPile.addCard(clubTopDiscardPile.topCard());
+                clubBottomDiscardPile.render();
+                clubTopDiscardPile.render();
+            }
+            clubTopDiscardPile.addCard(tempCard);
+            clubTopDiscardPile.render();
+            hand.render();
+            break;
+
+        case 3:
+            if(single_suit[2]) {
+                heartBottomDiscardPile.addCard(heartTopDiscardPile.topCard());
+                heartBottomDiscardPile.render();
+                heartTopDiscardPile.render();
+            }
+            heartTopDiscardPile.addCard(tempCard);
+            heartTopDiscardPile.render();
+            hand.render();
+            break;
+
+        case 4:
+            if(single_suit[3]) {
+                spadeBottomDiscardPile.addCard(spadeTopDiscardPile.topCard());
+                spadeBottomDiscardPile.render();
+                spadeTopDiscardPile.render();
+            }
+            spadeTopDiscardPile.addCard(tempCard);
+            spadeTopDiscardPile.render();
+            hand.render();
+            break;
+
+        case 5:
+            diamondBottomDiscardPile.addCard(tempCard);
+            diamondBottomDiscardPile.render();
+            hand.render();
+            break;
+        case 6:
+            clubBottomDiscardPile.addCard(tempCard);
+            clubBottomDiscardPile.render();
+            hand.render();
+            break;
+        case 7:
+            heartBottomDiscardPile.addCard(tempCard);
+            heartBottomDiscardPile.render();
+            hand.render();
+            break;
+        case 8: 
+            spadeBottomDiscardPile.addCard(tempCard);
+            spadeBottomDiscardPile.render();
+            hand.render();
+            break;
+        
+    }
+}
+
+socket.on('card-chosen-response-ft', data =>{
+    if(data.valid) {
+        myTurn = false;
+        let tempCard;
+        for (var i = 0; i < loc.names.length; i++) {
+            if (data.card === loc.names[i]) {
+                tempCard = loc.cards[i];
+            }
+        }
+        if (data.username === players.left) {
+            checkWhichPile(data.start_card, data.card, lefthand, data.single_suit, tempCard);
+        }else if (data.username === players.top){
+            checkWhichPile(data.start_card, data.card, upperhand, data.single_suit, tempCard);
+        }else if (data.username === players.right){
+            checkWhichPile(data.start_card, data.card, righthand, data.single_suit, tempCard);
+        }else if (data.username === user){
+            checkWhichPile(data.start_card, data.card, lowerhand, data.single_suit, tempCard);
+        }else {
+            window.alert("Error: Invalid user for played-card (Fan-Tan)");
+        }
+    }else {
+        if (data.username === user) {
+            window.alert(data.error);
+        }
+    }
+});
+
 socket.on('your-turn', data =>{
     document.getElementById("turn").innerHTML = data.username;
     if (data.username === user) {
@@ -296,31 +476,33 @@ socket.on('game-finished', data => {
     var msg = "";
     for (var i = 0; i < 4; i++) {
         msg = msg +  Object.keys(data)[i] + " : " + Object.values(data)[i][0] + "\n";
-        var query = firebase.database().ref("users/" + firebase.auth().currentUser.uid);
-        query.once("value")
-        .then(function(snapshot) {
-            let totalScore = snapshot.child("avg_score").val();
-            let wins = snapshot.child("wins").val();
-            let losses = snapshot.child("losses").val();
-            if (user = snapshot.child("username")) {
-                if (Object.values(data)[i][1]) {
-                    totalScore = totalScore + Object.values(data)[i][0];
-                    wins = wins + 1;
-                }else {
-                    totalScore = totalScore + Object.values(data)[i][0];
-                    losses = losses + 1;
+        firebase.auth().onAuthStateChanged(function(user){   
+            var query = firebase.database().ref("users/" + user.uid);
+            query.on("value", function(snapshot) {
+                let totalScore = snapshot.val().avg_score;
+                let wins = snapshot.val().wins;
+                let losses = snapshot.val().losses;
+                if (user = snapshot.child("username")) {
+                    if (Object.values(data)[i][1]) {
+                        totalScore = totalScore + Object.values(data)[i][0];
+                        wins = wins + 1;
+                    }else {
+                        totalScore = totalScore + Object.values(data)[i][0];
+                        losses = losses + 1;
+                    }
+                    firebase.database().ref("users/" + user.uid).update({
+                        wins : wins,
+                        losses : losses,
+                        avg_score: totalScore
+                    });
                 }
-                firebase.database().ref("users/" + firebase.auth().currentUser.uid).update({
-                    wins : wins,
-                    losses : losses,
-                    avg_score: totalScore
             });
-            }
         });   
     }
     window.alert(msg);
     window.location.href = "home.html";
 });
+
 
 //socket.on('subgame-finished', data => {
 //    //update dealer++%4

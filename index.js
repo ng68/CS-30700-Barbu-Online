@@ -603,6 +603,16 @@ lobbiesNamespace.on('connection', socket => {
 		lobbiesNamespace.emit('game-started', {
 			lobbyName: data.lobbyName
 		});
+
+		lobbiesNamespace.emit('lobby-removed', {
+			lobbyName: data.lobbyName
+		});
+
+		for (let i = lobbies.length - 1; i >= 0; i--) {
+			if (lobbies[i].name == data.lobbyName) {
+				lobbies.splice(i, 1); // Remove the lobby from the backend.
+			}
+		}
 	});
 
 	socket.on('check-password', data => {
@@ -743,7 +753,7 @@ gamesNamespace.on('connection', socket => {
 				players.push(game.players[(game.dealerIndex + i) % 4]);
 			}
 			game.subgame = new Subgame(players[0], players[1], players[2], players[3], game.handHash, data.gamechoice, data.trump, data.rank);
-			
+			var subgame = game.subgame;
 			// Add subgame to completed subgames
 			game.gamesChosen[data.username].push(data.gamechoice);
 			
@@ -760,7 +770,7 @@ gamesNamespace.on('connection', socket => {
 			
 			if(subgame.game_type != "Fan-Tan" && subgame.game_type != "Trumps") {
 				for(var i = game.players.indexOf(next_user) + 1; i < game.players.indexOf(next_user) + 4; i++) {
-					users.push(game.players[i]);
+					users.push(game.players[i%4]);
 					redouble.push(0);
 				}
 			}
@@ -805,7 +815,7 @@ gamesNamespace.on('connection', socket => {
 			var next_user = game.players[(game.players.indexOf(username) + 1) % 4];
 			var users = [];
 			var redouble = [];
-			if(next_user != game.players[game.dealerIndex] && subgame.game_type != "Fan-Tan" && subgame.game_type == "Trumps") {
+			if(next_user != game.players[game.dealerIndex] && subgame.game_type != "Fan-Tan" && subgame.game_type != "Trumps") {
 				// User can double anyone
 				for(var i = game.players.indexOf(next_user) + 1; i < game.players.indexOf(next_user) + 4; i++) {
 					var player = game.players[i % 4];
@@ -947,7 +957,7 @@ gamesNamespace.on('connection', socket => {
 						// Check if entire game is done
 						done = true;
 						for(var i = 0; i < game.players.length; i++) {
-							if(game.gamesChosen[game.players[i]].length != 1) { // TODO CHANGED FOR 1 SUBGAME
+							if(game.gamesChosen[game.players[i]].length != 1) { // CHANGED FOR SUBGAME LENGTH
 								done = false;
 							}
 						}
@@ -1115,7 +1125,7 @@ gamesNamespace.on('connection', socket => {
 					// Check if entire game is done
 					var all_done = true;
 					for(var i = 0; i < game.players.length; i++) {
-						if(game.gamesChosen[game.players[i]].length != 1) { // TODO CHANGED FOR 1 SUBGAME
+						if(game.gamesChosen[game.players[i]].length != 1) { // CHANGED FOR SUBGAME LENGTH
 							all_done = false;
 						}
 					}

@@ -15,10 +15,10 @@
 		</nav>
 		<img class="preload" src="img/cards.png"/>
 		<div id="card-table">
-            <!--<button id="p1">Player1</button>
+            <button id="p1">Player1</button>
             <button id="p2">Player2</button>
             <button id="p3">Player3</button>
-            <button id="p4">Player4</button>-->
+            <button id="p4">Player4</button>
 						<div class="scorecard">
 							<table id="scoretable">
 								<tr>
@@ -69,6 +69,7 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-primary btn-sm m-0" onclick="chooseSubgame()" id="cSubgame">Choose</button>
                         <button type="button" class="btn btn-primary btn-sm m-0" onclick="chooseTrump()" id="trump">Choose</button>
+                        <button type="button" class="btn btn-primary btn-sm m-0" onclick="chooseRank()" id="rank">Choose</button>
                     </div>
                   </div>
                 </div>
@@ -77,10 +78,27 @@
                     <div class="modal-dialog" role="document">
                       <div class="modal-content">
                         <div class="modal-header">
-                          <h5 class="modal-title" id="exampleModalLabel">Waiting for subgame to be chosen...</h5>
+                          <h5 class="modal-title" id="exampleModalLabel2">Waiting for subgame to be chosen...</h5>
                           <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                           </button> -->
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                
+                  <div class="modal fade" id="doubleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="false" data-backdrop="static" data-keyboard="false">
+                    <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="exampleModalLabel3">Choose who you want to double.</h5>
+                          <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button> -->
+                          <div class="modal-body" id="check"></div>
+                          <div class="modal-footer">
+                              <button type="button" class="btn btn-primary btn-sm m-0" onclick="chooseDouble()" id="cDouble">Confirm</button>
+                          </div>
                         </div>
                       </div>
                     </div>
