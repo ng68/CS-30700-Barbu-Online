@@ -508,7 +508,8 @@ lobbiesNamespace.on('connection', socket => {
                 owner: lobbyData.owner,
 				name: lobbyData.name,
 				password: lobbyData.password,
-                players: []
+				players: [],
+				num_rounds: lobbyData.num_rounds
             };
 
             lobby.players.push(lobbyData.owner); // Owner should be in lobby
@@ -609,12 +610,6 @@ lobbiesNamespace.on('connection', socket => {
 			lobbyName: data.lobbyName,
 			kickClients: false
 		});
-
-		for (let i = lobbies.length - 1; i >= 0; i--) {
-			if (lobbies[i].name == data.lobbyName) {
-				lobbies.splice(i, 1); // Remove the lobby from the backend.
-			}
-		}
 	});
 
 	socket.on('check-password', data => {
@@ -653,8 +648,18 @@ gamesNamespace.on('connection', socket => {
 				scoreHash: {},
 				gamesChosen: {},
                 subgame: {}
-            };
+			};
 
+			let lobbyIndex;
+			for (let i = lobbies.length - 1; i >= 0; i--) {
+				if (lobbies[i].name == data.lobbyName) {
+					lobbyIndex = i;
+				}
+			}
+			game.num_rounds = lobbies[lobbyIndex].num_rounds;
+
+			lobbies.splice(lobbyIndex, 1); // Remove the old lobby from the backend.
+			
             game.players.push(data.username); // Add the player to the players array.
 			game.gamesChosen[data.username] = [];
 			game.scoreHash[data.username] = 0;
