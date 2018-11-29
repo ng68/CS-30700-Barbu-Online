@@ -743,7 +743,7 @@ gamesNamespace.on('connection', socket => {
 				players.push(game.players[(game.dealerIndex + i) % 4]);
 			}
 			game.subgame = new Subgame(players[0], players[1], players[2], players[3], game.handHash, data.gamechoice, data.trump, data.rank);
-			
+			var subgame = game.subgame;
 			// Add subgame to completed subgames
 			game.gamesChosen[data.username].push(data.gamechoice);
 			
@@ -760,7 +760,7 @@ gamesNamespace.on('connection', socket => {
 			
 			if(subgame.game_type != "Fan-Tan" && subgame.game_type != "Trumps") {
 				for(var i = game.players.indexOf(next_user) + 1; i < game.players.indexOf(next_user) + 4; i++) {
-					users.push(game.players[i]);
+					users.push(game.players[i%4]);
 					redouble.push(0);
 				}
 			}
@@ -805,7 +805,7 @@ gamesNamespace.on('connection', socket => {
 			var next_user = game.players[(game.players.indexOf(username) + 1) % 4];
 			var users = [];
 			var redouble = [];
-			if(next_user != game.players[game.dealerIndex] && subgame.game_type != "Fan-Tan" && subgame.game_type == "Trumps") {
+			if(next_user != game.players[game.dealerIndex] && subgame.game_type != "Fan-Tan" && subgame.game_type != "Trumps") {
 				// User can double anyone
 				for(var i = game.players.indexOf(next_user) + 1; i < game.players.indexOf(next_user) + 4; i++) {
 					var player = game.players[i % 4];

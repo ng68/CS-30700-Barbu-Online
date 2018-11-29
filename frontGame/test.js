@@ -15,7 +15,6 @@ io.on('connection', socket => {
     socket.emit('game-finished', {
         Bole : [10, true]
     }); 
-} /*
     socket.on('subgame-chosen', data => {
         socket.emit('subgame-choice', {
             gamechoice : data.gamechoice
@@ -34,11 +33,7 @@ io.on('connection', socket => {
         });  
     });
 });
-    /*socket.on('initializeTest', playerInfo => {
-        socket.emit('player-joined', {
-            username : ["Larry", "George", "Paul", "Harry"]
-        });
-    });
+    /*
     
     socket.on('host-start-game', data => {
         socket.emit('start-game', {

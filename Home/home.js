@@ -7,6 +7,12 @@ var messageInput = document.getElementById("message-input");
 var messages = document.getElementById("messages");
 var friendList = document.getElementById("friend-list");
 
+/*
+window.addEventListener("beforeunload", function(e){
+    window.alert("HELLO");
+ }, false);
+*/
+
 addFriendBtn.addEventListener('click', e=> {
     e.preventDefault();
     var query = firebase.database().ref("users");

@@ -27,6 +27,7 @@ loginbtn.addEventListener('click', e => {
             alert(errorMessage);
         }
     });
+
     auth.onAuthStateChanged(function(user) {
     if(user){
         console.log('Signed In');
