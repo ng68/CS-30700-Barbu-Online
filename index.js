@@ -585,7 +585,8 @@ lobbiesNamespace.on('connection', socket => {
 
 		// Send an object containing the name of the removed lobby to everyone
 		lobbiesNamespace.emit('lobby-removed', {
-			lobbyName: data.lobbyName
+			lobbyName: data.lobbyName,
+			kickClients: true
 		});
 	});
 
@@ -601,8 +602,19 @@ lobbiesNamespace.on('connection', socket => {
 	
 	socket.on('start-game', data => {
 		lobbiesNamespace.emit('game-started', {
-			lobbyname: data.lobbyname
+			lobbyName: data.lobbyName
 		});
+
+		lobbiesNamespace.emit('lobby-removed', {
+			lobbyName: data.lobbyName,
+			kickClients: false
+		});
+
+		for (let i = lobbies.length - 1; i >= 0; i--) {
+			if (lobbies[i].name == data.lobbyName) {
+				lobbies.splice(i, 1); // Remove the lobby from the backend.
+			}
+		}
 	});
 
 	socket.on('check-password', data => {
@@ -947,14 +959,31 @@ gamesNamespace.on('connection', socket => {
 						// Check if entire game is done
 						done = true;
 						for(var i = 0; i < game.players.length; i++) {
-							if(game.gamesChosen[game.players[i]].length != 7) {
+							if(game.gamesChosen[game.players[i]].length != 1) { // CHANGED FOR SUBGAME LENGTH
 								done = false;
 							}
 						}
 						
 						if(done) {
-							gamesNamespace.to(data.lobbyname).emit('game-finished', game.scoreHash);
-							console.log("GAME OVER");
+							var winner = game.players[0];
+							var win_score = game.scoreHash[winner];
+							var users = [];
+							var users_scores = [];
+
+							for(var i = 0; i < 4; i++) {
+								users.push(game.players[i]);
+								var score = game.scoreHash[game.players[i]];
+								users_scores.push(score);
+								if(score > win_score) {
+									win_score = score;
+									winner = game.players[i];
+								}
+							}
+							gamesNamespace.to(data.lobbyname).emit('game-finished', {
+								users: users,
+								users_scores: users_scores,
+								winner: winner
+							});
 						}
 						
 						// Update dealer
@@ -1115,13 +1144,31 @@ gamesNamespace.on('connection', socket => {
 					// Check if entire game is done
 					var all_done = true;
 					for(var i = 0; i < game.players.length; i++) {
-						if(game.gamesChosen[game.players[i]].length != 7) {
+						if(game.gamesChosen[game.players[i]].length != 1) { // CHANGED FOR SUBGAME LENGTH
 							all_done = false;
 						}
 					}
 					
 					if(all_done) {
-						gamesNamespace.to(data.lobbyname).emit('game-finished', game.scoreHash);
+						var winner = game.players[0];
+						var win_score = game.scoreHash[winner];
+						var users = [];
+						var users_scores = [];
+
+						for(var i = 0; i < 4; i++) {
+							users.push(game.players[i]);
+							var score = game.scoreHash[game.players[i]];
+							users_scores.push(score);
+							if(score > win_score) {
+								win_score = score;
+								winner = game.players[i];
+							}
+						}
+						gamesNamespace.to(data.lobbyname).emit('game-finished', {
+							users: users,
+							users_scores: users_scores,
+							winner: winner
+						});
 					}
 					
 					// Update dealer

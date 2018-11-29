@@ -1,7 +1,7 @@
-//let socket = io('http://localhost:8080/games');
-let socket = io('https://protected-reef-35837.herokuapp.com/games'); //Socket
-//let lobby = "Lobby";//
-let lobby = localStorage.getItem('lobbyname'); //Lobby currently in 
+let socket = io('http://localhost:8080/games');
+//let socket = io('https://protected-reef-35837.herokuapp.com/games'); //Socket
+let lobby = "Lobby";//
+//let lobby = localStorage.getItem('lobbyname'); //Lobby currently in 
 let user;  //Current User
 let subgameList = ["Barbu", "Fan-Tan", "Hearts", "Last Two", "Losers", "Queens", "Trumps"];
 let players = {};   //Players in your lobby (Left, Top, Right)
@@ -30,7 +30,7 @@ let spadeTopDiscardPile = new cards.Deck({faceUp:true, x:705, y:220});
 let spadeBottomDiscardPile = new cards.Deck({faceUp:true, x:705, y:320});   
 
 let loc = {};  //Keeps track of the reference to the location of each Card
-
+/*
 firebase.auth().onAuthStateChanged( usern => {
     if (usern) 
     { 
@@ -48,9 +48,9 @@ firebase.auth().onAuthStateChanged( usern => {
         console.log("User not signed in");
     }
   });
+*/
 
 
-/*
 document.getElementById("p1").addEventListener('click', e => {
     user = "p1";
     socket.emit('player-info', {
@@ -82,7 +82,7 @@ document.getElementById("p4").addEventListener('click', e => {
         lobbyname : lobby
     });
 });
-*/
+
 //Run this for each subgame that we run this also populates the hands.
 socket.on('cards-dealt', data => {
     for (var i = 0; i < 4;i++) {
@@ -476,32 +476,34 @@ socket.on('your-turn', data =>{
 
 socket.on('game-finished', data => {
     var msg = "";
+    var ind = 0;
     for (var i = 0; i < 4; i++) {
-        msg = msg +  Object.keys(data)[i] + " : " + Object.values(data)[i][0] + "\n";
+        msg = msg +  data.users[i] + " : " + data.users_scores[i] + "\n";
+        if (user === data.users[i]) {
+            ind = i;
+        }
+    }
+        window.alert(msg);  
         firebase.auth().onAuthStateChanged(function(user){   
             var query = firebase.database().ref("users/" + user.uid);
             query.on("value", function(snapshot) {
                 let totalScore = snapshot.val().avg_score;
                 let wins = snapshot.val().wins;
                 let losses = snapshot.val().losses;
-                if (user = snapshot.child("username")) {
-                    if (Object.values(data)[i][1]) {
-                        totalScore = totalScore + Object.values(data)[i][0];
-                        wins = wins + 1;
-                    }else {
-                        totalScore = totalScore + Object.values(data)[i][0];
-                        losses = losses + 1;
-                    }
-                    firebase.database().ref("users/" + user.uid).update({
-                        wins : wins,
-                        losses : losses,
-                        avg_score: totalScore
-                    });
+                if (data.winner === user) {
+                    totalScore = totalScore + data.users_scores[ind];
+                    wins = wins + 1;
+                }else {
+                    totalScore = totalScore + data.users_scores[ind];
+                    losses = losses + 1;
                 }
+                firebase.database().ref("users/" + user.uid).update({
+                    wins : wins,
+                    losses : losses,
+                    avg_score: totalScore
+                });
             });
         });   
-    }
-    window.alert(msg);
     window.location.href = "home.html";
 });
 
