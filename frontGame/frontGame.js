@@ -482,9 +482,8 @@ socket.on('game-finished', data => {
         if (user === data.users[i]) {
             ind = i;
         }
-    }
-        window.alert(msg);  
-        firebase.auth().onAuthStateChanged(function(user){   
+    }  
+        //firebase.auth().onAuthStateChanged(function(user){   
             var query = firebase.database().ref("users/" + user.uid);
             query.on("value", function(snapshot) {
                 let totalScore = snapshot.val().avg_score;
@@ -503,7 +502,7 @@ socket.on('game-finished', data => {
                     avg_score: totalScore
                 });
             });
-        });   
+        //});   
     window.location.href = "home.html";
 });
 

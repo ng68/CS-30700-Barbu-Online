@@ -20,7 +20,7 @@ addFriendBtn.addEventListener('click', e=> {
       .then(function(snapshot) {
         snapshot.forEach(function(childSnapshot) {
           var email = childSnapshot.child("email").val();
-          if (email == addFriend.value && firebase.auth().currentUser.email != addFriend.value) {
+          if (email === addFriend.value && firebase.auth().currentUser.email != addFriend.value) {
              var username = childSnapshot.child("username").val();
              var uid = childSnapshot.key;
              firebase.database().ref().child("users").child(firebase.auth().currentUser.uid).child("friends").child(uid).update({email : email});
