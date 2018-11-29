@@ -1,6 +1,7 @@
-let socket = io('http://localhost:8080/games');
-//let socket = io('https://protected-reef-35837.herokuapp.com/games'); //Socket
-let lobby = "Lobby";//let lobby = localStorage.getItem('lobbyname'); //Lobby currently in 
+//let socket = io('http://localhost:8080/games');
+let socket = io('https://protected-reef-35837.herokuapp.com/games'); //Socket
+//let lobby = "Lobby";//
+let lobby = localStorage.getItem('lobbyname'); //Lobby currently in 
 let user;  //Current User
 let subgameList = ["Barbu", "Fan-Tan", "Hearts", "Last Two", "Losers", "Queens", "Trumps"];
 let players = {};   //Players in your lobby (Left, Top, Right)
@@ -30,7 +31,7 @@ let spadeBottomDiscardPile = new cards.Deck({faceUp:true, x:705, y:320});
 
 let loc = {};  //Keeps track of the reference to the location of each Card
 
-/*firebase.auth().onAuthStateChanged( usern => {
+firebase.auth().onAuthStateChanged( usern => {
     if (usern) 
     { 
     var query = firebase.database().ref("users/" + usern.uid);
@@ -47,7 +48,7 @@ let loc = {};  //Keeps track of the reference to the location of each Card
         console.log("User not signed in");
     }
   });
-*/
+
 
 
 document.getElementById("p1").addEventListener('click', e => {
@@ -341,8 +342,6 @@ function checkWhichPile(initialRank, card, hand, single_suit, tempCard) {
     let rank = parseInt(card.substring(1),10);
     initialRank = parseInt(initialRank,10);
     let pile;
-    console.log(initialRank);
-    console.log(rank);
     if (suit === "s") {
         if (rank >= initialRank) {
             pile = 4;

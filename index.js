@@ -736,14 +736,14 @@ gamesNamespace.on('connection', socket => {
 		
 		if(game.gamesChosen[data.username].indexOf(data.gamechoice) < 0) {
 			// User hasn't chosen game
-
+			
 			// Create new subgame
 			var players = [];
 			for(var i = 0; i < 4; i++) {
 				players.push(game.players[(game.dealerIndex + i) % 4]);
 			}
 			game.subgame = new Subgame(players[0], players[1], players[2], players[3], game.handHash, data.gamechoice, data.trump, data.rank);
-			var subgame = game.subgame;
+			
 			// Add subgame to completed subgames
 			game.gamesChosen[data.username].push(data.gamechoice);
 			
@@ -757,9 +757,10 @@ gamesNamespace.on('connection', socket => {
 			var next_user = game.players[(game.dealerIndex + 1) % 4];
 			var users = [];
 			var redouble = [];
+			
 			if(subgame.game_type != "Fan-Tan" && subgame.game_type != "Trumps") {
 				for(var i = game.players.indexOf(next_user) + 1; i < game.players.indexOf(next_user) + 4; i++) {
-					users.push(game.players[i%4]);
+					users.push(game.players[i]);
 					redouble.push(0);
 				}
 			}
@@ -767,6 +768,7 @@ gamesNamespace.on('connection', socket => {
 				users.push(game.players[game.dealerIndex]);
 				redouble.push(0);
 			}
+				
             gamesNamespace.to(data.lobbyname).emit('request-double', {
                 username: next_user,
 				users: users,
@@ -793,7 +795,6 @@ gamesNamespace.on('connection', socket => {
 		
 		// Send next event
 		if(username == game.players[game.dealerIndex]) {
-			console.log("Time to play");
 			// All doubles have been completed -> send first your-turn
 			gamesNamespace.to(data.lobbyname).emit('your-turn', {
                 username: game.subgame.current_player
@@ -804,10 +805,7 @@ gamesNamespace.on('connection', socket => {
 			var next_user = game.players[(game.players.indexOf(username) + 1) % 4];
 			var users = [];
 			var redouble = [];
-			console.log(next_user);
-			console.log(username);
-			if(next_user != game.players[game.dealerIndex] && subgame.game_type != "Fan-Tan" && subgame.game_type != "Trumps") {
-				console.log("Can double anyone");
+			if(next_user != game.players[game.dealerIndex] && subgame.game_type != "Fan-Tan" && subgame.game_type == "Trumps") {
 				// User can double anyone
 				for(var i = game.players.indexOf(next_user) + 1; i < game.players.indexOf(next_user) + 4; i++) {
 					var player = game.players[i % 4];
@@ -824,7 +822,6 @@ gamesNamespace.on('connection', socket => {
 				});
 			}
 			else if(next_user != game.players[game.dealerIndex]) {
-				console.log("Can double dealer");
 				// Fan-Tan and Trumps -> can only double dealer
 				var dealer = game.players[game.dealerIndex];
 				users.push(dealer);
@@ -836,7 +833,6 @@ gamesNamespace.on('connection', socket => {
 				});
 			}
 			else {
-				console.log("This is dealer");
 				// Dealer can redouble anyone who has doubled them
 				var i = subgame.players.indexOf(next_user);
 				for(var j = 0; j < 4; j++) {
