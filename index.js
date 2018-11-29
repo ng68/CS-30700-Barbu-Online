@@ -6,7 +6,7 @@ const io = require('socket.io')(port);
 
 // io.origins('https://barbu-online.firebaseapp.com:*');
 
-const chatNamespace = io.of('/chat');
+const homeNamespace = io.of('/home');
 const lobbiesNamespace = io.of('/lobbies');
 const gamesNamespace = io.of('/games');
 
@@ -1305,7 +1305,7 @@ gamesNamespace.on('connection', socket => {
     });
 });
 
-chatNamespace.on('connection', socket => {
+homeNamespace.on('connection', socket => {
     console.log("Chat connected");
 });
 
