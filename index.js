@@ -947,7 +947,7 @@ gamesNamespace.on('connection', socket => {
 						// Check if entire game is done
 						done = true;
 						for(var i = 0; i < game.players.length; i++) {
-							if(game.gamesChosen[game.players[i]].length != 7) {
+							if(game.gamesChosen[game.players[i]].length != 1) { // CHANGED FOR SUBGAME LENGTH
 								done = false;
 							}
 						}
@@ -1115,7 +1115,7 @@ gamesNamespace.on('connection', socket => {
 					// Check if entire game is done
 					var all_done = true;
 					for(var i = 0; i < game.players.length; i++) {
-						if(game.gamesChosen[game.players[i]].length != 7) {
+						if(game.gamesChosen[game.players[i]].length != 1) { // CHANGED FOR SUBGAME LENGTH
 							all_done = false;
 						}
 					}
