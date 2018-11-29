@@ -751,9 +751,28 @@ gamesNamespace.on('connection', socket => {
                 gamechoice: data.gamechoice,
 				trump: data.trump,
 				rank: data.rank
-            }); // FOR NOW just emit a string of the chosen game
-            gamesNamespace.to(data.lobbyname).emit('your-turn', {
-                username: game.subgame.current_player
+            });
+			
+			// Send Doubles Request to First Player
+			var next_user = game.players[(game.dealerIndex + 1) % 4];
+			var users = [];
+			var redouble = [];
+			
+			if(subgame.game_type != "Fan-Tan" && subgame.game_type != "Trumps") {
+				for(var i = game.players.indexOf(next_user) + 1; i < game.players.indexOf(next_user) + 4; i++) {
+					users.push(game.players[i]);
+					redouble.push(0);
+				}
+			}
+			else {
+				users.push(game.players[game.dealerIndex]);
+				redouble.push(0);
+			}
+				
+            gamesNamespace.to(data.lobbyname).emit('request-double', {
+                username: next_user,
+				users: users,
+				redouble: redouble
             });
 		}
 		else {
@@ -762,6 +781,86 @@ gamesNamespace.on('connection', socket => {
 		}
     });
 
+	//
+    socket.on('double-chosen', data => {
+		var subgame = gameHash[data.lobbyname].subgame;
+		var game = gameHash[data.lobbyname];
+		var username = data.username;
+		var doubles = data.users_doubled;
+		
+		// Add doubles
+		for(var i = 0; i < doubles.length; i++) {
+			subgame.add_double(username, doubles[i]);
+		}
+		
+		// Send next event
+		if(username == game.players[game.dealerIndex]) {
+			// All doubles have been completed -> send first your-turn
+			gamesNamespace.to(data.lobbyname).emit('your-turn', {
+                username: game.subgame.current_player
+            });
+		}
+		else {
+			// Send double to next user
+			var next_user = game.players[(game.players.indexOf(username) + 1) % 4];
+			var users = [];
+			var redouble = [];
+			if(next_user != game.players[game.dealerIndex] && subgame.game_type != "Fan-Tan" && subgame.game_type == "Trumps") {
+				// User can double anyone
+				for(var i = game.players.indexOf(next_user) + 1; i < game.players.indexOf(next_user) + 4; i++) {
+					var player = game.players[i % 4];
+					users.push(player);
+					if(subgame.doubles[subgame.players.indexOf(next_user)][subgame.players.indexOf(player)] == 1) {
+						redouble.push(1);
+					}
+					else redouble.push(0);
+				}
+				gamesNamespace.to(data.lobbyname).emit('request-double', {
+					username: next_user,
+					users: users,
+					redouble: redouble
+				});
+			}
+			else if(next_user != game.players[game.dealerIndex]) {
+				// Fan-Tan and Trumps -> can only double dealer
+				var dealer = game.players[game.dealerIndex];
+				users.push(dealer);
+				redouble.push(0);
+				gamesNamespace.to(data.lobbyname).emit('request-double', {
+					username: next_user,
+					users: users,
+					redouble: redouble
+				});
+			}
+			else {
+				// Dealer can redouble anyone who has doubled them
+				var i = subgame.players.indexOf(next_user);
+				for(var j = 0; j < 4; j++) {
+					if(i == j) continue;
+					else {
+						if(subgame.doubles[i][j] == 1) {
+							users.push(subgame.players[j]);
+							redouble.push(1);
+						}
+					}
+				}
+				if(users.length == 0) {
+					// No redoubles -> send first your-turn
+					gamesNamespace.to(data.lobbyname).emit('your-turn', {
+						username: game.subgame.current_player
+					});
+				}
+				else {
+					gamesNamespace.to(data.lobbyname).emit('request-double', {
+						username: next_user,
+						users: users,
+						redouble: redouble
+					});			
+				}
+			}
+		}
+			
+	});
     // DOUBLES LOGIC GOES HERE AND POSSIBLY IN THE EVENT ABOVE
 
     // Somehow we need to send a 'your-turn' to the client whose turn it is, to start the play. Maybe it will be at the end of the doubles logic
