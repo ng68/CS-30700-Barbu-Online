@@ -50,7 +50,7 @@ firebase.auth().onAuthStateChanged( usern => {
   });
 
 
-
+/*
 document.getElementById("p1").addEventListener('click', e => {
     user = "p1";
     socket.emit('player-info', {
@@ -82,7 +82,7 @@ document.getElementById("p4").addEventListener('click', e => {
         lobbyname : lobby
     });
 });
-
+*/
 //Run this for each subgame that we run this also populates the hands.
 socket.on('cards-dealt', data => {
     for (var i = 0; i < 4;i++) {
@@ -466,6 +466,8 @@ socket.on('card-chosen-response-ft', data =>{
 });
 
 socket.on('your-turn', data =>{
+    $('#doubleModal').modal('hide');
+    $('#waitingModal').modal('hide');
     document.getElementById("turn").innerHTML = data.username;
     if (data.username === user) {
         myTurn = true;
