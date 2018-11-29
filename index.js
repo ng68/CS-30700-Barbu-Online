@@ -965,8 +965,25 @@ gamesNamespace.on('connection', socket => {
 						}
 						
 						if(done) {
-							gamesNamespace.to(data.lobbyname).emit('game-finished', game.scoreHash);
-							console.log("GAME OVER");
+							var winner = game.players[0];
+							var win_score = game.scoreHash[winner];
+							var users = [];
+							var users_scores = [];
+
+							for(var i = 0; i < 4; i++) {
+								users.push(game.players[i]);
+								var score = game.scoreHash[game.players[i]];
+								users_score.push(score);
+								if(score > win_score) {
+									win_score = score;
+									winner = game.players[i];
+								}
+							}
+							gamesNamespace.to(data.lobbyname).emit('game-finished', {
+								users: users,
+								users_scores: users_scores,
+								winner: winner
+							});
 						}
 						
 						// Update dealer
