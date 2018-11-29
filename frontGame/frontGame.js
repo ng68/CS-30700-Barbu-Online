@@ -1,7 +1,7 @@
-let socket = io('http://localhost:8080/games');
-//let socket = io('https://protected-reef-35837.herokuapp.com/games'); //Socket
-let lobby = "Lobby";//
-//let lobby = localStorage.getItem('lobbyname'); //Lobby currently in 
+//let socket = io('http://localhost:8080/games');
+let socket = io('https://protected-reef-35837.herokuapp.com/games'); //Socket
+//let lobby = "Lobby";//
+let lobby = localStorage.getItem('lobbyname'); //Lobby currently in 
 let user;  //Current User
 let subgameList = ["Barbu", "Fan-Tan", "Hearts", "Last Two", "Losers", "Queens", "Trumps"];
 let players = {};   //Players in your lobby (Left, Top, Right)
@@ -30,7 +30,7 @@ let spadeTopDiscardPile = new cards.Deck({faceUp:true, x:705, y:220});
 let spadeBottomDiscardPile = new cards.Deck({faceUp:true, x:705, y:320});   
 
 let loc = {};  //Keeps track of the reference to the location of each Card
-/*
+
 firebase.auth().onAuthStateChanged( usern => {
     if (usern) 
     { 
@@ -48,9 +48,9 @@ firebase.auth().onAuthStateChanged( usern => {
         console.log("User not signed in");
     }
   });
-*/
 
 
+/*
 document.getElementById("p1").addEventListener('click', e => {
     user = "p1";
     socket.emit('player-info', {
@@ -82,6 +82,7 @@ document.getElementById("p4").addEventListener('click', e => {
         lobbyname : lobby
     });
 });
+*/
 
 //Run this for each subgame that we run this also populates the hands.
 socket.on('cards-dealt', data => {
