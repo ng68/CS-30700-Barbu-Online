@@ -1302,7 +1302,20 @@ gamesNamespace.on('connection', socket => {
 
             return;
 		}
-    });
+		});
+		
+		// Client emits this event when a user sends a chat message. Expects the data object to be {
+		// 		username: STRING,
+		// 		message: STRING,
+		// 		lobbyname: STRING
+		// }
+		socket.on('chat-sent', data => {
+				gamesNamespace.to(data.lobbyname).emit('new-message', {
+						username: data.username,
+						message: data.message,
+						lobbyname: data.lobbyname
+				});
+		});
 });
 
 homeNamespace.on('connection', socket => {
