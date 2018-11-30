@@ -1395,7 +1395,7 @@ gamesNamespace.on('connection', socket => {
 				winner = game.players[i];
 			}
 		}
-		gamesNamespace.to(data.lobbyname).emit('game-result', {
+		io.emit('game-result', {
 			users: users,
 			users_scores: users_scores,
 			winner: winner,
