@@ -505,7 +505,7 @@ lobbiesNamespace.on('connection', socket => {
 
 		onlinePlayers.splice(index, 1);
 		homeNamespace.emit('disconnected-user', {
-			uid: localStorage
+			uid: localuser
 		});
 	});
 
@@ -674,7 +674,7 @@ gamesNamespace.on('connection', socket => {
 
 		onlinePlayers.splice(index, 1);
 		homeNamespace.emit('disconnected-user', {
-			uid: localStorage
+			uid: localuser
 		});
 	});
 
@@ -1409,7 +1409,7 @@ homeNamespace.on('connection', socket => {
 
 		onlinePlayers.splice(index, 1);
 		homeNamespace.emit('disconnected-user', {
-			uid: localStorage
+			uid: localuser
 		});
 	});
 
@@ -1441,7 +1441,7 @@ io.on('connection', socket => {
 
 		onlinePlayers.splice(index, 1);
 		homeNamespace.emit('disconnected-user', {
-			uid: localStorage
+			uid: localuser
 		});
 	});
 });
