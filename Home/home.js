@@ -52,13 +52,21 @@ socket.on('new-message', data => {
 socket.on('connected-user', data => {
     // the uid is accessed in data.uid
     let friend = data.uid;
+    console.log(data.uid);
     var query = firebase.database().ref("users/" + ogUser.uid + "/friends");
     query.once("value")
       .then(function(snapshot) {
         snapshot.forEach(function(childSnapshot) {
             var uid = childSnapshot.key;
-            if (friend === uid) {
-                var email = childSnapshot.child("email").val();
+            var email = childSnapshot.child("email").val();
+            let ele = document.getElementById(email);
+            let check;
+            if (ele) {
+                check = true;
+            }else {
+                check = false;
+            }
+            if (friend === uid && !check) {
                 let messageDiv = document.createElement("div");
                 messageDiv.setAttribute("id", email);
                 messageDiv.innerHTML = email;
