@@ -713,6 +713,8 @@ gamesNamespace.on('connection', socket => {
             };
 
 			let lobbyIndex = lobbies.indexOf(data.lobbyname);
+			console.log(data);
+			console.log(lobbyIndex);
 			if (lobbyIndex >= 0) {
 				game.num_rounds = lobbies[lobbyIndex].num_rounds;
 				lobbies.splice(lobbyIndex, 1); // Remove the old lobby from the backend.
