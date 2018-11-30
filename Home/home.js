@@ -12,6 +12,7 @@ let email;
 let ogUser;
 
 firebase.auth().onAuthStateChanged( user => {
+    console.log("HELLO");
     if (user) 
     {
         ogUser = user;
@@ -50,10 +51,13 @@ socket.on('new-message', data => {
 });
 
 socket.on('connected-user', data => {
-    // the uid is accessed in data.uid
+    firebase.auth().onAuthStateChanged( user => {
+        if (user) 
+        {
+             // the uid is accessed in data.uid
     let friend = data.uid;
     console.log(data.uid);
-    var query = firebase.database().ref("users/" + ogUser.uid + "/friends");
+    var query = firebase.database().ref("users/" + user.uid + "/friends");
     query.once("value")
       .then(function(snapshot) {
         snapshot.forEach(function(childSnapshot) {
@@ -74,6 +78,9 @@ socket.on('connected-user', data => {
             }
         });
     });
+        }
+        });
+   
     //if (data.uid is in the users' friends list) {
         // Mark the user data.uid as online
     //}

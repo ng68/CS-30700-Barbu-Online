@@ -599,7 +599,10 @@ socket.on('game-finished', data => {
                 });
             });
         //});
-    window.location.href = "home.html";
+    localStorage.setItem('users', data.users);
+    localStorage.setItem('usersScores', data.users_scores);
+    localStorage.setItem('scoreHash', data.game_data);
+    window.location.href = "results.html";
 });
 
 
