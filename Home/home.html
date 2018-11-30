@@ -41,7 +41,7 @@
 <div class="container home-container" style="margin-top:30px">
   <div class="row home-row">
     <div class="col-lg-3 rounded">
-      <input type=button class="btn big-button" onClick="location.href='index.html'" value='Learn to Play'>
+      <input type=button class="btn big-button" data-toggle="modal" data-target="#tutorial1" value='Learn to Play'>
       <input type=button class="btn big-button" onClick="location.href='profile.html'" value='Profile'>
       <input type=button class="btn big-button" onClick="location.href='lobbies.html'" value='Lobbies'>
       <input type=button class="btn big-button" onClick="location.href='rankings.html'" value='Rankings'>
@@ -66,7 +66,7 @@
       <h2 class="text-gold">Chat</h2>
       <div class="bg-light rounded" id="messages" style="overflow-y: scroll;">
       </div>
-      <form onsubmit="sendChat();return false;">
+      <form>
         <div class="form-row home-form">
           <div class="col-10">
             <input type="text" class="form-control" id="message-input" placeholder="Message">
@@ -90,8 +90,7 @@
       <form>
         <div class="form-row home-form" style="margin-top: 10px">
           <div class="col-8">
-            <!--<input type="text" id="removeFriend" class="form-control" placeholder="Friend Email">-->
-            <select id="removeFriend"></select>
+            <input type="text" id="removeFriend" class="form-control" placeholder="Friend Email">
           </div>
           <button type="submit" id="removeFriendBtn" class="btn">Remove</button>
         </div>
@@ -99,6 +98,614 @@
     </div>
   </div>
 </div>
+
+<!--Beginning of Tutorial Modals-->
+<!--Beginning of Tutorial Modals-->
+<!--Beginning of Tutorial Modals-->
+<!--Beginning of Tutorial Modals-->
+
+<div class="modal fade" id="tutorial1" tabindex="-1" role="dialog" aria-labelledby="tutorial1" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="tutorial1">Welcome!</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:200%;">Welcome to Barbu Online!</p>
+        <img style="max-width: 350px" src="Logo.png"></img>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary btn-sm m-0" data-dismiss="modal" data-toggle="modal" data-target="#tutorial2">Next</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="tutorial2" tabindex="-1" role="dialog" aria-labelledby="tutorial2" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="tutorial2">Welcome!</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:150%;">
+          New to the game of Barbu? That's okay. Our goal is to help you learn the basic rules
+          and the different strategies that you can use to become an expert in no time!
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-basic btn-sm m-0" data-dismiss="modal" data-toggle="modal" data-target="#tutorial1">Previous</button>
+        <text></text>
+        <button type="button" class="btn btn-primary btn-sm m-0" data-dismiss="modal" data-toggle="modal" data-target="#tutorial3">Next</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="tutorial3" tabindex="-1" role="dialog" aria-labelledby="tutorial3" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="tutorial3">What is Barbu?</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:150%;">
+          Barbu is a four-player card game that uses a standard 52 playing card deck. That is the 4 suits -
+          Hearts, Diamonds, Clubs, and Spades each with numbers 2 - 10 with a Jack, Queen, King, and Ace.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-basic btn-sm m-0" data-dismiss="modal" data-toggle="modal" data-target="#tutorial2">Previous</button>
+        <text></text>
+        <button type="button" class="btn btn-primary btn-sm m-0" data-dismiss="modal" data-toggle="modal" data-target="#tutorial4">Next</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="tutorial4" tabindex="-1" role="dialog" aria-labelledby="tutorial4" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="tutorial4">What is Barbu?</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:150%;">
+          The game is composed of 7 subgames, which will be described in-depth later.
+          Each round, the dealer selects which of the subgames they want to play.
+          The dealer cannot select this game again for the rest of the game.
+          The game ends when each of the four players has selected each of the 7 subgames;
+          thus, there are 28 rounds in total.
+          At the end of the game, the scores for the players will sum up to zero.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-basic btn-sm m-0" data-dismiss="modal" data-toggle="modal" data-target="#tutorial3">Previous</button>
+        <text></text>
+        <button type="button" class="btn btn-primary btn-sm m-0" data-dismiss="modal" data-toggle="modal" data-target="#tutorial5">Next</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="tutorial5" tabindex="-1" role="dialog" aria-labelledby="tutorial5" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="tutorial5">Background Information</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:125%;">
+          6 of the 7 subgames are trick-taking games. The structure of these games is as follows:
+        </p>
+        <ul>
+          <li>Some player is chosen to lead. They play the first card of the trick.</li>
+          <li>
+            The player to their left is next to play.
+            They generally must play a card of the same suit as the card that was led (this is called “following suit”)
+            if they can. Play continues like this until the last person has played their card.
+          </li>
+          <li>
+            In games without a trump suit, a player wins the trick if they played the highest card in the trick that is
+            of the same suit as the card that was led.
+            In games with a trump suit, cards of that suit “trump”, or take precedence over, cards of different suits,
+            regardless of whether the card is lower.
+          </li>
+          <li>
+            The winner of the trick is said to have “taken” that trick and all the cards in it.
+          </li>
+          <li>
+            The player who won the previous trick leads for the following trick.
+          </li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-basic btn-sm m-0" data-dismiss="modal" data-toggle="modal" data-target="#tutorial4">Previous</button>
+        <text></text>
+        <button type="button" class="btn btn-primary btn-sm m-0" data-dismiss="modal" data-toggle="modal" data-target="#tutorial6">Next</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="tutorial6" tabindex="-1" role="dialog" aria-labelledby="tutorial6" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="tutorial6">The 7 Subgames</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:125%;">
+          As mentioned earlier, there are 7 total subgames of Barbu. They are:
+        </p>
+        <ul>
+          <li>Barbu</li>
+          <li>Last Two</li>
+          <li>Losers</li>
+          <li>Queens</li>
+          <li>Hearts</li>
+          <li>Trumps</li>
+          <li>Fan-Tan</li>
+        </ul>
+        <p style="font-size:100%;">
+          General Rules: For each of the trick-taking games,
+          players must follow suit (play a card of the same suit as the card that was led) if they can.
+          Otherwise, they are free to pitch (play a card of a different suit than the card that was led) any card they
+          want.
+          There are no trump suits unless otherwise specified.
+          With the exception of Fan-Tan, the player to the left of the dealer is the leader for the first trick.
+          Aces are high in each subgame.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-basic btn-sm m-0" data-dismiss="modal" data-toggle="modal" data-target="#tutorial5">Previous</button>
+        <text></text>
+        <button type="button" class="btn btn-primary btn-sm m-0" data-dismiss="modal" data-toggle="modal" data-target="#tutorial7">Next</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="tutorial7" tabindex="-1" role="dialog" aria-labelledby="tutorial7" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="tutorial7">The 7 Subgames</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:125%;">
+          Barbu
+        </p>
+        <ul>
+          <li>Description: Though this is the name of the game as a whole,
+            there is also a subgame called “Barbu.”
+            This is a trick-taking game in which the only objective is to not take the King of Hearts.
+            Players cannot lead a Heart unless that is the only suit they have in their hand.
+          </li>
+          <li>Scoring: The player who takes the King of Hearts loses 20 points.</li>
+          <li>Strategy: If you have the King of Hearts, try to get rid of all your cards 
+            in another suit so that you can pitch the King of Hearts early.  
+            If you don’t have the King of Hearts, try to avoid taking tricks in which you 
+            think someone might pitch the King of Hearts - for example, you probably want to avoid 
+            taking the trick when Spades are led for the third time, as whoever has the King of Hearts 
+            may have already run out of Spades.</li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-basic btn-sm m-0" data-dismiss="modal" data-toggle="modal" data-target="#tutorial6">Previous</button>
+        <text></text>
+        <button type="button" class="btn btn-primary btn-sm m-0" data-dismiss="modal" data-toggle="modal" data-target="#tutorial8">Next</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="tutorial8" tabindex="-1" role="dialog" aria-labelledby="tutorial8" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="tutorial8">The 7 Subgames</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:125%;">
+          Last Two
+        </p>
+        <ul>
+          <li>Description: This is a trick-taking game in which the objective is to not take the last two tricks.</li>
+          <li>Scoring: The player who takes the second-to-last trick loses 10 points. The player who takes the last
+            trick loses 20 points. If the same player takes both tricks, they lose 30 points.</li>
+          <li>Strategy: Save your low cards for the end!  The more cards you have in one suit, 
+            the more you should want your last cards to be in that suit (since other players 
+            will run out of that suit first).  Also, try to get off the lead before the last two 
+            tricks - it can be dangerous to be on lead towards the end of the game.</li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-basic btn-sm m-0" data-dismiss="modal" data-toggle="modal" data-target="#tutorial7">Previous</button>
+        <text></text>
+        <button type="button" class="btn btn-primary btn-sm m-0" data-dismiss="modal" data-toggle="modal" data-target="#tutorial9">Next</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="tutorial9" tabindex="-1" role="dialog" aria-labelledby="tutorial9" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="tutorial9">The 7 Subgames</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:125%;">
+          Losers
+        </p>
+        <ul>
+          <li>Description: This is a trick-taking game in which the goal is to not take tricks.</li>
+          <li>Scoring: Players lose 2 points for each trick they take.</li>
+          <li>Strategy: In general, you should play your highest card that won’t take the trick.  
+            If you have to take the trick, you should play your highest card.</li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-basic btn-sm m-0" data-dismiss="modal" data-toggle="modal" data-target="#tutorial8">Previous</button>
+        <text></text>
+        <button type="button" class="btn btn-primary btn-sm m-0" data-dismiss="modal" data-toggle="modal" data-target="#tutorial10">Next</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="tutorial10" tabindex="-1" role="dialog" aria-labelledby="tutorial10" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="tutorial10">The 7 Subgames</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:125%;">
+          Queens
+        </p>
+        <ul>
+          <li>Description: This is a trick-taking game in which the goal is to not take Queens.</li>
+          <li>Scoring: Players lose 6 points for each Queen they take.</li>
+          <li>Strategy: In general, you should avoid playing Aces or Kings unless it’s 
+            the last card of the trick (in this case, it gives you an easy way to get rid of 
+            a dangerous card).  Use pitching to your advantage - if you don’t have a card of the 
+            same suit as the card that was led, pitch one of your Aces, Kings, or Queens.</li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-basic btn-sm m-0" data-dismiss="modal" data-toggle="modal" data-target="#tutorial9">Previous</button>
+        <text></text>
+        <button type="button" class="btn btn-primary btn-sm m-0" data-dismiss="modal" data-toggle="modal" data-target="#tutorial11">Next</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="tutorial11" tabindex="-1" role="dialog" aria-labelledby="tutorial11" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="tutorial11">The 7 Subgames</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:125%;">
+          Hearts
+        </p>
+        <ul>
+          <li>Description: This is a trick-taking game in which the goal is to not take Hearts.
+            Unlike the popular card game of the same name, there is no penalty for taking the Queen of Spades,
+            and players cannot “shoot the moon.” Players cannot lead a heart until they have been broken
+            (i.e. someone else has pitched a heart), unless that is the only suit they have.</li>
+          <li>Scoring: Players lose 6 points if they take the Ace of Hearts. All other Hearts carry a penalty of 2
+            points each.</li>
+          <li>Strategy: Try to avoid taking tricks involving Hearts.  One or two won’t hurt you, but if 
+            the trick has 4 Hearts then it will hurt your score much more.  Having a lot of Hearts can 
+            actually help you - it gives you more control over who takes Hearts, and you don’t have to worry 
+            about people pitching Hearts in tricks you win.  Also, keep in mind that the Ace of Hearts has a 
+            penalty 3 times worse than a normal Heart.</li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-basic btn-sm m-0" data-dismiss="modal" data-toggle="modal" data-target="#tutorial10">Previous</button>
+        <text></text>
+        <button type="button" class="btn btn-primary btn-sm m-0" data-dismiss="modal" data-toggle="modal" data-target="#tutorial12">Next</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="tutorial12" tabindex="-1" role="dialog" aria-labelledby="tutorial12" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="tutorial12">The 7 Subgames</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:125%;">
+          Trumps
+        </p>
+        <ul>
+          <li>Description: This is a trick-taking game in which the goal is to take tricks.
+            As the name suggests, there is a trump suit; this is chosen by the dealer when they select the game.</li>
+          <li>Scoring: Players gain 5 points for each trick they take.</li>
+          <li>Strategy: Win as many tricks as you can!  When picking this game, select a 
+            trump suit in which you have many cards and several high cards.  If you know you’re 
+            going to lose a trick, play the lowest card you can.  When trumping, play your lowest 
+            trump card unless someone else has already played a higher trump.</li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-basic btn-sm m-0" data-dismiss="modal" data-toggle="modal" data-target="#tutorial11">Previous</button>
+        <text></text>
+        <button type="button" class="btn btn-primary btn-sm m-0" data-dismiss="modal" data-toggle="modal" data-target="#tutorial13">Next</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="tutorial13" tabindex="-1" role="dialog" aria-labelledby="tutorial13" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="tutorial13">The 7 Subgames</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:125%;">
+          Fan-Tan
+        </p>
+        <ul>
+          <li>Description: This is the only non-trick-taking game.
+            The objective of the game is to play all your cards before the other players.
+            The dealer chooses a start card, e.g. 2 to Ace, and begins the game by playing one of the start cards.
+            For example, if the dealer chooses the start card to be the Jack, then they can begin by playing the Jack
+            of any suit.
+            Each suit will have its own row in which the start card is the first card to be played.
+            From there, players build the row by playing a card adjacent to the cards at the end of the row.
+            For example, if the 7 is chosen as a start card and the 7 of Clubs is played, the next player can either
+            play the 6 of Clubs, 8 of Clubs, or the 7 of any other suit.
+            Players pass if they cannot make a legal play. At the end of the game, each suit will have a full row going
+            from 2 to Ace.</li>
+          <li>Scoring: The first player to play all their cards gains 45 points. The second gains 20 points, the third
+            gains 5 points, and the last loses 5 points.</li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-basic btn-sm m-0" data-dismiss="modal" data-toggle="modal" data-target="#tutorial12">Previous</button>
+        <text></text>
+        <button type="button" class="btn btn-primary btn-sm m-0" data-dismiss="modal" data-toggle="modal" data-target="#tutorial14">Next</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="tutorial14" tabindex="-1" role="dialog" aria-labelledby="tutorial14" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="tutorial14">The 7 Subgames</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p style="font-size:125%;">
+            Fan-Tan
+          </p>
+          <ul>
+            <li>Strategy: The main goal in this game is to have control of the board.  The best possible position 
+              to be in is when you have the only cards that are allowed to be played and no one else can play anything. 
+               When you need help to be able to eventually play a card, focus on that first - for example, if the start 
+               card is 8 and you have the 7 and the 2 of Spades but nothing in between, you should play the 7 early so 
+               that other players will have time to play the cards in between.  Conversely, if you just have the 7, you 
+               should hold off from playing it until you have to, since you don’t need any help there.</li>
+          </ul>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-basic btn-sm m-0" data-dismiss="modal" data-toggle="modal" data-target="#tutorial13">Previous</button>
+          <text></text>
+          <button type="button" class="btn btn-primary btn-sm m-0" data-dismiss="modal" data-toggle="modal" data-target="#tutorial15">Next</button>
+        </div>
+      </div>
+    </div>
+  </div>
+<div class="modal fade" id="tutorial15" tabindex="-1" role="dialog" aria-labelledby="tutorial15" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="tutorial15">Doubling</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:125%;">
+          After the subgame is chosen, each player will have an opportunity to double.
+          A double is essentially a side bet between two players. If Player A doubles Player B,
+          they will gain extra points if they do better than Player B in that game, and Player B
+          will lose extra points; conversely, if Player B does better, they will gain extra points
+          and Player A will lose extra points.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-basic btn-sm m-0" data-dismiss="modal" data-toggle="modal" data-target="#tutorial14">Previous</button>
+        <text></text>
+        <button type="button" class="btn btn-primary btn-sm m-0" data-dismiss="modal" data-toggle="modal" data-target="#tutorial16">Next</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="tutorial16" tabindex="-1" role="dialog" aria-labelledby="tutorial16" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="tutorial16">Doubling</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:125%;">
+          Procedure: Doubling starts with the player to the dealer’s left.
+          In the five negative contracts (Losers, Barbu, Queens, Hearts, and Last Two),
+          the player will have the option to double any of the other players; in the two
+          positive contracts (Trumps and Fan-Tan), the player can only double the dealer or pass.
+          Once they have made their selections, the next player to the left makes theirs.
+          If Player B has already been doubled by Player A before they make their selections,
+          they have the option to redouble, which raises the stakes of the bet. Doubling continues
+          in this manner until reaching the dealer. The dealer cannot double other players, but can
+          redouble any players who have already doubled them. Once the dealer has made their selections, play begins.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-basic btn-sm m-0" data-dismiss="modal" data-toggle="modal" data-target="#tutorial15">Previous</button>
+        <text></text>
+        <button type="button" class="btn btn-primary btn-sm m-0" data-dismiss="modal" data-toggle="modal" data-target="#tutorial17">Next</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="tutorial17" tabindex="-1" role="dialog" aria-labelledby="tutorial17" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="tutorial17">Doubling</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:125%;">
+          Scoring: At the end of the game, raw scores are calculated for each player according
+          to the scoring system for the subgame of choice. For each double (say, between Player
+          A and Player B), calculate the difference between their scores. This difference is added
+          to the score of the player who did better and subtracted from the score of the player who
+          did worse. If it was a redouble instead of a double, the difference is doubled.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-basic btn-sm m-0" data-dismiss="modal" data-toggle="modal" data-target="#tutorial16">Previous</button>
+        <text></text>
+        <button type="button" class="btn btn-primary btn-sm m-0" data-dismiss="modal" data-toggle="modal" data-target="#tutorial18">Next</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="tutorial18" tabindex="-1" role="dialog" aria-labelledby="tutorial18" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="tutorial18">Doubling</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:125%;">
+          Example: Say that Players A, B, C, and D played a round of Losers and D was the dealer.
+          Let’s say the raw scores are:
+        </p>
+        <ul>
+          <li>A: -4</li>
+          <li>B: -10</li>
+          <li>C: -6</li>
+          <li>D: -6</li>
+        </ul>
+        <p style="font-size:125%;">
+          Let’s also say that the doubling went as follows:
+        </p>
+        <ul>
+          <li>A doubled B</li>
+          <li>B redoubled A and doubled C</li>
+          <li>C doubled D</li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-basic btn-sm m-0" data-dismiss="modal" data-toggle="modal" data-target="#tutorial17">Previous</button>
+        <text></text>
+        <button type="button" class="btn btn-primary btn-sm m-0" data-dismiss="modal" data-toggle="modal" data-target="#tutorial19">Next</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="tutorial19" tabindex="-1" role="dialog" aria-labelledby="tutorial19" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="tutorial19">Doubling</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p style="font-size:125%;">
+            First, let’s handle the redouble between A and B. A did 6 points better than B,
+            so we add 12 points to A’s score and subtract 12 from B’s score. Now we have A
+            at +8 and B at -22. B also doubled C and did 4 points worse, so we subtract 4 from
+            B’s score and add 4 to C’s score. Now we have A at +8, B at -26, and C at -2. Finally,
+            C doubled D and did just as well, so this double is a wash. The final scores for the round
+            are A at +8, B and -26, C at -2, and D at -6. Notice that the scores for the round still add up to -26.
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-basic btn-sm m-0" data-dismiss="modal" data-toggle="modal" data-target="#tutorial18">Previous</button>
+          <text></text>
+          <button type="button" class="btn btn-primary btn-sm m-0" data-dismiss="modal" data-toggle="modal" data-target="#tutorial20">Next</button>
+        </div>
+      </div>
+    </div>
+</div>
+<div class="modal fade" id="tutorial20" tabindex="-1" role="dialog" aria-labelledby="tutorial20" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="tutorial20">Barbu Online</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p style="font-size:150%;">
+            That pretty much covers everything! Did you get all of that? Well if you didn't, you'll surely catch on 
+            after a few games. Hop in a lobby, meet some new friends, and have some fun! Once again, Welcome to Barbu Online!
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-basic btn-sm m-0" data-dismiss="modal" data-toggle="modal" data-target="#tutorial19">Previous</button>
+          <text></text>
+          <button type="button" class="btn btn-primary btn-sm m-0" data-dismiss="modal">End Tutorial</button>
+        </div>
+      </div>
+    </div>
+  </div>
 <!--
 <div class="jumbotron text-center" style="margin-bottom:0">
   <p>© 2018-2019</p>
@@ -106,7 +713,6 @@
 -->
 </body>
 <script src="https://www.gstatic.com/firebasejs/5.5.2/firebase.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
 <script>
   // Initialize Firebase
   var config = {
