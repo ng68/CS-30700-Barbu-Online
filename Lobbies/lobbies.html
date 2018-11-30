@@ -47,6 +47,9 @@
         <th scope="col text-white">Name</th>
         <th scope="col">Host</th>
         <th scope="col">Players</th>
+        <th scope="col">Password</th>
+        <th scope="col">Player Level</th>
+        <th scope="col"># of Rounds</th>
         </tr>
     </thead>
     <tbody id="table">
@@ -60,7 +63,7 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Lobby Name</h5>
+          <h5 class="modal-title" id="exampleModalLabel">Lobby Information</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -68,14 +71,135 @@
         <div class="modal-body">
           <input id="lobby-name" type="text" placeholder="Lobby Name">
         </div>
+        <div class="modal-body">
+            <text>Player Level:</text><br>
+            <input type="radio" name="pub_difficulty" value="Beginner" checked> Beginner<br>
+            <input type="radio" name="pub_difficulty" value="Intermediate">Intermediate<br>
+            <input type="radio" name="pub_difficulty" value="Expert"> Expert
+        </div>
+        <div class="modal-body">
+            <text>Number of Rounds:</text><br>
+            <select id="pub_num_rounds">
+                <option>28</option>
+                <option>27</option>
+                <option>26</option>
+                <option>25</option>
+                <option>24</option>
+                <option>23</option>
+                <option>22</option>
+                <option>21</option>
+                <option>20</option>
+                <option>19</option>
+                <option>18</option>
+                <option>17</option>
+                <option>16</option>
+                <option>15</option>
+                <option>14</option>
+                <option>13</option>
+                <option>12</option>
+                <option>11</option>
+                <option>10</option>
+                <option>9</option>
+                <option>8</option>
+                <option>7</option>
+                <option>6</option>
+                <option>5</option>
+                <option>4</option>
+                <option>3</option>
+                <option>2</option>
+                <option>1</option>
+            </select>
+        </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-primary btn-sm m-0" onclick="makelobby()">Create Lobby</button>
         </div>
       </div>
     </div>
   </div>
+  <div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel1" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel1">Lobby Information</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <input id="private-lobby-name" type="text" placeholder="Lobby Name">
+        </div>
+        <div class="modal-body">
+          <input id="lobby-password" type="text" placeholder="Password">
+        </div>
+        <div class="modal-body">
+            <text>Player Level:</text><br>
+            <input type="radio" name="priv_difficulty" value="Beginner" checked> Beginner<br>
+            <input type="radio" name="priv_difficulty" value="Intermediate"> Intermediate<br>
+            <input type="radio" name="priv_difficulty" value="Expert"> Expert
+        </div>
+        <div class="modal-body">
+            <text>Number of Rounds:</text><br>
+            <select id="priv_num_rounds">
+                <option>28</option>
+                <option>27</option>
+                <option>26</option>
+                <option>25</option>
+                <option>24</option>
+                <option>23</option>
+                <option>22</option>
+                <option>21</option>
+                <option>20</option>
+                <option>19</option>
+                <option>18</option>
+                <option>17</option>
+                <option>16</option>
+                <option>15</option>
+                <option>14</option>
+                <option>13</option>
+                <option>12</option>
+                <option>11</option>
+                <option>10</option>
+                <option>9</option>
+                <option>8</option>
+                <option>7</option>
+                <option>6</option>
+                <option>5</option>
+                <option>4</option>
+                <option>3</option>
+                <option>2</option>
+                <option>1</option>
+                
+            </select>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary btn-sm m-0" onclick="makeprivatelobby()">Create Lobby</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel2">Enter Password</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <input id="check-password" type="text" placeholder="Password">
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary btn-sm m-0" onclick="checkPassword()">Join Lobby</button>
+        </div>
+      </div>
+    </div>
+  </div>
 <button class="btn btn-primary btn-sm m-0" data-toggle="modal" data-target="#myModal">
-     Host A Lobby
+     Host A Public Lobby
+</button>
+<button class="btn btn-primary btn-sm m-0" data-toggle="modal" data-target="#myModal1">
+     Host A Private Lobby
 </button>
 </body>
 <script src="https://www.gstatic.com/firebasejs/5.5.2/firebase.js"></script>
