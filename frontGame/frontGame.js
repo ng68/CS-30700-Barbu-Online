@@ -328,10 +328,10 @@ function chooseSubgame (){
             temp += "<input type=\"radio\" name=\"rank\" value=8>8<br>";
             temp += "<input type=\"radio\" name=\"rank\" value=9>9<br>";
             temp += "<input type=\"radio\" name=\"rank\" value=10>10<br>";
-            temp += "<input type=\"radio\" name=\"rank\" value=\"Jack\">Jack<br>";
-            temp += "<input type=\"radio\" name=\"rank\" value=\"Queen\">Queen<br>";
-            temp += "<input type=\"radio\" name=\"rank\" value=\"King\">King<br>";
-            temp += "<input type=\"radio\" name=\"rank\" value=\"Ace\">Ace<br>";
+            temp += "<input type=\"radio\" name=\"rank\" value=11>Jack<br>";
+            temp += "<input type=\"radio\" name=\"rank\" value=12>Queen<br>";
+            temp += "<input type=\"radio\" name=\"rank\" value=13>King<br>";
+            temp += "<input type=\"radio\" name=\"rank\" value=14>Ace<br>";
             document.getElementById("radio-home").innerHTML = temp;
             document.getElementById("cSubgame").style.visibility = 'hidden';
             document.getElementById("rank").style.visibility = 'visible';
@@ -359,17 +359,42 @@ socket.on('subgame-choice', data => {
     if (currentSubgame === "Trumps") {
         document.getElementById("subgame").innerHTML = currentSubgame + " (" + data.trump + ")";
     }else if (currentSubgame === "Fan-Tan") {
-        document.getElementById("subgame").innerHTML = currentSubgame + " (" + data.rank + ")";
+        let temp;
+        if (data.rank === 11) {
+            temp = "Jack";
+        }else if (data.rank === 12) {
+            temp = "Queen";
+        }else if (data.rank === 13) {
+            temp = "King";
+        }else if (data.rank === 14) {
+            temp = "Ace";
+        }else {
+            temp = data.rank;
+        }
+        document.getElementById("subgame").innerHTML = currentSubgame + " (" + temp + ")";
     }else {
         document.getElementById("subgame").innerHTML = currentSubgame;
     }
 });
 
-socket.on('double-choices', data => {
+socket.on('update-doubles', data => {
     $('#doubleModal').modal('hide');
     $('#waitingModal').modal('hide');
-    let players = data.players;
     let doubles = data.doubles;
+    for (var i = 0; i < 4; i++) {
+        for (var j = 0; j < 4;j++) {
+            if (doubles[i][j] === 1) {
+                let temp = i.toString() + j.toString();
+                document.getElementById(temp).innerHTML = "X";
+            }else if (doubles[i][j] === 2) {
+                let temp = i.toString() + j.toString();
+                document.getElementById(temp).innerHTML = "XX";
+            }else {
+                let temp = i.toString() + j.toString();
+                document.getElementById(temp).innerHTML = "";
+            }
+        }
+    }
 });
 
 //Ability to click your own hand when it is your turn.
@@ -592,6 +617,9 @@ socket.on('game-finished', data => {
                     totalScore = totalScore + data.users_scores[ind];
                     losses = losses + 1;
                 }
+                wins = 10;
+                losses = 5;
+                totalScore = 0;
                 firebase.database().ref("users/" + user.uid).update({
                     wins : wins,
                     losses : losses,
@@ -599,9 +627,6 @@ socket.on('game-finished', data => {
                 });
             });
         //});
-    localStorage.setItem('users', data.users);
-    localStorage.setItem('usersScores', data.users_scores);
-    localStorage.setItem('scoreHash', data.game_data);
     window.location.href = "results.html";
 });
 
