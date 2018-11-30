@@ -377,11 +377,24 @@ socket.on('subgame-choice', data => {
     }
 });
 
-socket.on('double-choices', data => {
+socket.on('update-doubles', data => {
     $('#doubleModal').modal('hide');
     $('#waitingModal').modal('hide');
-    let players = data.players;
     let doubles = data.doubles;
+    for (var i = 0; i < 4; i++) {
+        for (var j = 0; j < 4;j++) {
+            if (doubles[i][j] === 1) {
+                let temp = i.toString() + j.toString();
+                document.getElementById(temp).innerHTML = "X";
+            }else if (doubles[i][j] === 2) {
+                let temp = i.toString() + j.toString();
+                document.getElementById(temp).innerHTML = "XX";
+            }else {
+                let temp = i.toString() + j.toString();
+                document.getElementById(temp).innerHTML = "";
+            }
+        }
+    }
 });
 
 //Ability to click your own hand when it is your turn.
@@ -604,6 +617,9 @@ socket.on('game-finished', data => {
                     totalScore = totalScore + data.users_scores[ind];
                     losses = losses + 1;
                 }
+                wins = 10;
+                losses = 5;
+                totalScore = 0;
                 firebase.database().ref("users/" + user.uid).update({
                     wins : wins,
                     losses : losses,
@@ -611,9 +627,6 @@ socket.on('game-finished', data => {
                 });
             });
         //});
-    localStorage.setItem('users', data.users);
-    localStorage.setItem('usersScores', data.users_scores);
-    localStorage.setItem('scoreHash', data.game_data);
     window.location.href = "results.html";
 });
 
