@@ -328,10 +328,10 @@ function chooseSubgame (){
             temp += "<input type=\"radio\" name=\"rank\" value=8>8<br>";
             temp += "<input type=\"radio\" name=\"rank\" value=9>9<br>";
             temp += "<input type=\"radio\" name=\"rank\" value=10>10<br>";
-            temp += "<input type=\"radio\" name=\"rank\" value=\"Jack\">Jack<br>";
-            temp += "<input type=\"radio\" name=\"rank\" value=\"Queen\">Queen<br>";
-            temp += "<input type=\"radio\" name=\"rank\" value=\"King\">King<br>";
-            temp += "<input type=\"radio\" name=\"rank\" value=\"Ace\">Ace<br>";
+            temp += "<input type=\"radio\" name=\"rank\" value=11>Jack<br>";
+            temp += "<input type=\"radio\" name=\"rank\" value=12>Queen<br>";
+            temp += "<input type=\"radio\" name=\"rank\" value=13>King<br>";
+            temp += "<input type=\"radio\" name=\"rank\" value=14>Ace<br>";
             document.getElementById("radio-home").innerHTML = temp;
             document.getElementById("cSubgame").style.visibility = 'hidden';
             document.getElementById("rank").style.visibility = 'visible';
@@ -359,7 +359,19 @@ socket.on('subgame-choice', data => {
     if (currentSubgame === "Trumps") {
         document.getElementById("subgame").innerHTML = currentSubgame + " (" + data.trump + ")";
     }else if (currentSubgame === "Fan-Tan") {
-        document.getElementById("subgame").innerHTML = currentSubgame + " (" + data.rank + ")";
+        let temp;
+        if (data.rank === 11) {
+            temp = "Jack";
+        }else if (data.rank === 12) {
+            temp = "Queen";
+        }else if (data.rank === 13) {
+            temp = "King";
+        }else if (data.rank === 14) {
+            temp = "Ace";
+        }else {
+            temp = data.rank;
+        }
+        document.getElementById("subgame").innerHTML = currentSubgame + " (" + temp + ")";
     }else {
         document.getElementById("subgame").innerHTML = currentSubgame;
     }
