@@ -5,6 +5,9 @@ let lobby = localStorage.getItem('lobbyname'); //Lobby currently in
 let user;  //Current User
 let subgameList = ["Barbu", "Fan-Tan", "Hearts", "Last Two", "Losers", "Queens", "Trumps"];
 let players = {};   //Players in your lobby (Left, Top, Right)
+let ogPlayers;
+let direction = ["South", "West", "North", "East"];
+let abrDirection = ["S", "W", "N", "E"];
 let currentDealer = 0;
 let currentSubgame;
 let myTurn = false;  //Current user position relative to other players
@@ -57,6 +60,7 @@ socket.on('new-message', data => {
 
 let loc = {};  //Keeps track of the reference to the location of each Card
 
+
 firebase.auth().onAuthStateChanged( usern => {
     if (usern)
     {
@@ -74,6 +78,7 @@ firebase.auth().onAuthStateChanged( usern => {
         console.log("User not signed in");
     }
   });
+
 
 socket.emit('user-info', {
     uid: firebase.auth().currentUser.uid
@@ -131,6 +136,14 @@ btnTabB.onclick = function () {
 }
 //Run this for each subgame that we run this also populates the hands.
 socket.on('cards-dealt', data => {
+    ogPlayers = Object.keys(data);
+    /*{
+        South : Object.keys(data)[0],
+        West : Object.keys(data)[1],
+        North : Object.keys(data)[2],
+        East : Object.keys(data)[3]
+    };
+    */
     for (var i = 0; i < 4;i++) {
         if (Object.keys(data)[i] === user) {
             myPosition = i;
@@ -139,23 +152,20 @@ socket.on('cards-dealt', data => {
                 top: Object.keys(data)[(i+2)%4],
                 right: Object.keys(data)[(i+3)%4]
             };
-            document.getElementById("player1").innerHTML = user;
-            document.getElementById("pl1").innerHTML = user;
+            document.getElementById("player1").innerHTML = abrDirection[myPosition] + " : " + user;
+            document.getElementById("pl1").innerHTML = direction[myPosition];
             document.getElementById("player1score").innerHTML = data.scores[myPosition];
 
-            document.getElementById("player2").innerHTML = players.left;
-            document.getElementById("pl2").innerHTML = players.left;
-            document.getElementsByClassName("doub2").innerHTML = players.left;
+            document.getElementById("player2").innerHTML = abrDirection[(myPosition+1)%4] + " : " + players.left;
+            document.getElementById("pl2").innerHTML = direction[(myPosition+1)%4];
             document.getElementById("player2score").innerHTML = data.scores[(myPosition+1)%4];
 
-            document.getElementById("player3").innerHTML = players.top;
-            document.getElementById("pl3").innerHTML = players.top;
-            document.getElementsByClassName("doub3").innerHTML = players.top;
+            document.getElementById("player3").innerHTML = abrDirection[(myPosition+2)%4] + " : " + players.top;
+            document.getElementById("pl3").innerHTML = direction[(myPosition+2)%4];
             document.getElementById("player3score").innerHTML = data.scores[(myPosition+2)%4];
 
-            document.getElementById("player4").innerHTML = players.right;
-            document.getElementById("pl4").innerHTML = players.right;
-            document.getElementsByClassName("doub4").innerHTML = players.right;
+            document.getElementById("player4").innerHTML = abrDirection[(myPosition+3)%4] + " : " + players.right;
+            document.getElementById("pl4").innerHTML = direction[(myPosition+3)%4];
             document.getElementById("player4score").innerHTML = data.scores[(myPosition+3)%4];
         }
     }
