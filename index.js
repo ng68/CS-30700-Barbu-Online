@@ -12,6 +12,7 @@ const gamesNamespace = io.of('/games');
 
 let lobbies = [];
 let gameHash = {};
+let onlinePlayers = [];
 
 class Card {
 	constructor(suit, value) {
@@ -477,16 +478,35 @@ class Subgame {
 // lobbies page.
 lobbiesNamespace.on('connection', socket => {
 	console.log("Lobbies connected");
+	
+	let localuser;
 
     // When the page loads (i.e. once a client joins lobbiesNamespace), want
     // to send the client all of the currently open lobbies
     lobbies.forEach(lobby => {
-        socket.emit('new-lobby', {
-            owner: lobby.owner,
-            name: lobby.name,
-			players: lobby.players,
-			password: lobby.password
-        });
+        socket.emit('new-lobby', lobby);
+	});
+
+	socket.on('user-info', data => {
+		onlinePlayers.push(data.uid);
+		localuser = data.uid;
+		homeNamespace.emit('connected-user', {
+			uid: localuser
+		});
+	});
+
+	socket.on('disconnect', () => {
+		let index = onlinePlayers.indexOf(localuser);
+
+		if (index < 0) {
+			console.log("UID not in onlinePlayers (called in lobbies)");
+			return;
+		}
+
+		onlinePlayers.splice(index, 1);
+		homeNamespace.emit('disconnected-user', {
+			uid: localStorage
+		});
 	});
 
     // Event handler for user creating a new lobby
@@ -509,7 +529,8 @@ lobbiesNamespace.on('connection', socket => {
 				name: lobbyData.name,
 				password: lobbyData.password,
 				players: [],
-				num_rounds: lobbyData.num_rounds
+				num_rounds: lobbyData.num_rounds,
+				difficulty: lobbyData.difficulty
             };
 
             lobby.players.push(lobbyData.owner); // Owner should be in lobby
@@ -631,7 +652,31 @@ lobbiesNamespace.on('connection', socket => {
 // The games namespace is for individual game lobbies that people join. The /games channel itself is never used,
 // but rather an individual room is created for each game.
 gamesNamespace.on('connection', socket => {
-    console.log("Games connected");
+	console.log("Games connected");
+	
+	let localuser;
+
+	socket.on('user-info', data => {
+		onlinePlayers.push(data.uid);
+		localuser = data.uid;
+		homeNamespace.emit('connected-user', {
+			uid: localuser
+		});
+	});
+
+	socket.on('disconnect', () => {
+		let index = onlinePlayers.indexOf(localuser);
+
+		if (index < 0) {
+			console.log("UID not in onlinePlayers (called in games)");
+			return;
+		}
+
+		onlinePlayers.splice(index, 1);
+		homeNamespace.emit('disconnected-user', {
+			uid: localStorage
+		});
+	});
 
     // This function needs to be called as soon as a player
     // goes to the game/lobby page (after joining/creating a lobby on the lobbIES page)
@@ -649,19 +694,18 @@ gamesNamespace.on('connection', socket => {
 				scoreHash: {},
 				gamesChosen: {},
                 subgame: {},
-				num_rounds: 0,
+				num_rounds: 1,
 				game_data: []
             };
 
-			let lobbyIndex;
-			for (let i = lobbies.length - 1; i >= 0; i--) {
-				if (lobbies[i].name == data.lobbyName) {
-					lobbyIndex = i;
-				}
+			let lobbyIndex = lobbies.indexOf(data.lobbyname);
+			if (lobbyIndex >= 0) {
+				game.num_rounds = lobbies[lobbyIndex].num_rounds;
+				lobbies.splice(lobbyIndex, 1); // Remove the old lobby from the backend.
+				console.log("Lobby found (in player-info)");
+			} else {
+				console.log("Lobby not found (in player-info). Removal failed, num_rounds failed.");
 			}
-			game.num_rounds = lobbies[lobbyIndex].num_rounds;
-
-			lobbies.splice(lobbyIndex, 1); // Remove the old lobby from the backend.
 			
             game.players.push(data.username); // Add the player to the players array.
 			game.gamesChosen[data.username] = [];
@@ -1325,9 +1369,63 @@ gamesNamespace.on('connection', socket => {
 });
 
 homeNamespace.on('connection', socket => {
-    console.log("Chat connected");
+	console.log("Chat connected");
+	
+	let localuser;
+
+	onlinePlayers.forEach(uid => {
+		socket.emit('connected-user', {
+			uid: uid
+		});
+	});
+
+	socket.on('user-info', data => {
+		onlinePlayers.push(data.uid);
+		localuser = data.uid;
+		homeNamespace.emit('connected-user', {
+			uid: localuser
+		});
+	});
+
+	socket.on('disconnect', () => {
+		let index = onlinePlayers.indexOf(localuser);
+
+		if (index < 0) {
+			console.log("UID not in onlinePlayers (called in home)");
+			return;
+		}
+
+		onlinePlayers.splice(index, 1);
+		homeNamespace.emit('disconnected-user', {
+			uid: localStorage
+		});
+	});
 });
 
 io.on('connection', socket => {
-    console.log("Root connected");
+	console.log("Root connected");
+	
+	let localuser;
+
+	socket.on('user-info', data => {
+		onlinePlayers.push(data.uid);
+		localuser = data.uid;
+		homeNamespace.emit('connected-user', {
+			uid: localuser
+		});
+	});
+
+	socket.on('disconnect', () => {
+		let index = onlinePlayers.indexOf(localuser);
+
+		if (index < 0) {
+			console.log("UID not in onlinePlayers (called in root)");
+			return;
+		}
+
+		onlinePlayers.splice(index, 1);
+		homeNamespace.emit('disconnected-user', {
+			uid: localStorage
+		});
+	});
 });
