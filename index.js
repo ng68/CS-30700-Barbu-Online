@@ -488,7 +488,11 @@ lobbiesNamespace.on('connection', socket => {
 	});
 
 	socket.on('user-info', data => {
-		onlinePlayers.push(data.uid);
+		if (!onlinePlayers.includes(data.uid)) {
+			onlinePlayers.push(data.uid);
+			console.log("Added user");
+		console.log(onlinePlayers);
+		}
 		localuser = data.uid;
 		homeNamespace.emit('connected-user', {
 			uid: localuser
@@ -503,7 +507,10 @@ lobbiesNamespace.on('connection', socket => {
 			return;
 		}
 
+		
 		onlinePlayers.splice(index, 1);
+		console.log("User left (lobbies)");
+		console.log(onlinePlayers);
 		homeNamespace.emit('disconnected-user', {
 			uid: localuser
 		});
@@ -657,7 +664,11 @@ gamesNamespace.on('connection', socket => {
 	let localuser;
 
 	socket.on('user-info', data => {
-		onlinePlayers.push(data.uid);
+		if (!onlinePlayers.includes(data.uid)) {
+			onlinePlayers.push(data.uid);
+			console.log("Added user");
+		console.log(onlinePlayers);
+		}
 		localuser = data.uid;
 		homeNamespace.emit('connected-user', {
 			uid: localuser
@@ -673,6 +684,8 @@ gamesNamespace.on('connection', socket => {
 		}
 
 		onlinePlayers.splice(index, 1);
+		console.log("User left (games)");
+		console.log(onlinePlayers);
 		homeNamespace.emit('disconnected-user', {
 			uid: localuser
 		});
@@ -1381,18 +1394,24 @@ gamesNamespace.on('connection', socket => {
 });
 
 homeNamespace.on('connection', socket => {
-	console.log("Chat connected");
+	console.log("Home connected");
 	
 	let localuser;
 
 	onlinePlayers.forEach(uid => {
+		console.log("Sending:");
+		console.log(uid);
 		socket.emit('connected-user', {
 			uid: uid
 		});
 	});
 
 	socket.on('user-info', data => {
-		onlinePlayers.push(data.uid);
+		if (!onlinePlayers.includes(data.uid)) {
+			onlinePlayers.push(data.uid);
+			console.log("Added user");
+		console.log(onlinePlayers);
+		}
 		localuser = data.uid;
 		homeNamespace.emit('connected-user', {
 			uid: localuser
@@ -1408,6 +1427,8 @@ homeNamespace.on('connection', socket => {
 		}
 
 		onlinePlayers.splice(index, 1);
+		console.log("User left (home)");
+		console.log(onlinePlayers);
 		homeNamespace.emit('disconnected-user', {
 			uid: localuser
 		});
@@ -1424,7 +1445,11 @@ io.on('connection', socket => {
 	let localuser;
 
 	socket.on('user-info', data => {
-		onlinePlayers.push(data.uid);
+		if (!onlinePlayers.includes(data.uid)) {
+			onlinePlayers.push(data.uid);
+			console.log("Added user");
+		console.log(onlinePlayers);
+		}
 		localuser = data.uid;
 		homeNamespace.emit('connected-user', {
 			uid: localuser
@@ -1440,6 +1465,8 @@ io.on('connection', socket => {
 		}
 
 		onlinePlayers.splice(index, 1);
+		console.log("User left (root)");
+		console.log(onlinePlayers);
 		homeNamespace.emit('disconnected-user', {
 			uid: localuser
 		});
