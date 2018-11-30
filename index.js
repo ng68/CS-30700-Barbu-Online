@@ -864,6 +864,9 @@ gamesNamespace.on('connection', socket => {
 			game.universal_doubles[game.players.indexOf(doubles[i])][game.players.indexOf(username)]++;
 		}
 		
+		// Send updated doubles
+		gamesNamespace.to(data.lobbyname).emit('update-doubles', game.universal_doubles);
+		
 		// Send next event
 		if(username == game.players[game.dealerIndex]) {
 			// All doubles have been completed -> send first your-turn
