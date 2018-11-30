@@ -159,7 +159,7 @@ a:visited {color:blue;}
 }
 
 #messageCard {
-	background-color: white;
+	border:solid 6px #A67909;
 	height: 200px;
 	width: 360px;
 	position: absolute;

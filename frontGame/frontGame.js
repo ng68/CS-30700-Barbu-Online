@@ -77,7 +77,7 @@ document.getElementById("p3").addEventListener('click', e => {
         lobbyname : lobby
     });
 });
-*/
+
 document.getElementById("p4").addEventListener('click', e => {
     user = "p4";
     socket.emit('player-info', {
@@ -85,7 +85,7 @@ document.getElementById("p4").addEventListener('click', e => {
         lobbyname : lobby
     });
 });
-
+*/
 
 // Code for switching between the score card and doubles table
 var tableA = document.getElementById("scoretable");
