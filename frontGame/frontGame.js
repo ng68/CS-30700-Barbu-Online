@@ -21,10 +21,10 @@ let upperDiscardPile = new cards.Deck({faceUp:true, x:600, y:220});
 let leftDiscardPile = new cards.Deck({faceUp:true, x:520, y:270});
 let rightDiscardPile = new cards.Deck({faceUp:true, x:680, y:270});
 
-let lowerTrickPile = new cards.Deck({faceUp:false, x:350, y:500});
-let upperTrickPile = new cards.Deck({faceUp:false, x:850, y:80});
-let leftTrickPile = new cards.Deck({faceUp:false, x:200, y:390});
-let rightTrickPile = new cards.Deck({faceUp:false, x:1000, y:90});
+let lowerTrickPile = new cards.Deck({faceUp:false, x:400, y:390});
+let upperTrickPile = new cards.Deck({faceUp:false, x:800, y:100});
+let leftTrickPile = new cards.Deck({faceUp:false, x:400, y:100});
+let rightTrickPile = new cards.Deck({faceUp:false, x:800, y:390});
 
 let diamondTopDiscardPile = new cards.Deck({faceUp:true, x:495, y:220});
 let diamondBottomDiscardPile = new cards.Deck({faceUp:true, x:495, y:320});
