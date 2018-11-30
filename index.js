@@ -736,7 +736,6 @@ gamesNamespace.on('connection', socket => {
 			game.gamesChosen[data.username] = [];
 			game.scoreHash[data.username] = 0;
             game.dealerIndex = 0; // The first player that joins (i.e. the host) will be the first dealer
-			game.num_rounds = data.num_rounds;
             gameHash[data.lobbyname] = game; // Add the game to the gamehash.
         } else { // The game already exists
             gameHash[data.lobbyname].players.push(data.username); // Add the player to the lobby.
