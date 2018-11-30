@@ -17,8 +17,13 @@ firebase.database().ref("users").orderByChild("avg_score").on("value", function(
     document.getElementById("table").innerHTML += str;
 });
 
-socket.emit('user-info', {
-    uid: firebase.auth().currentUser.uid
+firebase.auth().onAuthStateChanged( user => {
+    if (user) 
+    {
+        socket.emit('user-info', {
+            uid: user.uid
+        });
+    }
 });
 
 
