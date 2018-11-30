@@ -24,3 +24,14 @@ document.getElementById("player1score").innerHTML = usersScores[0];
 document.getElementById("player2score").innerHTML = usersScores[1];
 document.getElementById("player3score").innerHTML = usersScores[2];
 document.getElementById("player4score").innerHTML = usersScores[3];
+
+// Add all round scores
+// row = dealer, subgame, score1, 2, 3, 4
+for(var i = 0; i < scoreHash.length; i++) {
+  str += '<tr>\n<td>' + (i+1) + '</td>\n';
+  str += '<td>' + scoreHash[i][2] + '</td>\n';
+  str += '<td>' + scoreHash[i][3] + '</td>\n';
+  str += '<td>' + scoreHash[i][4] + '</td>\n';
+  str += '<td>' + scoreHash[i][5] + '</td>\n';
+  str += '</tr>\n';
+}
