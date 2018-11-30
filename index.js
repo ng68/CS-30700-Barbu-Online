@@ -655,7 +655,7 @@ gamesNamespace.on('connection', socket => {
 
 			let lobbyIndex;
 			for (let i = lobbies.length - 1; i >= 0; i--) {
-				if (lobbies[i].name == data.lobbyName) {
+				if (lobbies[i].name == data.lobbyname) {
 					lobbyIndex = i;
 				}
 			}
