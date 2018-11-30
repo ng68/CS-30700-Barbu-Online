@@ -31,7 +31,6 @@
 			<form>
 				<div class="form-inline">
 					<div class="form-group mx-sm-3 mb-2">
-				    <label for="inputPassword2" class="sr-only">Password</label>
 						<!--
 						Grab the message from this with the id of 'message-input'
 						-->
@@ -62,12 +61,15 @@
 					<td><h2 class="text-gold" id="pl4">Player 4</h2></td><td id="dealer4"></td>
 				</tr>
 			</table>
+			<h2 id="subgame"></h2>
 						<div class="scorecard">
 							<table id="scoretable">
+								<!--
 								<tr class="borderRow">
 									<th>Subgame</th>
 									<td class="text-gold" id="subgame"></td>
 								</tr>
+							-->
 							  <tr class="borderRow">
 							    <td id="player1"></td>
 							    <td id="player1score">0</td>
@@ -87,19 +89,19 @@
 							</table>
 							<table id="doublesCard">
 								<tr>
-									<th></th><td>N</td><td>E</td><td>S</td><td>W</td>
+									<th></th><th>N</th><th>E</th><th>S</th><th>W</th>
 								</tr>
 								<tr>
-									<td>N</td><td></td><td id="NE"></td><td id="NS"></td><td id="NW"></td>
+									<th>N</th><td></td><td id="NE"></td><td id="NS"></td><td id="NW"></td>
 								</tr>
 								<tr>
-									<td>E</td><td id="EN">X</td><td></td><td id="ES"></td><td id="EW"></td>
+									<th>E</th><td id="EN"></td><td></td><td id="ES"></td><td id="EW"></td>
 								</tr>
 								<tr>
-									<td>S</td><td id="SN">X</td><td id="SE">XX</td><td></td><td id="SW"></td>
+									<th>S</th><td id="SN"></td><td id="SE"></td><td></td><td id="SW"></td>
 								</tr>
 								<tr>
-									<td>W</td><td id="WN"></td><td id="WE"></td><td id="WS"></td><td></td>
+									<th>W</th><td id="WN"></td><td id="WE"></td><td id="WS"></td><td></td>
 								</tr>
 							</table>
 							<input type="button" id="showScores" value="Scores">

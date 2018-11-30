@@ -3,6 +3,14 @@
 	/*text-align:center;*/
 }
 
+#subgame {
+	margin: 0;
+	position: absolute;
+	top: 0;
+	right: 5%;
+	margin-left: -90%
+}
+
 #player1info {
 	margin: 0;
 	position: absolute;
@@ -15,7 +23,7 @@
 #player2info {
 	margin: 0;
 	position: absolute;
-	top: 25%;
+	top: 30%;
 	left: 5%;
 	margin-right: -95%;
 }
@@ -32,7 +40,7 @@
 #player4info {
 	margin: 0;
 	position: absolute;
-	top: 25%;
+	top: 30%;
 	right: 5%;
 	margin-left: -95%;
 }
@@ -153,7 +161,7 @@ a:visited {color:blue;}
 #messageCard {
 	background-color: white;
 	height: 200px;
-	width: 375px;
+	width: 360px;
 	position: absolute;
 	bottom: 0;
 	left: 0;

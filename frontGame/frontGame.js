@@ -1,7 +1,7 @@
 //let socket = io('http://localhost:8080/games');
 let socket = io('https://protected-reef-35837.herokuapp.com/games'); //Socket
 //let lobby = "Lobby";//
-//let lobby = localStorage.getItem('lobbyname'); //Lobby currently in
+let lobby = localStorage.getItem('lobbyname'); //Lobby currently in
 let user;  //Current User
 let subgameList = ["Barbu", "Fan-Tan", "Hearts", "Last Two", "Losers", "Queens", "Trumps"];
 let players = {};   //Players in your lobby (Left, Top, Right)
@@ -18,10 +18,10 @@ let upperDiscardPile = new cards.Deck({faceUp:true, x:600, y:220});
 let leftDiscardPile = new cards.Deck({faceUp:true, x:520, y:270});
 let rightDiscardPile = new cards.Deck({faceUp:true, x:680, y:270});
 
-let lowerTrickPile = new cards.Deck({faceUp:false, x:350, y:500});
-let upperTrickPile = new cards.Deck({faceUp:false, x:850, y:80});
-let leftTrickPile = new cards.Deck({faceUp:false, x:200, y:390});
-let rightTrickPile = new cards.Deck({faceUp:false, x:1000, y:90});
+let lowerTrickPile = new cards.Deck({faceUp:false, x:400, y:390});
+let upperTrickPile = new cards.Deck({faceUp:false, x:800, y:100});
+let leftTrickPile = new cards.Deck({faceUp:false, x:400, y:100});
+let rightTrickPile = new cards.Deck({faceUp:false, x:800, y:390});
 
 let diamondTopDiscardPile = new cards.Deck({faceUp:true, x:495, y:220});
 let diamondBottomDiscardPile = new cards.Deck({faceUp:true, x:495, y:320});
@@ -77,7 +77,7 @@ document.getElementById("p3").addEventListener('click', e => {
         lobbyname : lobby
     });
 });
-
+*/
 document.getElementById("p4").addEventListener('click', e => {
     user = "p4";
     socket.emit('player-info', {
@@ -85,7 +85,7 @@ document.getElementById("p4").addEventListener('click', e => {
         lobbyname : lobby
     });
 });
-*/
+
 
 // Code for switching between the score card and doubles table
 var tableA = document.getElementById("scoretable");
