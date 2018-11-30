@@ -4,7 +4,7 @@ let usersScores = localStorage.getItem('usersScores'); //Lobby currently in
 let scoreHash = localStorage.getItem('scoreHash'); //Lobby currently in
 
 firebase.auth().onAuthStateChanged(user => {
-    if (user) 
+    if (user)
     {
         socket.emit('user-info', {
             uid: user.uid
@@ -13,3 +13,14 @@ firebase.auth().onAuthStateChanged(user => {
 });
 
 //Manipulate table
+// Add users at the table headers
+document.getElementById("player1").innerHTML = users[0];
+document.getElementById("player2").innerHTML = users[1];
+document.getElementById("player2").innerHTML = users[2];
+document.getElementById("player2").innerHTML = users[3];
+
+// Add final scores for players
+document.getElementById("player1score").innerHTML = usersScores[0];
+document.getElementById("player2score").innerHTML = usersScores[1];
+document.getElementById("player2score").innerHTML = usersScores[2];
+document.getElementById("player2score").innerHTML = usersScores[3];
