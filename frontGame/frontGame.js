@@ -378,8 +378,6 @@ socket.on('subgame-choice', data => {
 });
 
 socket.on('update-doubles', data => {
-    $('#doubleModal').modal('hide');
-    $('#waitingModal').modal('hide');
     let doubles = data.doubles;
     for (var i = 0; i < 4; i++) {
         for (var j = 0; j < 4;j++) {
@@ -389,6 +387,8 @@ socket.on('update-doubles', data => {
             }else if (doubles[i][j] === 2) {
                 let temp = i.toString() + j.toString();
                 document.getElementById(temp).innerHTML = "XX";
+            }else if (i === j){
+                
             }else {
                 let temp = i.toString() + j.toString();
                 document.getElementById(temp).innerHTML = "";
