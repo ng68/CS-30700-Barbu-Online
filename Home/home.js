@@ -8,10 +8,11 @@ var sendMessageBtn = document.getElementById("send-message-btn");
 var messageInput = document.getElementById("message-input");
 var messageBox = document.getElementById("messages");
 var friendList = document.getElementById("friend-list");
+let email = firebase.auth().currentUser.email;
 
 function sendChat() {
     socket.emit('chat-sent', { // TODO fill in username correctly
-        username: user,
+        username: email,
         message: messageInput.value
     });
 
