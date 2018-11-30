@@ -9,7 +9,10 @@
     <title>Barbu Online</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
 
     <!-- Custom styles for this template -->
     <link href="signin.css" rel="stylesheet">
@@ -20,8 +23,8 @@
     <div class="form-signin">
             <nav class="site-header sticky-top py-1">
                     <div class="container d-flex flex-column flex-md-row justify-content-between">
-                      <a class="py-2 d-none d-md-inline-block" href="#">About</a>
-                      <a class="py-2 d-none d-md-inline-block" href="#">Developers</a>
+                        <button type="button" class="btn btn-light btn-sm m-0" data-toggle="modal" data-target="#about">About</button>
+                        <button type="button" class="btn btn-light btn-sm m-0" data-toggle="modal" data-target="#developers">Developers</button>
                     </div>
                   </nav>
       <img class="form-center" src="Logo.png">
@@ -34,6 +37,54 @@
       <button class="btn btn-lg btn-light btn-block" id="signupbtn">Sign up</button>
       <p class="mt-5 mb-3 text-muted">&copy; 2018-2019</p>
     </div>
+    <div class="modal fade" id="about" tabindex="-1" role="dialog" aria-labelledby="about" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="about">About</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <p style="font-size:150%;">Welcome to Barbu Online! Barbu Online is a user-friendly, 
+                community focused, beginner-oriented Barbu platform. The goal of the website is to 
+                provide a more intuitive and social alternative to other existing Barbu websites. The 
+                result is a platform where new and experienced players alike can collectively enjoy the 
+                excitement of Barbu. Click “Sign Up” at the bottom to get started, or log in below if you 
+                already have an account. Happy playing!</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary btn-sm m-0" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal fade" id="developers" tabindex="-1" role="dialog" aria-labelledby="developers" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="developers">Developers</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <p style="font-size:200%;">Purdue University Computer Science 30700 - Fall 2018<br>
+                  Team Leader: Cole Compton<br>
+                  Team Members:<br>
+                  Matt Whipple<br>
+                  Noah Johnson<br>
+                  Morgan Kaehr<br>
+                  Julian Ng<br> 
+                </p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-sm m-0" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
   </body>
 <script src="https://www.gstatic.com/firebasejs/5.5.2/firebase.js"></script>
 <script>
