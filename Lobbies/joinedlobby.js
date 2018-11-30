@@ -7,6 +7,9 @@ let p2 = document.getElementById('player2');
 let p3 = document.getElementById('player3');
 let p4 = document.getElementById('player4');
 
+socket.emit('user-info', {
+    uid: firebase.auth().currentUser.uid
+});
 
 socket.emit('entered-lobby', lobbyname);
 

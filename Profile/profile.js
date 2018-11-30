@@ -1,3 +1,4 @@
+let socket = io('https://protected-reef-35837.herokuapp.com');
 var username = document.getElementById("inputUsername");
 var password = document.getElementById("inputPassword");
 var confirmPassword = document.getElementById("confirmPassword");
@@ -14,6 +15,10 @@ connectedRef.on("value", function(snap) {
   }
 });
 *///
+
+socket.emit('user-info', {
+    uid: firebase.auth().currentUser.uid
+});
 
 savebtn.addEventListener('click', e=> {
     if(password.value != confirmPassword.value){

@@ -52,6 +52,10 @@ firebase.auth().onAuthStateChanged( usern => {
     }
   });
 
+socket.emit('user-info', {
+    uid: firebase.auth().currentUser.uid
+});
+
 
 /*
 document.getElementById("p1").addEventListener('click', e => {
