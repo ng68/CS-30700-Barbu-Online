@@ -9,14 +9,24 @@ var messageInput = document.getElementById("message-input");
 var messageBox = document.getElementById("messages");
 var friendList = document.getElementById("friend-list");
 let email;
+let ogUser;
 
 firebase.auth().onAuthStateChanged( user => {
     if (user) 
     {
+        ogUser = user;
         email = user.email;
         socket.emit('user-info', {
             uid: user.uid
         });
+        var query = firebase.database().ref("users/" + user.uid + "/friends");
+        query.once("value")
+        .then(function(snapshot) {
+            snapshot.forEach(function(childSnapshot) {
+            var email = childSnapshot.child("email").val();
+            document.getElementById("removeFriend").innerHTML += "<option value=\"" + email + "\">" + email + "</option>";
+            });
+    });
     }
 });
 
@@ -41,6 +51,21 @@ socket.on('new-message', data => {
 
 socket.on('connected-user', data => {
     // the uid is accessed in data.uid
+    let friend = data.uid;
+    var query = firebase.database().ref("users/" + ogUser.uid + "/friends");
+    query.once("value")
+      .then(function(snapshot) {
+        snapshot.forEach(function(childSnapshot) {
+            var uid = childSnapshot.key;
+            if (friend === uid) {
+                var email = childSnapshot.child("email").val();
+                let messageDiv = document.createElement("div");
+                messageDiv.setAttribute("id", email);
+                messageDiv.innerHTML = email;
+                friendList.appendChild(messageDiv);
+            }
+        });
+    });
     //if (data.uid is in the users' friends list) {
         // Mark the user data.uid as online
     //}
@@ -51,6 +76,18 @@ socket.on('disconnected-user', data => {
     //if (data.uid is in friends list) {
         // mark them as offline
     //}
+    let friend = data.uid;
+    var query = firebase.database().ref("users/" + ogUser.uid + "/friends");
+    query.once("value")
+      .then(function(snapshot) {
+        snapshot.forEach(function(childSnapshot) {
+            var uid = childSnapshot.key;
+            if (friend === uid) {
+                var email = childSnapshot.child("email").val();
+                document.getElementById(email).remove();
+            }
+        });
+    });
 });
 
 /*
@@ -71,8 +108,8 @@ addFriendBtn.addEventListener('click', e=> {
              var username = childSnapshot.child("username").val();
              var uid = childSnapshot.key;
              firebase.database().ref().child("users").child(firebase.auth().currentUser.uid).child("friends").child(uid).update({email : email});
-             friendsList();
-             return true;
+             //friendsList();
+             //return true;
           }
       });
     });
@@ -100,13 +137,14 @@ removeFriendBtn.addEventListener('click', e=> {
                 });
                 });
               query.child(childSnapshot.key).remove();
-              friendsList();
+              //friendsList();
           }
       });
     });
 	document.getElementById("removeFriend").value = '';
 });
 
+/*
 function friendsList(){
     friendList.innerHTML = "";
     firebase.auth().onAuthStateChanged(function(user){
@@ -115,7 +153,6 @@ function friendsList(){
         .then(function(snapshot) {
             snapshot.forEach(function(childSnapshot) {
             var email = childSnapshot.child("email").val();
-            document.getElementById("removeFriend").innerHTML += "<option value=\"" + email + "\">" + email + "</option>";
             let messageDiv = document.createElement("div");
             messageDiv.innerHTML = email;
             friendList.appendChild(messageDiv);
@@ -123,6 +160,7 @@ function friendsList(){
         });
     });
 }
+*/
 
 // JS for top 5 players
 var str = '';
@@ -154,4 +192,4 @@ function sort_function(a, b) {
     }
 }
 
-friendsList();
+//friendsList();
