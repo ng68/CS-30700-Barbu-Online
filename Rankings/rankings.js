@@ -1,3 +1,4 @@
+let socket = io('https://protected-reef-35837.herokuapp.com');
 var str = '';
 var users = [];
 firebase.database().ref("users").orderByChild("avg_score").on("value", function(snapshot) {
@@ -14,6 +15,10 @@ firebase.database().ref("users").orderByChild("avg_score").on("value", function(
 	    str += '</tr>\n';
     }
     document.getElementById("table").innerHTML += str;
+});
+
+socket.emit('user-info', {
+    uid: firebase.auth().currentUser.uid
 });
 
 

@@ -4,6 +4,10 @@ let lobbyNameInput = document.getElementById('lobby-name');
 let table = document.getElementById('table');
 let username = "";
 
+socket.emit('user-info', {
+    uid: firebase.auth().currentUser.uid
+});
+
 firebase.auth().onAuthStateChanged( user => {
     if (user) 
     { 

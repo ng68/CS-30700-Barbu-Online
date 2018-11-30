@@ -12,31 +12,62 @@
 	<body style="background-color: black">
 		<nav class="navbar navbar-expand-sm navbar-custom navbar-dark home-nav">
 		  <img style="max-width: 192px" src="img/logo-thin.jpg"></a>
+			<!--
+			<button id="p1">Player1</button>
+			<button id="p2">Player2</button>
+			<button id="p3">Player3</button>
+			<button id="p4">Player4</button>
+			-->
 		</nav>
 		<img class="preload" src="img/cards.png"/>
 		<div id="card-table">
-            <button id="p1">Player1</button>
-            <button id="p2">Player2</button>
-            <button id="p3">Player3</button>
-            <button id="p4">Player4</button>
+
+		<div class="rounded" id="messageCard">
+			<!--
+			Messages go in this div with the id of 'messages'
+			-->
+			<div class="rounded" id="messages" style="overflow-y: scroll;">
+			</div>
+			<form onsubmit="sendChat();return false;">
+				<div class="form-inline">
+					<div class="form-group mx-sm-3 mb-2">
+				    <label for="inputPassword2" class="sr-only">Password</label>
+						<!--
+						Grab the message from this with the id of 'message-input'
+						-->
+				    <input type="text" class="form-control" id="message-input" placeholder="Message">
+				  </div>
+				  <button type="submit" id="send-message-btn" class="btn btn-primary mb-2">Send</button>
+				</div>
+			</form>
+		</div>
+
+			<table id="player1info">
+				<tr>
+					<td><h2 class="text-gold" id="pl1">Player 1</h2></td><td id="dealer1"></td>
+				</tr>
+			</table>
+			<table id="player2info">
+				<tr>
+					<td><h2 class="text-gold" id="pl2">Player 2</h2></td><td id="dealer2"></td>
+				</tr>
+			</table>
+			<table id="player3info">
+				<tr>
+					<td><h2 class="text-gold" id="pl3">Player 3</h2></td><td id="dealer3"></td>
+				</tr>
+			</table>
+			<table id="player4info">
+				<tr>
+					<td><h2 class="text-gold" id="pl4">Player 4</h2></td><td id="dealer4"></td>
+				</tr>
+			</table>
 						<div class="scorecard">
 							<table id="scoretable">
-								<tr>
-									<th>Turn</th>
-									<td id="turn"></td>
-								</tr>
-								<tr>
-									<th>Subgame</th>
-									<td id="subgame"></td>
-								</tr>
 								<tr class="borderRow">
-									<th>Dealer</th>
-									<td id="dealer"></td>
+									<th>Subgame</th>
+									<td class="text-gold" id="subgame"></td>
 								</tr>
-							  <tr class="borderRow">
-							    <th>Player</th>
-							    <th>Score</th>
-							  </tr>
 							  <tr class="borderRow">
 							    <td id="player1"></td>
 							    <td id="player1score">0</td>
@@ -54,6 +85,26 @@
 									<td id="player4score">0</td>
 								</tr>
 							</table>
+							<table id="doublesCard">
+								<tr>
+									<th></th><td>N</td><td>E</td><td>S</td><td>W</td>
+								</tr>
+								<tr>
+									<td>N</td><td></td><td id="NE"></td><td id="NS"></td><td id="NW"></td>
+								</tr>
+								<tr>
+									<td>E</td><td id="EN">X</td><td></td><td id="ES"></td><td id="EW"></td>
+								</tr>
+								<tr>
+									<td>S</td><td id="SN">X</td><td id="SE">XX</td><td></td><td id="SW"></td>
+								</tr>
+								<tr>
+									<td>W</td><td id="WN"></td><td id="WE"></td><td id="WS"></td><td></td>
+								</tr>
+							</table>
+							<input type="button" id="showScores" value="Scores">
+							<input type="button" id="showDoubles" value="Doubles">
+
 						</div>
     </div>
         <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
@@ -86,7 +137,7 @@
                       </div>
                     </div>
                   </div>
-                
+
                   <div class="modal fade" id="doubleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="false" data-backdrop="static" data-keyboard="false">
                     <div class="modal-dialog" role="document">
                       <div class="modal-content">

@@ -9,6 +9,10 @@ let p3 = document.getElementById('player3');
 let p4 = document.getElementById('player4');
 let username = "";
 
+socket.emit('user-info', {
+    uid: firebase.auth().currentUser.uid
+});
+
 firebase.auth().onAuthStateChanged( user => {
     if (user) 
     { 

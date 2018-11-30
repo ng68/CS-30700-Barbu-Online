@@ -1,7 +1,7 @@
-//let socket = io('http://localhost:8080/games');
-let socket = io('https://protected-reef-35837.herokuapp.com/games'); //Socket
+let socket = io('http://localhost:8080/games');
+//let socket = io('https://protected-reef-35837.herokuapp.com/games'); //Socket
 //let lobby = "Lobby";//
-let lobby = localStorage.getItem('lobbyname'); //Lobby currently in 
+let lobby = localStorage.getItem('lobbyname'); //Lobby currently in
 let user;  //Current User
 let subgameList = ["Barbu", "Fan-Tan", "Hearts", "Last Two", "Losers", "Queens", "Trumps"];
 let players = {};   //Players in your lobby (Left, Top, Right)
@@ -9,17 +9,20 @@ let currentDealer = 0;
 let currentSubgame;
 let myTurn = false;  //Current user position relative to other players
 let lowerhand = new cards.Hand({faceUp:true, x:600, y:500});  //Initializing all of the visuals for hands and discard piles
-let lefthand = new cards.Hand({faceUp:false, x:200, y:270});
-let upperhand = new cards.Hand({faceUp:false, x:600, y:80});	
+let lefthand = new cards.Hand({faceUp:false, x:190, y:270});
+let upperhand = new cards.Hand({faceUp:false, x:600, y:60});
 let righthand = new cards.Hand({faceUp:false, x:1000, y:270});
+
 let lowerDiscardPile = new cards.Deck({faceUp:true, x:600, y:320});
 let upperDiscardPile = new cards.Deck({faceUp:true, x:600, y:220});
 let leftDiscardPile = new cards.Deck({faceUp:true, x:520, y:270});
 let rightDiscardPile = new cards.Deck({faceUp:true, x:680, y:270});
-let lowerTrickPile = new cards.Deck({faceUp:false, x:850, y:500});
-let upperTrickPile = new cards.Deck({faceUp:false, x:350, y:80});
-let leftTrickPile = new cards.Deck({faceUp:false, x:200, y:150});
-let rightTrickPile = new cards.Deck({faceUp:false, x:1000, y:390});
+
+let lowerTrickPile = new cards.Deck({faceUp:false, x:350, y:500});
+let upperTrickPile = new cards.Deck({faceUp:false, x:850, y:80});
+let leftTrickPile = new cards.Deck({faceUp:false, x:200, y:390});
+let rightTrickPile = new cards.Deck({faceUp:false, x:1000, y:90});
+
 let diamondTopDiscardPile = new cards.Deck({faceUp:true, x:495, y:220});
 let diamondBottomDiscardPile = new cards.Deck({faceUp:true, x:495, y:320});
 let clubTopDiscardPile = new cards.Deck({faceUp:true, x:565, y:220});
@@ -27,13 +30,36 @@ let clubBottomDiscardPile = new cards.Deck({faceUp:true, x:565, y:320});
 let heartTopDiscardPile = new cards.Deck({faceUp:true, x:635, y:220});
 let heartBottomDiscardPile = new cards.Deck({faceUp:true, x:635, y:320});
 let spadeTopDiscardPile = new cards.Deck({faceUp:true, x:705, y:220});
-let spadeBottomDiscardPile = new cards.Deck({faceUp:true, x:705, y:320});   
+let spadeBottomDiscardPile = new cards.Deck({faceUp:true, x:705, y:320});
+
+let messageBox = document.getElementById('messages');
+let messageInput = document.getElementById('message-input');
+let messageBtn = document.getElementById('send-message-btn');
+
+function sendChat() {
+    socket.emit('chat-sent', { // TODO fill in username and lobbyname correctly
+        username: user,
+        message: messageInput.value,
+        lobbyname: lobby
+    });
+
+    messageInput.value = '';
+}
+
+socket.on('new-message', data => {
+    let messageDiv = document.createElement("div");
+    let messageString = data.username + ": " + data.message;
+    messageDiv.innerHTML = messageString;
+
+    messageBox.appendChild(messageDiv);
+    messageBox.scrollTop = messageBox.scrollHeight - messageBox.clientHeight;
+});
 
 let loc = {};  //Keeps track of the reference to the location of each Card
 
 firebase.auth().onAuthStateChanged( usern => {
-    if (usern) 
-    { 
+    if (usern)
+    {
     var query = firebase.database().ref("users/" + usern.uid);
     query.once("value")
       .then(function(snapshot) {
@@ -48,6 +74,10 @@ firebase.auth().onAuthStateChanged( usern => {
         console.log("User not signed in");
     }
   });
+
+socket.emit('user-info', {
+    uid: firebase.auth().currentUser.uid
+});
 
 
 /*
@@ -83,6 +113,22 @@ document.getElementById("p4").addEventListener('click', e => {
     });
 });
 */
+
+// Code for switching between the score card and doubles table
+var tableA = document.getElementById("scoretable");
+var tableB = document.getElementById("doublesCard");
+
+var btnTabA = document.getElementById("showScores");
+var btnTabB = document.getElementById("showDoubles");
+
+btnTabA.onclick = function () {
+    tableA.style.display = "table";
+    tableB.style.display = "none";
+}
+btnTabB.onclick = function () {
+    tableA.style.display = "none";
+    tableB.style.display = "table";
+}
 //Run this for each subgame that we run this also populates the hands.
 socket.on('cards-dealt', data => {
     for (var i = 0; i < 4;i++) {
@@ -94,19 +140,47 @@ socket.on('cards-dealt', data => {
                 right: Object.keys(data)[(i+3)%4]
             };
             document.getElementById("player1").innerHTML = user;
+            document.getElementById("pl1").innerHTML = user;
             document.getElementById("player1score").innerHTML = data.scores[myPosition];
+
             document.getElementById("player2").innerHTML = players.left;
+            document.getElementById("pl2").innerHTML = players.left;
+            document.getElementsByClassName("doub2").innerHTML = players.left;
             document.getElementById("player2score").innerHTML = data.scores[(myPosition+1)%4];
+
             document.getElementById("player3").innerHTML = players.top;
+            document.getElementById("pl3").innerHTML = players.top;
+            document.getElementsByClassName("doub3").innerHTML = players.top;
             document.getElementById("player3score").innerHTML = data.scores[(myPosition+2)%4];
+
             document.getElementById("player4").innerHTML = players.right;
-            document.getElementById("player4score").innerHTML = data.scores[(myPosition+3)%4]; 
+            document.getElementById("pl4").innerHTML = players.right;
+            document.getElementsByClassName("doub4").innerHTML = players.right;
+            document.getElementById("player4score").innerHTML = data.scores[(myPosition+3)%4];
         }
     }
     $('.card').remove();  //Initializing all of the visuals for hands and discard piles
     var dealDeck = [];
     currentDealer = data.dealer;
-    document.getElementById("dealer").innerHTML = currentDealer;
+
+    // clear image from all players
+    document.getElementById("dealer1").innerHTML = ""
+    document.getElementById("dealer2").innerHTML = "";
+    document.getElementById("dealer3").innerHTML = "";
+    document.getElementById("dealer4").innerHTML = "";
+    /*<img src="chip.png" alt="Dealer" style="width:40px;height:40px;">*/
+
+    // find who is the dealer and set image next to there name
+    if (user === currentDealer) {
+      document.getElementById("dealer1").innerHTML = "<img src='chip.png' alt='Dealer' style='width:40px;height:40px;'>";
+    } else if (players.left === currentDealer) {
+      document.getElementById("dealer2").innerHTML = "<img src='chip.png' alt='Dealer' style='width:40px;height:40px;'>";
+    } else if (players.top === currentDealer) {
+      document.getElementById("dealer3").innerHTML = "<img src='chip.png' alt='Dealer' style='width:40px;height:40px;'>";
+    } else if (players.right === currentDealer){
+      document.getElementById("dealer4").innerHTML = "<img src='chip.png' alt='Dealer' style='width:40px;height:40px;'>";
+    }
+
     for(var i = 0; i < data[user].length; i++) {
         dealDeck.push(data[players.right][i]);
         dealDeck.push(data[players.top][i]);
@@ -119,7 +193,7 @@ socket.on('cards-dealt', data => {
         names : cards.names
     };
     let deck = new cards.Deck();
-    deck.addCards(cards.all); 
+    deck.addCards(cards.all);
     deck.render({immediate:true});
     deck.deal(13, [lowerhand, lefthand, upperhand, righthand], 10);
     //prompt with subgame choice if dealer
@@ -173,16 +247,16 @@ socket.on('request-double', data => {
 function chooseTrump(){
     let cTrump = document.querySelector('input[name = "trump"]:checked').value;
     socket.emit('subgame-chosen', {
-        lobbyname : lobby, 
+        lobbyname : lobby,
         gamechoice : currentSubgame,
         username : user,
         trump : cTrump,
         rank : ""
     });
     $('#myModal').modal('hide');
-    for(var i = 0; i < subgameList.length; i++){ 
+    for(var i = 0; i < subgameList.length; i++){
         if (subgameList[i] === currentSubgame) {
-          subgameList.splice(i, 1); 
+          subgameList.splice(i, 1);
         }
      }
 }
@@ -190,16 +264,16 @@ function chooseTrump(){
 function chooseRank(){
     let cRank = document.querySelector('input[name = "rank"]:checked').value;
     socket.emit('subgame-chosen', {
-        lobbyname : lobby, 
+        lobbyname : lobby,
         gamechoice : currentSubgame,
         username : user,
         trump : "",
         rank : cRank
     });
     $('#myModal').modal('hide');
-    for(var i = 0; i < subgameList.length; i++){ 
+    for(var i = 0; i < subgameList.length; i++){
         if (subgameList[i] === currentSubgame) {
-          subgameList.splice(i, 1); 
+          subgameList.splice(i, 1);
         }
      }
 }
@@ -210,7 +284,7 @@ function chooseDouble(){
 		chkArray.push($(this).val());
     });
     socket.emit('double-chosen', {
-        lobbyname : lobby, 
+        lobbyname : lobby,
         users_doubled : chkArray,
         username : user
     });
@@ -232,7 +306,7 @@ function chooseSubgame (){
             document.getElementById("cSubgame").style.visibility = 'hidden';
             document.getElementById("trump").style.visibility = 'visible';
             return;
-        } 
+        }
         if (chosen === "Fan-Tan") {
             document.getElementById("exampleModalLabel").innerHTML = "Choose a Rank";
             let temp = "";
@@ -255,20 +329,20 @@ function chooseSubgame (){
             return;
         }
         socket.emit('subgame-chosen', {
-            lobbyname : lobby, 
+            lobbyname : lobby,
             gamechoice : chosen,
             username : user,
             trump : "",
             rank : ""
         });
         $('#myModal').modal('hide');
-        for(var i = 0; i < subgameList.length; i++){ 
+        for(var i = 0; i < subgameList.length; i++){
             if (subgameList[i] === chosen) {
-              subgameList.splice(i, 1); 
+              subgameList.splice(i, 1);
             }
          }
     }
-    
+
 }
 
 socket.on('subgame-choice', data => {
@@ -429,12 +503,12 @@ function checkWhichPile(initialRank, card, hand, single_suit, tempCard) {
             heartBottomDiscardPile.render();
             hand.render();
             break;
-        case 8: 
+        case 8:
             spadeBottomDiscardPile.addCard(tempCard);
             spadeBottomDiscardPile.render();
             hand.render();
             break;
-        
+
     }
 }
 
@@ -468,9 +542,22 @@ socket.on('card-chosen-response-ft', data =>{
 socket.on('your-turn', data =>{
     $('#doubleModal').modal('hide');
     $('#waitingModal').modal('hide');
-    document.getElementById("turn").innerHTML = data.username;
+    //document.getElementById("turn").innerHTML = data.username;
+    //Remove blinking element from all player names
+    document.getElementById("pl1").classList.remove('blink_me');
+    document.getElementById("pl2").classList.remove('blink_me');
+    document.getElementById("pl3").classList.remove('blink_me');
+    document.getElementById("pl4").classList.remove('blink_me');
+    //Find whose turn it is and add blinking class to that name
     if (data.username === user) {
+        document.getElementById("pl1").classList.add('blink_me');
         myTurn = true;
+    } else if (players.left === data.username) {
+      document.getElementById("pl2").classList.add('blink_me');
+    } else if (players.top === data.username) {
+      document.getElementById("pl3").classList.add('blink_me');
+    } else if (players.right === data.username){
+      document.getElementById("pl4").classList.add('blink_me');
     }
 });
 
@@ -483,8 +570,7 @@ socket.on('game-finished', data => {
             ind = i;
         }
     }
-        window.alert(msg);  
-        firebase.auth().onAuthStateChanged(function(user){   
+        //firebase.auth().onAuthStateChanged(function(user){
             var query = firebase.database().ref("users/" + user.uid);
             query.on("value", function(snapshot) {
                 let totalScore = snapshot.val().avg_score;
@@ -503,7 +589,7 @@ socket.on('game-finished', data => {
                     avg_score: totalScore
                 });
             });
-        });   
+        //});
     window.location.href = "home.html";
 });
 
@@ -557,7 +643,3 @@ socket.on('game-update', data => {
         window.alert("Error: Invalid user for trick-won");
     }
 });
-
-
-
-   

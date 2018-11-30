@@ -65,6 +65,10 @@ body {
   font-size: 13px;
 }
 
+#removeFriend{
+  width:160px;   
+}
+
 .text-gold {
   background: -webkit-linear-gradient(#A67909, #F9E6B6);
   -webkit-background-clip: text;
