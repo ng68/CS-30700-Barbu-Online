@@ -1372,7 +1372,7 @@ gamesNamespace.on('connection', socket => {
 		// 		lobbyname: STRING
 		// }
 		socket.on('chat-sent', data => {
-				gamesNamespace./*to(data.lobbyname).*/emit('new-message', {
+				gamesNamespace.to(data.lobbyname).emit('new-message', {
 						username: data.username,
 						message: data.message,
 						lobbyname: data.lobbyname
@@ -1411,6 +1411,10 @@ homeNamespace.on('connection', socket => {
 		homeNamespace.emit('disconnected-user', {
 			uid: localStorage
 		});
+	});
+
+	socket.on('chat-sent', data => {
+		homeNamespace.emit('new-message', data);
 	});
 });
 

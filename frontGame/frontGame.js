@@ -1,5 +1,5 @@
-let socket = io('http://localhost:8080/games');
-//let socket = io('https://protected-reef-35837.herokuapp.com/games'); //Socket
+//let socket = io('http://localhost:8080/games');
+let socket = io('https://protected-reef-35837.herokuapp.com/games'); //Socket
 //let lobby = "Lobby";//
 let lobby = localStorage.getItem('lobbyname'); //Lobby currently in
 let user;  //Current User

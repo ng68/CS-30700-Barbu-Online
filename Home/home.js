@@ -1,12 +1,33 @@
 let socket = io('https://protected-reef-35837.herokuapp.com/home');
+//let socket = io('http://localhost:8080/home');
 var addFriend = document.getElementById("addFriend");
 //var removeFriend = document.getElementById("removeFriend");
 var addFriendBtn = document.getElementById("addFriendBtn");
 var removeFriendBtn = document.getElementById("removeFriendBtn");
 var sendMessageBtn = document.getElementById("send-message-btn");
 var messageInput = document.getElementById("message-input");
-var messages = document.getElementById("messages");
+var messageBox = document.getElementById("messages");
 var friendList = document.getElementById("friend-list");
+
+function sendChat() {
+    socket.emit('chat-sent', { // TODO fill in username correctly
+        username: user,
+        message: messageInput.value
+    });
+
+    messageInput.value = '';
+}
+
+socket.on('new-message', data => {
+    console.log("Here");
+    let messageDiv = document.createElement("div");
+    let messageString = data.username + ": " + data.message;
+    messageDiv.innerHTML = messageString;
+
+    messageBox.appendChild(messageDiv);
+    messageBox.scrollTop = messageBox.scrollHeight - messageBox.clientHeight;
+});
+
 
 socket.emit('user-info', {
     uid: firebase.auth().currentUser.uid
@@ -97,36 +118,6 @@ function friendsList(){
     });
 }
 
-sendMessageBtn.addEventListener('click', e => {
-    e.preventDefault();
-    let text = messageInput.value;
-    let userEmail = firebase.auth().currentUser.email;
-
-	document.getElementById("message-input").value = '';
-    firebase.database().ref('/messages/').push({
-        user: userEmail,
-        content: text
-    });
-});
-
-function loadMessages() {
-    var callback = function(snap) {
-        var data = snap.val();
-        addMessage(data.user, data.content);
-    }
-
-    firebase.database().ref('/messages/').limitToLast(9).on('child_added', callback);
-    firebase.database().ref('/messages/').limitToLast(9).on('child_changed', callback);
-}
-
-function addMessage(username, messageContent) {
-    let messageDiv = document.createElement("div");
-    let messageString = username + ": " + messageContent;
-    messageDiv.innerHTML = messageString;
-
-    messages.appendChild(messageDiv);
-}
-
 // JS for top 5 players
 var str = '';
 var users = [];
@@ -157,5 +148,4 @@ function sort_function(a, b) {
     }
 }
 
-loadMessages();
 friendsList();

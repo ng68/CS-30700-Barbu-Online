@@ -66,7 +66,7 @@
       <h2 class="text-gold">Chat</h2>
       <div class="bg-light rounded" id="messages" style="overflow-y: scroll;">
       </div>
-      <form>
+      <form onsubmit="sendChat();return false;">
         <div class="form-row home-form">
           <div class="col-10">
             <input type="text" class="form-control" id="message-input" placeholder="Message">
@@ -106,6 +106,7 @@
 -->
 </body>
 <script src="https://www.gstatic.com/firebasejs/5.5.2/firebase.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
 <script>
   // Initialize Firebase
   var config = {
