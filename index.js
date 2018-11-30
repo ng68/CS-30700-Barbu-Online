@@ -695,7 +695,8 @@ gamesNamespace.on('connection', socket => {
 				gamesChosen: {},
                 subgame: {},
 				num_rounds: 1,
-				game_data: []
+				game_data: [],
+				universal_doubles: [[0,0,0,0], [0,0,0,0], [0,0,0,0], [0,0,0,0]]
             };
 
 			let lobbyIndex = lobbies.indexOf(data.lobbyname);
@@ -859,6 +860,8 @@ gamesNamespace.on('connection', socket => {
 		// Add doubles
 		for(var i = 0; i < doubles.length; i++) {
 			subgame.add_double(username, doubles[i]);
+			game.universal_doubles[game.players.indexOf(username)][game.players.indexOf(doubles[i])]++;
+			game.universal_doubles[game.players.indexOf(doubles[i])][game.players.indexOf(username)]++;
 		}
 		
 		// Send next event
@@ -991,6 +994,9 @@ gamesNamespace.on('connection', socket => {
 
 					if(subgame.game_done()) {
 						// GAME IS OVER
+						
+						// Reset universal doubles
+						game.universal_doubles = [[0,0,0,0], [0,0,0,0], [0,0,0,0], [0,0,0,0]];
 						
 						// Update scores
 						var raw_scores = [0,0,0,0];
@@ -1187,6 +1193,9 @@ gamesNamespace.on('connection', socket => {
 				}
 				
 				if(done) {
+					// Reset universal doubles
+					game.universal_doubles = [[0,0,0,0], [0,0,0,0], [0,0,0,0], [0,0,0,0]];
+					
 					// Update scores
 					var raw_scores = [0,0,0,0];
 					for(var i = 0; i < subgame.players.length; i++) {
