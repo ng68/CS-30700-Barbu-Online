@@ -12,6 +12,7 @@ const gamesNamespace = io.of('/games');
 
 let lobbies = [];
 let gameHash = {};
+let onlinePlayers = [];
 
 class Card {
 	constructor(suit, value) {
@@ -477,6 +478,8 @@ class Subgame {
 // lobbies page.
 lobbiesNamespace.on('connection', socket => {
 	console.log("Lobbies connected");
+	
+	let localuser;
 
     // When the page loads (i.e. once a client joins lobbiesNamespace), want
     // to send the client all of the currently open lobbies
@@ -487,6 +490,28 @@ lobbiesNamespace.on('connection', socket => {
 			players: lobby.players,
 			password: lobby.password
         });
+	});
+
+	socket.on('user-info', data => {
+		onlinePlayers.push(data.uid);
+		localuser = data.uid;
+		homeNamespace.emit('connected-user', {
+			uid: localuser
+		});
+	});
+
+	socket.on('disconnect', () => {
+		let index = onlinePlayers.indexOf(localuser);
+
+		if (index < 0) {
+			console.log("UID not in onlinePlayers (called in lobbies)");
+			return;
+		}
+
+		onlinePlayers.splice(index, 1);
+		homeNamespace.emit('disconnected-user', {
+			uid: localStorage
+		});
 	});
 
     // Event handler for user creating a new lobby
@@ -631,7 +656,31 @@ lobbiesNamespace.on('connection', socket => {
 // The games namespace is for individual game lobbies that people join. The /games channel itself is never used,
 // but rather an individual room is created for each game.
 gamesNamespace.on('connection', socket => {
-    console.log("Games connected");
+	console.log("Games connected");
+	
+	let localuser;
+
+	socket.on('user-info', data => {
+		onlinePlayers.push(data.uid);
+		localuser = data.uid;
+		homeNamespace.emit('connected-user', {
+			uid: localuser
+		});
+	});
+
+	socket.on('disconnect', () => {
+		let index = onlinePlayers.indexOf(localuser);
+
+		if (index < 0) {
+			console.log("UID not in onlinePlayers (called in games)");
+			return;
+		}
+
+		onlinePlayers.splice(index, 1);
+		homeNamespace.emit('disconnected-user', {
+			uid: localStorage
+		});
+	});
 
     // This function needs to be called as soon as a player
     // goes to the game/lobby page (after joining/creating a lobby on the lobbIES page)
@@ -1322,9 +1371,63 @@ gamesNamespace.on('connection', socket => {
 });
 
 homeNamespace.on('connection', socket => {
-    console.log("Chat connected");
+	console.log("Chat connected");
+	
+	let localuser;
+
+	onlinePlayers.forEach(uid => {
+		socket.emit('connected-user', {
+			uid: uid
+		});
+	});
+
+	socket.on('user-info', data => {
+		onlinePlayers.push(data.uid);
+		localuser = data.uid;
+		homeNamespace.emit('connected-user', {
+			uid: localuser
+		});
+	});
+
+	socket.on('disconnect', () => {
+		let index = onlinePlayers.indexOf(localuser);
+
+		if (index < 0) {
+			console.log("UID not in onlinePlayers (called in home)");
+			return;
+		}
+
+		onlinePlayers.splice(index, 1);
+		homeNamespace.emit('disconnected-user', {
+			uid: localStorage
+		});
+	});
 });
 
 io.on('connection', socket => {
-    console.log("Root connected");
+	console.log("Root connected");
+	
+	let localuser;
+
+	socket.on('user-info', data => {
+		onlinePlayers.push(data.uid);
+		localuser = data.uid;
+		homeNamespace.emit('connected-user', {
+			uid: localuser
+		});
+	});
+
+	socket.on('disconnect', () => {
+		let index = onlinePlayers.indexOf(localuser);
+
+		if (index < 0) {
+			console.log("UID not in onlinePlayers (called in root)");
+			return;
+		}
+
+		onlinePlayers.splice(index, 1);
+		homeNamespace.emit('disconnected-user', {
+			uid: localStorage
+		});
+	});
 });
