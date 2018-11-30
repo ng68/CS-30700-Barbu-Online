@@ -683,6 +683,9 @@ gamesNamespace.on('connection', socket => {
         if (gameHash[data.lobbyname].players.length == 4) { // Deal
             let game = gameHash[data.lobbyname];
     
+			// Inform the front-end of what order the players are in
+            gamesNamespace.to(data.lobbyname).emit('directions', game.players);
+
             // Code below here prepares the game for start
     
             // 1. Shuffle deck
