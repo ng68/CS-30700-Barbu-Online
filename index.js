@@ -712,7 +712,16 @@ gamesNamespace.on('connection', socket => {
 				universal_doubles: [[0,0,0,0], [0,0,0,0], [0,0,0,0], [0,0,0,0]]
             };
 
-			let lobbyIndex = lobbies.indexOf(data.lobbyname);
+			let lobbyIndex = -1;
+
+			console.log(lobbies);
+			for (let i = 0; i < lobbies.length; i++) {
+				if (lobbies[i].name == data.lobbyname) {
+					lobbyIndex = i;
+					break;
+				}
+			}
+
 			console.log(data);
 			console.log(lobbyIndex);
 			if (lobbyIndex >= 0) {
