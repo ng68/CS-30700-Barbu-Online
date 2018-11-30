@@ -328,10 +328,10 @@ function chooseSubgame (){
             temp += "<input type=\"radio\" name=\"rank\" value=8>8<br>";
             temp += "<input type=\"radio\" name=\"rank\" value=9>9<br>";
             temp += "<input type=\"radio\" name=\"rank\" value=10>10<br>";
-            temp += "<input type=\"radio\" name=\"rank\" value=11>Jack<br>";
-            temp += "<input type=\"radio\" name=\"rank\" value=12>Queen<br>";
-            temp += "<input type=\"radio\" name=\"rank\" value=13>King<br>";
-            temp += "<input type=\"radio\" name=\"rank\" value=14>Ace<br>";
+            temp += "<input type=\"radio\" name=\"rank\" value=Jack>Jack<br>";
+            temp += "<input type=\"radio\" name=\"rank\" value=Queen>Queen<br>";
+            temp += "<input type=\"radio\" name=\"rank\" value=King>King<br>";
+            temp += "<input type=\"radio\" name=\"rank\" value=Ace>Ace<br>";
             document.getElementById("radio-home").innerHTML = temp;
             document.getElementById("cSubgame").style.visibility = 'hidden';
             document.getElementById("rank").style.visibility = 'visible';
