@@ -18,8 +18,8 @@ socket.emit('final-results', {
 
 socket.on('game-result', data =>) {
   let users = data.users;
-  let usersScores = data.usersScores;
-  let scoreHash = data.scoreHash;
+  let usersScores = data.users_scores;
+  let scoreHash = data.game_data;
   //Manipulate table
   // Add users at the table headers
   document.getElementById("player1").innerHTML = users[0];
