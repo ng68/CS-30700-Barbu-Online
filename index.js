@@ -488,7 +488,11 @@ lobbiesNamespace.on('connection', socket => {
 	});
 
 	socket.on('user-info', data => {
-		onlinePlayers.push(data.uid);
+		if (!onlinePlayers.includes(data.uid)) {
+			onlinePlayers.push(data.uid);
+			console.log("Added user");
+		console.log(onlinePlayers);
+		}
 		localuser = data.uid;
 		homeNamespace.emit('connected-user', {
 			uid: localuser
@@ -503,7 +507,10 @@ lobbiesNamespace.on('connection', socket => {
 			return;
 		}
 
+		
 		onlinePlayers.splice(index, 1);
+		console.log("User left (lobbies)");
+		console.log(onlinePlayers);
 		homeNamespace.emit('disconnected-user', {
 			uid: localuser
 		});
@@ -657,7 +664,11 @@ gamesNamespace.on('connection', socket => {
 	let localuser;
 
 	socket.on('user-info', data => {
-		onlinePlayers.push(data.uid);
+		if (!onlinePlayers.includes(data.uid)) {
+			onlinePlayers.push(data.uid);
+			console.log("Added user");
+		console.log(onlinePlayers);
+		}
 		localuser = data.uid;
 		homeNamespace.emit('connected-user', {
 			uid: localuser
@@ -673,6 +684,8 @@ gamesNamespace.on('connection', socket => {
 		}
 
 		onlinePlayers.splice(index, 1);
+		console.log("User left (games)");
+		console.log(onlinePlayers);
 		homeNamespace.emit('disconnected-user', {
 			uid: localuser
 		});
@@ -699,7 +712,18 @@ gamesNamespace.on('connection', socket => {
 				universal_doubles: [[0,0,0,0], [0,0,0,0], [0,0,0,0], [0,0,0,0]]
             };
 
-			let lobbyIndex = lobbies.indexOf(data.lobbyname);
+			let lobbyIndex = -1;
+
+			console.log(lobbies);
+			for (let i = 0; i < lobbies.length; i++) {
+				if (lobbies[i].name == data.lobbyname) {
+					lobbyIndex = i;
+					break;
+				}
+			}
+
+			console.log(data);
+			console.log(lobbyIndex);
 			if (lobbyIndex >= 0) {
 				game.num_rounds = lobbies[lobbyIndex].num_rounds;
 				lobbies.splice(lobbyIndex, 1); // Remove the old lobby from the backend.
@@ -712,7 +736,6 @@ gamesNamespace.on('connection', socket => {
 			game.gamesChosen[data.username] = [];
 			game.scoreHash[data.username] = 0;
             game.dealerIndex = 0; // The first player that joins (i.e. the host) will be the first dealer
-			game.num_rounds = data.num_rounds;
             gameHash[data.lobbyname] = game; // Add the game to the gamehash.
         } else { // The game already exists
             gameHash[data.lobbyname].players.push(data.username); // Add the player to the lobby.
@@ -1060,8 +1083,7 @@ gamesNamespace.on('connection', socket => {
 								users_scores: users_scores,
 								winner: winner,
 								game_data: game.game_data
-							});							
-							delete gameHash[data.lobbyname];
+							});
 						}
 						
 						// Update dealer
@@ -1406,18 +1428,24 @@ gamesNamespace.on('connection', socket => {
 });
 
 homeNamespace.on('connection', socket => {
-	console.log("Chat connected");
+	console.log("Home connected");
 	
 	let localuser;
 
 	onlinePlayers.forEach(uid => {
+		console.log("Sending:");
+		console.log(uid);
 		socket.emit('connected-user', {
 			uid: uid
 		});
 	});
 
 	socket.on('user-info', data => {
-		onlinePlayers.push(data.uid);
+		if (!onlinePlayers.includes(data.uid)) {
+			onlinePlayers.push(data.uid);
+			console.log("Added user");
+		console.log(onlinePlayers);
+		}
 		localuser = data.uid;
 		homeNamespace.emit('connected-user', {
 			uid: localuser
@@ -1433,6 +1461,8 @@ homeNamespace.on('connection', socket => {
 		}
 
 		onlinePlayers.splice(index, 1);
+		console.log("User left (home)");
+		console.log(onlinePlayers);
 		homeNamespace.emit('disconnected-user', {
 			uid: localuser
 		});
@@ -1449,7 +1479,11 @@ io.on('connection', socket => {
 	let localuser;
 
 	socket.on('user-info', data => {
-		onlinePlayers.push(data.uid);
+		if (!onlinePlayers.includes(data.uid)) {
+			onlinePlayers.push(data.uid);
+			console.log("Added user");
+		console.log(onlinePlayers);
+		}
 		localuser = data.uid;
 		homeNamespace.emit('connected-user', {
 			uid: localuser
@@ -1465,6 +1499,8 @@ io.on('connection', socket => {
 		}
 
 		onlinePlayers.splice(index, 1);
+		console.log("User left (root)");
+		console.log(onlinePlayers);
 		homeNamespace.emit('disconnected-user', {
 			uid: localuser
 		});
