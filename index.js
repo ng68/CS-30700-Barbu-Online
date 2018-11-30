@@ -484,12 +484,7 @@ lobbiesNamespace.on('connection', socket => {
     // When the page loads (i.e. once a client joins lobbiesNamespace), want
     // to send the client all of the currently open lobbies
     lobbies.forEach(lobby => {
-        socket.emit('new-lobby', {
-            owner: lobby.owner,
-            name: lobby.name,
-			players: lobby.players,
-			password: lobby.password
-        });
+        socket.emit('new-lobby', lobby);
 	});
 
 	socket.on('user-info', data => {
@@ -534,7 +529,8 @@ lobbiesNamespace.on('connection', socket => {
 				name: lobbyData.name,
 				password: lobbyData.password,
 				players: [],
-				num_rounds: lobbyData.num_rounds
+				num_rounds: lobbyData.num_rounds,
+				difficulty: lobbyData.difficulty
             };
 
             lobby.players.push(lobbyData.owner); // Owner should be in lobby
