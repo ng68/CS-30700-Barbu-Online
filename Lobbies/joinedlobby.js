@@ -28,6 +28,10 @@ firebase.auth().onAuthStateChanged( user => {
     }
   });
 
+socket.emit('user-info', {
+    uid: firebase.auth().currentUser.uid
+});
+
 socket.emit('entered-lobby', lobbyname);
 
 leavelobbybtn.addEventListener('click', e=> {

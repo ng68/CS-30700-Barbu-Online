@@ -20,6 +20,10 @@ firebase.auth().onAuthStateChanged( user => {
     }
   });
 
+socket.emit('user-info', {
+    uid: firebase.auth().currentUser.uid
+});
+
 function makelobby() {
     // emits that a lobby is created
     if(lobbyNameInput.value == ""){
