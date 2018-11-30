@@ -6,7 +6,7 @@ const io = require('socket.io')(port);
 
 // io.origins('https://barbu-online.firebaseapp.com:*');
 
-const chatNamespace = io.of('/chat');
+const homeNamespace = io.of('/home');
 const lobbiesNamespace = io.of('/lobbies');
 const gamesNamespace = io.of('/games');
 
@@ -508,7 +508,8 @@ lobbiesNamespace.on('connection', socket => {
                 owner: lobbyData.owner,
 				name: lobbyData.name,
 				password: lobbyData.password,
-                players: []
+				players: [],
+				num_rounds: lobbyData.num_rounds
             };
 
             lobby.players.push(lobbyData.owner); // Owner should be in lobby
@@ -609,12 +610,6 @@ lobbiesNamespace.on('connection', socket => {
 			lobbyName: data.lobbyName,
 			kickClients: false
 		});
-
-		for (let i = lobbies.length - 1; i >= 0; i--) {
-			if (lobbies[i].name == data.lobbyName) {
-				lobbies.splice(i, 1); // Remove the lobby from the backend.
-			}
-		}
 	});
 
 	socket.on('check-password', data => {
@@ -642,7 +637,8 @@ gamesNamespace.on('connection', socket => {
     // goes to the game/lobby page (after joining/creating a lobby on the lobbIES page)
     // Expects an object data of the form {
     //    lobbyname: String,
-    //    username: String
+    //    username: String,
+	//	  num_rounds: Integer
     // }
     socket.on('player-info', data => {
         if (gameHash[data.lobbyname] == null) { // This game does not exist in the game hash yet
@@ -652,13 +648,26 @@ gamesNamespace.on('connection', socket => {
                 handHash: {}, // TODO edit this code to whatever is actually needed later
 				scoreHash: {},
 				gamesChosen: {},
-                subgame: {}
+                subgame: {},
+				num_rounds: 0,
+				game_data: []
             };
 
+			let lobbyIndex;
+			for (let i = lobbies.length - 1; i >= 0; i--) {
+				if (lobbies[i].name == data.lobbyname) {
+					lobbyIndex = i;
+				}
+			}
+			game.num_rounds = lobbies[lobbyIndex].num_rounds;
+
+			lobbies.splice(lobbyIndex, 1); // Remove the old lobby from the backend.
+			
             game.players.push(data.username); // Add the player to the players array.
 			game.gamesChosen[data.username] = [];
 			game.scoreHash[data.username] = 0;
             game.dealerIndex = 0; // The first player that joins (i.e. the host) will be the first dealer
+			game.num_rounds = data.num_rounds;
             gameHash[data.lobbyname] = game; // Add the game to the gamehash.
         } else { // The game already exists
             gameHash[data.lobbyname].players.push(data.username); // Add the player to the lobby.
@@ -955,11 +964,20 @@ gamesNamespace.on('connection', socket => {
 							var p = subgame.players[i];
 							game.scoreHash[p] += scores[i];
 						}
+						
+						// Add scores to end of game data
+						var round_data = []; // [dealer, game, p1 score, p2 score, p3 score, p4 score]
+						round_data.push(game.players[game.dealerIndex]);
+						round_data.push(subgame.game_type);
+						for(var i = 0; i < 4; i++) {
+							round_data.push(scores[subgame.players.indexOf(game.players[i])]);
+						}
+						game.game_data.push(round_data);
 				
 						// Check if entire game is done
 						done = true;
 						for(var i = 0; i < game.players.length; i++) {
-							if(game.gamesChosen[game.players[i]].length != 1) { // CHANGED FOR SUBGAME LENGTH
+							if(game.gamesChosen[game.players[i]].length != game.num_rounds) { // CHANGED FOR SUBGAME LENGTH
 								done = false;
 							}
 						}
@@ -982,8 +1000,10 @@ gamesNamespace.on('connection', socket => {
 							gamesNamespace.to(data.lobbyname).emit('game-finished', {
 								users: users,
 								users_scores: users_scores,
-								winner: winner
-							});
+								winner: winner,
+								game_data: game.game_data
+							});							
+							delete gameHash[data.lobbyname];
 						}
 						
 						// Update dealer
@@ -1140,11 +1160,20 @@ gamesNamespace.on('connection', socket => {
 						var p = subgame.players[i];
 						game.scoreHash[p] += scores[i];
 					}
-
+					
+					// Add scores to end of game data
+					var round_data = []; // [dealer, game, p1 score, p2 score, p3 score, p4 score]
+					round_data.push(game.players[game.dealerIndex]);
+					round_data.push(subgame.game_type);
+					for(var i = 0; i < 4; i++) {
+						round_data.push(scores[subgame.players.indexOf(game.players[i])]);
+					}
+					game.game_data.push(round_data);
+						
 					// Check if entire game is done
 					var all_done = true;
 					for(var i = 0; i < game.players.length; i++) {
-						if(game.gamesChosen[game.players[i]].length != 1) { // CHANGED FOR SUBGAME LENGTH
+						if(game.gamesChosen[game.players[i]].length != game.num_rounds) { // CHANGED FOR SUBGAME LENGTH
 							all_done = false;
 						}
 					}
@@ -1167,8 +1196,11 @@ gamesNamespace.on('connection', socket => {
 						gamesNamespace.to(data.lobbyname).emit('game-finished', {
 							users: users,
 							users_scores: users_scores,
-							winner: winner
+							winner: winner,
+							game_data: game.game_data
 						});
+						
+						delete gameHash[data.lobbyname];
 					}
 					
 					// Update dealer
@@ -1273,10 +1305,23 @@ gamesNamespace.on('connection', socket => {
 
             return;
 		}
-    });
+		});
+		
+		// Client emits this event when a user sends a chat message. Expects the data object to be {
+		// 		username: STRING,
+		// 		message: STRING,
+		// 		lobbyname: STRING
+		// }
+		socket.on('chat-sent', data => {
+				gamesNamespace.to(data.lobbyname).emit('new-message', {
+						username: data.username,
+						message: data.message,
+						lobbyname: data.lobbyname
+				});
+		});
 });
 
-chatNamespace.on('connection', socket => {
+homeNamespace.on('connection', socket => {
     console.log("Chat connected");
 });
 
