@@ -698,19 +698,18 @@ gamesNamespace.on('connection', socket => {
 				scoreHash: {},
 				gamesChosen: {},
                 subgame: {},
-				num_rounds: 0,
+				num_rounds: 1,
 				game_data: []
             };
 
-			let lobbyIndex;
-			for (let i = lobbies.length - 1; i >= 0; i--) {
-				if (lobbies[i].name == data.lobbyname) {
-					lobbyIndex = i;
-				}
+			let lobbyIndex = lobbies.indexOf(data.lobbyname);
+			if (lobbyIndex >= 0) {
+				game.num_rounds = lobbies[lobbyIndex].num_rounds;
+				lobbies.splice(lobbyIndex, 1); // Remove the old lobby from the backend.
+				console.log("Lobby found (in player-info)");
+			} else {
+				console.log("Lobby not found (in player-info). Removal failed, num_rounds failed.");
 			}
-			game.num_rounds = lobbies[lobbyIndex].num_rounds;
-
-			lobbies.splice(lobbyIndex, 1); // Remove the old lobby from the backend.
 			
             game.players.push(data.username); // Add the player to the players array.
 			game.gamesChosen[data.username] = [];
