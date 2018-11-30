@@ -1083,8 +1083,7 @@ gamesNamespace.on('connection', socket => {
 								users_scores: users_scores,
 								winner: winner,
 								game_data: game.game_data
-							});							
-							delete gameHash[data.lobbyname];
+							});
 						}
 						
 						// Update dealer
