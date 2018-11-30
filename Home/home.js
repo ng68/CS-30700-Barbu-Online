@@ -39,11 +39,6 @@ socket.on('new-message', data => {
     messageBox.scrollTop = messageBox.scrollHeight - messageBox.clientHeight;
 });
 
-
-socket.emit('user-info', {
-    uid: firebase.auth().currentUser.uid
-});
-
 socket.on('connected-user', data => {
     // the uid is accessed in data.uid
     //if (data.uid is in the users' friends list) {
