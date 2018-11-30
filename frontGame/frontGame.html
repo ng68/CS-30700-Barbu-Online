@@ -12,12 +12,14 @@
 	<body style="background-color: black">
 		<nav class="navbar navbar-expand-sm navbar-custom navbar-dark home-nav">
 		  <img style="max-width: 192px" src="img/logo-thin.jpg"></a>
-			
+      
+      <!--
 			<button id="p1">Player1</button>
 			<button id="p2">Player2</button>
 			<button id="p3">Player3</button>
 			<button id="p4">Player4</button>
-			
+      -->
+      
 		</nav>
 		<img class="preload" src="img/cards.png"/>
 		<div id="card-table">
@@ -31,13 +33,12 @@
 			<form onsubmit="sendChat();return false;">
 				<div class="form-inline">
 					<div class="form-group mx-sm-3 mb-2">
-				    <label for="inputPassword2" class="sr-only">Password</label>
 						<!--
 						Grab the message from this with the id of 'message-input'
 						-->
 				    <input type="text" class="form-control" id="message-input" placeholder="Message">
 				  </div>
-				  <button type="submit" id="send-message-btn" class="btn btn-primary mb-2">Send</button>
+				  <button type="submit" id="send-message-btn" class="btn mb-2">Send</button>
 				</div>
 			</form>
 		</div>
@@ -62,12 +63,15 @@
 					<td><h2 class="text-gold" id="pl4">Player 4</h2></td><td id="dealer4"></td>
 				</tr>
 			</table>
+			<h2 id="subgame"></h2>
 						<div class="scorecard">
 							<table id="scoretable">
+								<!--
 								<tr class="borderRow">
 									<th>Subgame</th>
 									<td class="text-gold" id="subgame"></td>
 								</tr>
+							-->
 							  <tr class="borderRow">
 							    <td id="player1"></td>
 							    <td id="player1score">0</td>
@@ -87,19 +91,19 @@
 							</table>
 							<table id="doublesCard">
 								<tr>
-									<th></th><td>N</td><td>E</td><td>S</td><td>W</td>
+									<th></th><th>N</th><th>E</th><th>S</th><th>W</th>
 								</tr>
 								<tr>
-									<td>N</td><td></td><td id="NE"></td><td id="NS"></td><td id="NW"></td>
+									<th>N</th><td></td><td id="NE"></td><td id="NS"></td><td id="NW"></td>
 								</tr>
 								<tr>
-									<td>E</td><td id="EN">X</td><td></td><td id="ES"></td><td id="EW"></td>
+									<th>E</th><td id="EN"></td><td></td><td id="ES"></td><td id="EW"></td>
 								</tr>
 								<tr>
-									<td>S</td><td id="SN">X</td><td id="SE">XX</td><td></td><td id="SW"></td>
+									<th>S</th><td id="SN"></td><td id="SE"></td><td></td><td id="SW"></td>
 								</tr>
 								<tr>
-									<td>W</td><td id="WN"></td><td id="WE"></td><td id="WS"></td><td></td>
+									<th>W</th><td id="WN"></td><td id="WE"></td><td id="WS"></td><td></td>
 								</tr>
 							</table>
 							<input type="button" id="showScores" value="Scores">

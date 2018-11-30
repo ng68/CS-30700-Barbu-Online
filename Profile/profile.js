@@ -16,9 +16,15 @@ connectedRef.on("value", function(snap) {
 });
 *///
 
-socket.emit('user-info', {
-    uid: firebase.auth().currentUser.uid
+firebase.auth().onAuthStateChanged( user => {
+    if (user) 
+    {
+        socket.emit('user-info', {
+            uid: user.uid
+        });
+    }
 });
+
 
 savebtn.addEventListener('click', e=> {
     if(password.value != confirmPassword.value){

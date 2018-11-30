@@ -17,6 +17,9 @@ let username = "";
 firebase.auth().onAuthStateChanged( user => {
     if (user) 
     {
+    socket.emit('user-info', {
+        uid: user.uid
+    });
     var query = firebase.database().ref("users/" + user.uid);
     query.once("value")
       .then(function(snapshot) {
@@ -28,10 +31,6 @@ firebase.auth().onAuthStateChanged( user => {
         console.log("User not signed in");
     }
   });
-
-socket.emit('user-info', {
-    uid: firebase.auth().currentUser.uid
-});
 
 startgamebtn.addEventListener('click', e=> {
     socket.emit('start-game', {lobbyName: lobbyname});
