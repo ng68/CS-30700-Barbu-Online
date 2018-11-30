@@ -865,7 +865,9 @@ gamesNamespace.on('connection', socket => {
 		}
 		
 		// Send updated doubles
-		gamesNamespace.to(data.lobbyname).emit('update-doubles', game.universal_doubles);
+		gamesNamespace.to(data.lobbyname).emit('update-doubles', {
+			doubles: game.universal_doubles
+		});
 		
 		// Send next event
 		if(username == game.players[game.dealerIndex]) {
