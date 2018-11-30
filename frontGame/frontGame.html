@@ -12,41 +12,53 @@
 	<body style="background-color: black">
 		<nav class="navbar navbar-expand-sm navbar-custom navbar-dark home-nav">
 		  <img style="max-width: 192px" src="img/logo-thin.jpg"></a>
+			<!--
+			<button id="p1">Player1</button>
+			<button id="p2">Player2</button>
+			<button id="p3">Player3</button>
+			<button id="p4">Player4</button>
+			-->
 		</nav>
 		<img class="preload" src="img/cards.png"/>
 		<div id="card-table">
-            <!--<button id="p1">Player1</button>
-            <button id="p2">Player2</button>
-            <button id="p3">Player3</button>
-            <button id="p4">Player4</button>-->
-			<div id="chat">
-				<div id="messages" style="overflow-y: scroll;"></div>
-				<div>
 
-				</div>
+		<div class="rounded" id="messageCard">
+			<!--
+			Messages go in this div with the id of 'messages'
+			-->
+			<div class="rounded" id="messages" style="overflow-y: scroll;">
 			</div>
+			<form>
+				<div class="form-inline">
+					<div class="form-group mx-sm-3 mb-2">
+				    <label for="inputPassword2" class="sr-only">Password</label>
+						<!--
+						Grab the message from this with the id of 'message-input'
+						-->
+				    <input type="text" class="form-control" id="message-input" placeholder="Message">
+				  </div>
+				  <button type="submit" id="send-message-btn" class="btn btn-primary mb-2">Send</button>
+				</div>
+			</form>
+		</div>
 
 			<table id="player1info">
 				<tr>
-					<td id="turn1"></td>
 					<td><h2 class="text-gold" id="pl1">Player 1</h2></td><td id="dealer1"></td>
 				</tr>
 			</table>
 			<table id="player2info">
 				<tr>
-					<td id="turn2"></td>
 					<td><h2 class="text-gold" id="pl2">Player 2</h2></td><td id="dealer2"></td>
 				</tr>
 			</table>
 			<table id="player3info">
 				<tr>
-					<td id="turn3"></td>
 					<td><h2 class="text-gold" id="pl3">Player 3</h2></td><td id="dealer3"></td>
 				</tr>
 			</table>
 			<table id="player4info">
 				<tr>
-					<td id="turn4"></td>
 					<td><h2 class="text-gold" id="pl4">Player 4</h2></td><td id="dealer4"></td>
 				</tr>
 			</table>
@@ -75,19 +87,19 @@
 							</table>
 							<table id="doublesCard">
 								<tr>
-									<th>Doubles</th><td class="doub1">player 1 name</td><td class="doub2">player 2 name</td><td class="doub3">plaeyr asdfnaef</td><td class="doub4">asldfnasldf</td>
+									<th></th><td>N</td><td>E</td><td>S</td><td>W</td>
 								</tr>
 								<tr>
-									<td class="doub1"></td><td></td><td></td><td></td><td></td>
+									<td>N</td><td></td><td id="NE"></td><td id="NS"></td><td id="NW"></td>
 								</tr>
 								<tr>
-									<td class="doub2"></td><td></td><td></td><td></td><td></td>
+									<td>E</td><td id="EN">X</td><td></td><td id="ES"></td><td id="EW"></td>
 								</tr>
 								<tr>
-									<td class="doub3"></td><td></td><td></td><td></td><td></td>
+									<td>S</td><td id="SN">X</td><td id="SE">XX</td><td></td><td id="SW"></td>
 								</tr>
 								<tr>
-									<td class="doub4"></td><td></td><td></td><td></td><td></td>
+									<td>W</td><td id="WN"></td><td id="WE"></td><td id="WS"></td><td></td>
 								</tr>
 							</table>
 							<input type="button" id="showScores" value="Scores">

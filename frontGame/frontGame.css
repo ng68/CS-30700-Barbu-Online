@@ -1,6 +1,6 @@
 
 #buttons {
-	text-align:center;
+	/*text-align:center;*/
 }
 
 #player1info {
@@ -43,11 +43,15 @@ a img {
 	right: 0;
 	border: 0;
 }
+
+/*
 button {
 	height:30px;
 	width:100px;
 	margin:8px auto;
 }
+*/
+
 img.preload {
 	display:none;
 }
@@ -129,7 +133,7 @@ a:visited {color:blue;}
 }
 
 #scoretable {
-	display: none;
+	/*display: none;*/
 	width: auto;
 }
 
@@ -139,6 +143,20 @@ a:visited {color:blue;}
 
 .borderRow{
 	border-bottom: solid;
+}
+
+#messages {
+	height: 120px;
+	margin: 15px;
+}
+
+#messageCard {
+	background-color: white;
+	height: 200px;
+	width: 375px;
+	position: absolute;
+	bottom: 0;
+	left: 0;
 }
 
 th, td {
