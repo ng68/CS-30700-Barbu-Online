@@ -64,6 +64,9 @@ let loc = {};  //Keeps track of the reference to the location of each Card
 firebase.auth().onAuthStateChanged( usern => {
     if (usern)
     {
+    socket.emit('user-info', {
+        uid: usern.uid
+    });
     var query = firebase.database().ref("users/" + usern.uid);
     query.once("value")
       .then(function(snapshot) {
@@ -79,10 +82,6 @@ firebase.auth().onAuthStateChanged( usern => {
     }
   });
 
-
-socket.emit('user-info', {
-    uid: firebase.auth().currentUser.uid
-});
 
 
 /*

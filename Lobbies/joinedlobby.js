@@ -16,7 +16,10 @@ if (window.performance) {
   } 
 firebase.auth().onAuthStateChanged( user => {
     if (user) 
-    { 
+    {
+    socket.emit('user-info', {
+        uid: user.uid
+    }); 
     var query = firebase.database().ref("users/" + user.uid);
     query.once("value")
       .then(function(snapshot) {
@@ -28,9 +31,7 @@ firebase.auth().onAuthStateChanged( user => {
     }
   });
 
-socket.emit('user-info', {
-    uid: firebase.auth().currentUser.uid
-});
+
 
 socket.emit('entered-lobby', lobbyname);
 
