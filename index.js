@@ -865,7 +865,9 @@ gamesNamespace.on('connection', socket => {
 		}
 		
 		// Send updated doubles
-		gamesNamespace.to(data.lobbyname).emit('update-doubles', game.universal_doubles);
+		gamesNamespace.to(data.lobbyname).emit('update-doubles', {
+			doubles: game.universal_doubles
+		});
 		
 		// Send next event
 		if(username == game.players[game.dealerIndex]) {
@@ -1258,8 +1260,6 @@ gamesNamespace.on('connection', socket => {
 							winner: winner,
 							game_data: game.game_data
 						});
-						
-						delete gameHash[data.lobbyname];
 					}
 					
 					// Update dealer
@@ -1364,20 +1364,45 @@ gamesNamespace.on('connection', socket => {
 
             return;
 		}
-		});
+	});
 		
-		// Client emits this event when a user sends a chat message. Expects the data object to be {
-		// 		username: STRING,
-		// 		message: STRING,
-		// 		lobbyname: STRING
-		// }
-		socket.on('chat-sent', data => {
-				gamesNamespace.to(data.lobbyname).emit('new-message', {
-						username: data.username,
-						message: data.message,
-						lobbyname: data.lobbyname
-				});
+	// Client emits this event when a user sends a chat message. Expects the data object to be {
+	// 		username: STRING,
+	// 		message: STRING,
+	// 		lobbyname: STRING
+	// }
+	socket.on('chat-sent', data => {
+			gamesNamespace.to(data.lobbyname).emit('new-message', {
+					username: data.username,
+					message: data.message,
+					lobbyname: data.lobbyname
+			});
+	});
+	
+	socket.on('final-results', data => {
+		var game = gameHash[data.lobbyname];
+		var winner = game.players[0];
+		var win_score = game.scoreHash[winner];
+		var users = [];
+		var users_scores = [];
+
+		for(var i = 0; i < 4; i++) {
+			users.push(game.players[i]);
+			var score = game.scoreHash[game.players[i]];
+			users_scores.push(score);
+			if(score > win_score) {
+				win_score = score;
+				winner = game.players[i];
+			}
+		}
+		io.emit('game-result', {
+			users: users,
+			users_scores: users_scores,
+			winner: winner,
+			game_data: game.game_data
 		});
+		delete gameHash[data.lobbyname];
+	});
 });
 
 homeNamespace.on('connection', socket => {
