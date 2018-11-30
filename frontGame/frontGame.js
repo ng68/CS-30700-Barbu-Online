@@ -1,7 +1,7 @@
-//let socket = io('http://localhost:8080/games');
-let socket = io('https://protected-reef-35837.herokuapp.com/games'); //Socket
+let socket = io('http://localhost:8080/games');
+//let socket = io('https://protected-reef-35837.herokuapp.com/games'); //Socket
 //let lobby = "Lobby";//
-//let lobby = localStorage.getItem('lobbyname'); //Lobby currently in
+let lobby = localStorage.getItem('lobbyname'); //Lobby currently in
 let user;  //Current User
 let subgameList = ["Barbu", "Fan-Tan", "Hearts", "Last Two", "Losers", "Queens", "Trumps"];
 let players = {};   //Players in your lobby (Left, Top, Right)
@@ -31,6 +31,29 @@ let heartTopDiscardPile = new cards.Deck({faceUp:true, x:635, y:220});
 let heartBottomDiscardPile = new cards.Deck({faceUp:true, x:635, y:320});
 let spadeTopDiscardPile = new cards.Deck({faceUp:true, x:705, y:220});
 let spadeBottomDiscardPile = new cards.Deck({faceUp:true, x:705, y:320});
+
+let messageBox = document.getElementById('messages');
+let messageInput = document.getElementById('message-input');
+let messageBtn = document.getElementById('send-message-btn');
+
+function sendChat() {
+    socket.emit('chat-sent', { // TODO fill in username and lobbyname correctly
+        username: user,
+        message: messageInput.value,
+        lobbyname: lobby
+    });
+
+    messageInput.value = '';
+}
+
+socket.on('new-message', data => {
+    let messageDiv = document.createElement("div");
+    let messageString = data.username + ": " + data.message;
+    messageDiv.innerHTML = messageString;
+
+    messageBox.appendChild(messageDiv);
+    messageBox.scrollTop = messageBox.scrollHeight - messageBox.clientHeight;
+});
 
 let loc = {};  //Keeps track of the reference to the location of each Card
 
