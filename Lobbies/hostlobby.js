@@ -125,6 +125,9 @@ socket.on('lobby-updated', lobbyData => {
         if(lobbyData.players.length == 4){
             startgamebtn.disabled = false;
         }
+        else {
+            startgamebtn.disabled = true;
+        }
     }
 });
 
